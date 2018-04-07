@@ -49,6 +49,10 @@ class ReportBot(commands.Bot):
         self.add_command(self.uptime)
         self.remove_command("help")
         self.add_command(self.help)
+        self.add_command(self.quest)
+        self.add_command(self.raid)
+        self.add_command(self.rare)
+        self.add_command(self.nest)
         self.start_time = 0
         self.session = aiohttp.ClientSession(loop=self.loop)
 
@@ -75,12 +79,37 @@ class ReportBot(commands.Bot):
     async def uptime(self):
         await self.say("Online for %s" % str(datetime.datetime.utcnow() - self.start_time))
 
+
     @commands.command(pass_context=True)
     async def help(self, ctx, here=None):
         if not here:
             await self.send_message(destination=ctx.message.author, content=HELP_MSG)
         else:
             await self.say(HELP_MSG)
+
+    @commands.command(pass_context=True)
+    async def quest(self, ctx, *, report):
+        chan = self.get_channel(id=self.config.quest_channel_id)
+        msg = "__**Quest: %s**__\n\nreported by %s" % (report, ctx.message.author.mention)
+        await self.send_message(destination=chan, content=msg)
+
+    @commands.command(pass_context=True)
+    async def raid(self, ctx, *, report):
+        chan = self.get_channel(id=self.config.raid_channel_id)
+        msg = "__**Raid: %s**__\n\nreported by %s" % (report, ctx.message.author.mention)
+        await self.send_message(destination=chan, content=msg)
+
+    @commands.command(pass_context=True)
+    async def rare(self, ctx, *, report):
+        chan = self.get_channel(id=self.config.rare_channel_id)
+        msg = "__**Rare: %s**__\n\nreported by %s" % (report, ctx.message.author.mention)
+        await self.send_message(destination=chan, content=msg)
+
+    @commands.command(pass_context=True)
+    async def nest(self, ctx, *, report):
+        chan = self.get_channel(id=self.config.nest_channel_id)
+        msg = "__**Nest: %s**__\n\nreported by %s" % (report, ctx.message.author.mention)
+        await self.send_message(destination=chan, content=msg)
 
     async def get_message_if_exists(self, channel, msg_id):
         try:

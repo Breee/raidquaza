@@ -31,10 +31,10 @@ class Configuration(object):
                 if line.startswith("playing="):
                     self.playing = line[line.find("=") + 1:].rstrip("\n")
                 if line.startswith("raid-channel-id="):
-                    self.raid_channel_id = int(line[line.find("=") + 1:].rstrip("\n"))
+                    self.raid_channel_id = line[line.find("=") + 1:].rstrip("\n")
                 if line.startswith("rare-channel-id="):
-                    self.rare_channel_id = int(line[line.find("=") + 1:].rstrip("\n"))
+                    self.rare_channel_id = line[line.find("=") + 1:].rstrip("\n")
                 if line.startswith("quest-channel-id="):
-                    self.quest_channel_id = int(line[line.find("=") + 1:].rstrip("\n"))
+                    self.quest_channel_id = line[line.find("=") + 1:].rstrip("\n")
                 if line.startswith("nest-channel-id="):
-                    self.nest_channel_id = int(line[line.find("=") + 1:].rstrip("\n"))
+                    self.nest_channel_id = line[line.find("=") + 1:].rstrip("\n")

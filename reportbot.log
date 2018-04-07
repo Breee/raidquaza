@@ -6,3 +6,135 @@
 2018-04-07 23:12:58,764 [MainThread  ] [INFO ]  Created websocket connected to wss://gateway.discord.gg?encoding=json&v=6
 2018-04-07 23:12:58,765 [MainThread  ] [INFO ]  sent the identify payload to create the websocket
 2018-04-07 23:13:00,962 [MainThread  ] [INFO ]  Bot is ready.
+2018-04-07 23:15:31,038 [MainThread  ] [INFO ]  Starting Bot.
+2018-04-07 23:15:31,039 [MainThread  ] [WARNI]  PyNaCl is not installed, voice will NOT be supported
+2018-04-07 23:15:31,040 [MainThread  ] [INFO ]  logging in using static token
+2018-04-07 23:15:31,597 [MainThread  ] [INFO ]  Created websocket connected to wss://gateway.discord.gg?encoding=json&v=6
+2018-04-07 23:15:31,598 [MainThread  ] [INFO ]  sent the identify payload to create the websocket
+2018-04-07 23:15:33,752 [MainThread  ] [INFO ]  Bot is ready.
+2018-04-07 23:21:43,991 [MainThread  ] [INFO ]  Starting Bot.
+2018-04-07 23:21:43,992 [MainThread  ] [WARNI]  PyNaCl is not installed, voice will NOT be supported
+2018-04-07 23:21:43,992 [MainThread  ] [INFO ]  logging in using static token
+2018-04-07 23:21:44,522 [MainThread  ] [INFO ]  Created websocket connected to wss://gateway.discord.gg?encoding=json&v=6
+2018-04-07 23:21:44,523 [MainThread  ] [INFO ]  sent the identify payload to create the websocket
+2018-04-07 23:21:46,670 [MainThread  ] [INFO ]  Bot is ready.
+2018-04-07 23:22:12,385 [MainThread  ] [INFO ]  Starting Bot.
+2018-04-07 23:22:12,386 [MainThread  ] [WARNI]  PyNaCl is not installed, voice will NOT be supported
+2018-04-07 23:22:12,386 [MainThread  ] [INFO ]  logging in using static token
+2018-04-07 23:22:12,953 [MainThread  ] [INFO ]  Created websocket connected to wss://gateway.discord.gg?encoding=json&v=6
+2018-04-07 23:22:12,954 [MainThread  ] [INFO ]  sent the identify payload to create the websocket
+2018-04-07 23:22:15,517 [MainThread  ] [INFO ]  Bot is ready.
+2018-04-07 23:24:08,610 [MainThread  ] [INFO ]  Starting Bot.
+2018-04-07 23:24:08,611 [MainThread  ] [WARNI]  PyNaCl is not installed, voice will NOT be supported
+2018-04-07 23:24:08,611 [MainThread  ] [INFO ]  logging in using static token
+2018-04-07 23:24:09,306 [MainThread  ] [INFO ]  Created websocket connected to wss://gateway.discord.gg?encoding=json&v=6
+2018-04-07 23:24:09,307 [MainThread  ] [INFO ]  sent the identify payload to create the websocket
+2018-04-07 23:24:11,455 [MainThread  ] [INFO ]  Bot is ready.
+2018-04-07 23:24:48,182 [MainThread  ] [INFO ]  Starting Bot.
+2018-04-07 23:24:48,183 [MainThread  ] [WARNI]  PyNaCl is not installed, voice will NOT be supported
+2018-04-07 23:24:48,184 [MainThread  ] [INFO ]  logging in using static token
+2018-04-07 23:24:48,731 [MainThread  ] [INFO ]  Created websocket connected to wss://gateway.discord.gg?encoding=json&v=6
+2018-04-07 23:24:48,734 [MainThread  ] [INFO ]  sent the identify payload to create the websocket
+2018-04-07 23:24:50,886 [MainThread  ] [INFO ]  Bot is ready.
+2018-04-07 23:27:18,021 [MainThread  ] [INFO ]  Starting Bot.
+2018-04-07 23:27:18,022 [MainThread  ] [WARNI]  PyNaCl is not installed, voice will NOT be supported
+2018-04-07 23:27:18,023 [MainThread  ] [INFO ]  logging in using static token
+2018-04-07 23:27:18,580 [MainThread  ] [INFO ]  Created websocket connected to wss://gateway.discord.gg?encoding=json&v=6
+2018-04-07 23:27:18,581 [MainThread  ] [INFO ]  sent the identify payload to create the websocket
+2018-04-07 23:27:20,741 [MainThread  ] [INFO ]  Bot is ready.
+2018-04-07 23:28:21,833 [MainThread  ] [INFO ]  Starting Bot.
+2018-04-07 23:28:21,834 [MainThread  ] [WARNI]  PyNaCl is not installed, voice will NOT be supported
+2018-04-07 23:28:21,834 [MainThread  ] [INFO ]  logging in using static token
+2018-04-07 23:28:22,344 [MainThread  ] [INFO ]  Created websocket connected to wss://gateway.discord.gg?encoding=json&v=6
+2018-04-07 23:28:22,352 [MainThread  ] [INFO ]  sent the identify payload to create the websocket
+2018-04-07 23:28:24,514 [MainThread  ] [INFO ]  Bot is ready.
+2018-04-07 23:28:41,256 [MainThread  ] [INFO ]  Starting Bot.
+2018-04-07 23:28:41,257 [MainThread  ] [WARNI]  PyNaCl is not installed, voice will NOT be supported
+2018-04-07 23:28:41,258 [MainThread  ] [INFO ]  logging in using static token
+2018-04-07 23:28:41,836 [MainThread  ] [INFO ]  Created websocket connected to wss://gateway.discord.gg?encoding=json&v=6
+2018-04-07 23:28:41,837 [MainThread  ] [INFO ]  sent the identify payload to create the websocket
+2018-04-07 23:28:44,544 [MainThread  ] [INFO ]  Bot is ready.
+2018-04-07 23:30:04,089 [MainThread  ] [INFO ]  Starting Bot.
+2018-04-07 23:30:04,090 [MainThread  ] [WARNI]  PyNaCl is not installed, voice will NOT be supported
+2018-04-07 23:30:04,090 [MainThread  ] [INFO ]  logging in using static token
+2018-04-07 23:30:04,616 [MainThread  ] [INFO ]  Created websocket connected to wss://gateway.discord.gg?encoding=json&v=6
+2018-04-07 23:30:04,617 [MainThread  ] [INFO ]  sent the identify payload to create the websocket
+2018-04-07 23:30:06,761 [MainThread  ] [INFO ]  Bot is ready.
+2018-04-07 23:30:56,756 [MainThread  ] [INFO ]  Starting Bot.
+2018-04-07 23:30:56,757 [MainThread  ] [WARNI]  PyNaCl is not installed, voice will NOT be supported
+2018-04-07 23:30:56,758 [MainThread  ] [INFO ]  logging in using static token
+2018-04-07 23:30:57,294 [MainThread  ] [INFO ]  Created websocket connected to wss://gateway.discord.gg?encoding=json&v=6
+2018-04-07 23:30:57,295 [MainThread  ] [INFO ]  sent the identify payload to create the websocket
+2018-04-07 23:31:00,187 [MainThread  ] [INFO ]  Bot is ready.
+2018-04-07 23:32:43,382 [MainThread  ] [INFO ]  Starting Bot.
+2018-04-07 23:32:43,383 [MainThread  ] [WARNI]  PyNaCl is not installed, voice will NOT be supported
+2018-04-07 23:32:43,384 [MainThread  ] [INFO ]  logging in using static token
+2018-04-07 23:32:43,939 [MainThread  ] [INFO ]  Created websocket connected to wss://gateway.discord.gg?encoding=json&v=6
+2018-04-07 23:32:43,940 [MainThread  ] [INFO ]  sent the identify payload to create the websocket
+2018-04-07 23:32:46,094 [MainThread  ] [INFO ]  Bot is ready.
+2018-04-07 23:33:25,062 [MainThread  ] [INFO ]  Starting Bot.
+2018-04-07 23:33:25,063 [MainThread  ] [WARNI]  PyNaCl is not installed, voice will NOT be supported
+2018-04-07 23:33:25,064 [MainThread  ] [INFO ]  logging in using static token
+2018-04-07 23:33:25,595 [MainThread  ] [INFO ]  Created websocket connected to wss://gateway.discord.gg?encoding=json&v=6
+2018-04-07 23:33:25,597 [MainThread  ] [INFO ]  sent the identify payload to create the websocket
+2018-04-07 23:33:28,096 [MainThread  ] [INFO ]  Bot is ready.
+2018-04-07 23:33:43,448 [MainThread  ] [INFO ]  Starting Bot.
+2018-04-07 23:33:43,448 [MainThread  ] [WARNI]  PyNaCl is not installed, voice will NOT be supported
+2018-04-07 23:33:43,449 [MainThread  ] [INFO ]  logging in using static token
+2018-04-07 23:33:43,982 [MainThread  ] [INFO ]  Created websocket connected to wss://gateway.discord.gg?encoding=json&v=6
+2018-04-07 23:33:43,983 [MainThread  ] [INFO ]  sent the identify payload to create the websocket
+2018-04-07 23:33:46,124 [MainThread  ] [INFO ]  Bot is ready.
+2018-04-07 23:35:00,670 [MainThread  ] [INFO ]  Starting Bot.
+2018-04-07 23:35:00,672 [MainThread  ] [WARNI]  PyNaCl is not installed, voice will NOT be supported
+2018-04-07 23:35:00,673 [MainThread  ] [INFO ]  logging in using static token
+2018-04-07 23:35:01,233 [MainThread  ] [INFO ]  Created websocket connected to wss://gateway.discord.gg?encoding=json&v=6
+2018-04-07 23:35:01,234 [MainThread  ] [INFO ]  sent the identify payload to create the websocket
+2018-04-07 23:35:03,386 [MainThread  ] [INFO ]  Bot is ready.
+2018-04-07 23:35:13,753 [MainThread  ] [INFO ]  Starting Bot.
+2018-04-07 23:35:13,754 [MainThread  ] [WARNI]  PyNaCl is not installed, voice will NOT be supported
+2018-04-07 23:35:13,755 [MainThread  ] [INFO ]  logging in using static token
+2018-04-07 23:35:14,299 [MainThread  ] [INFO ]  Created websocket connected to wss://gateway.discord.gg?encoding=json&v=6
+2018-04-07 23:35:14,301 [MainThread  ] [INFO ]  sent the identify payload to create the websocket
+2018-04-07 23:35:16,472 [MainThread  ] [INFO ]  Bot is ready.
+2018-04-07 23:35:40,187 [MainThread  ] [INFO ]  Starting Bot.
+2018-04-07 23:35:40,188 [MainThread  ] [WARNI]  PyNaCl is not installed, voice will NOT be supported
+2018-04-07 23:35:40,189 [MainThread  ] [INFO ]  logging in using static token
+2018-04-07 23:35:40,727 [MainThread  ] [INFO ]  Created websocket connected to wss://gateway.discord.gg?encoding=json&v=6
+2018-04-07 23:35:40,728 [MainThread  ] [INFO ]  sent the identify payload to create the websocket
+2018-04-07 23:35:43,083 [MainThread  ] [INFO ]  Bot is ready.
+2018-04-07 23:36:06,220 [MainThread  ] [INFO ]  Starting Bot.
+2018-04-07 23:36:06,221 [MainThread  ] [WARNI]  PyNaCl is not installed, voice will NOT be supported
+2018-04-07 23:36:06,221 [MainThread  ] [INFO ]  logging in using static token
+2018-04-07 23:36:06,742 [MainThread  ] [INFO ]  Created websocket connected to wss://gateway.discord.gg?encoding=json&v=6
+2018-04-07 23:36:06,743 [MainThread  ] [INFO ]  sent the identify payload to create the websocket
+2018-04-07 23:36:08,916 [MainThread  ] [INFO ]  Bot is ready.
+2018-04-07 23:38:22,225 [MainThread  ] [INFO ]  Starting Bot.
+2018-04-07 23:38:22,225 [MainThread  ] [WARNI]  PyNaCl is not installed, voice will NOT be supported
+2018-04-07 23:38:22,226 [MainThread  ] [INFO ]  logging in using static token
+2018-04-07 23:38:22,785 [MainThread  ] [INFO ]  Created websocket connected to wss://gateway.discord.gg?encoding=json&v=6
+2018-04-07 23:38:22,787 [MainThread  ] [INFO ]  sent the identify payload to create the websocket
+2018-04-07 23:38:25,001 [MainThread  ] [INFO ]  Bot is ready.
+2018-04-07 23:39:55,082 [MainThread  ] [INFO ]  Starting Bot.
+2018-04-07 23:39:55,083 [MainThread  ] [WARNI]  PyNaCl is not installed, voice will NOT be supported
+2018-04-07 23:39:55,083 [MainThread  ] [INFO ]  logging in using static token
+2018-04-07 23:39:55,622 [MainThread  ] [INFO ]  Created websocket connected to wss://gateway.discord.gg?encoding=json&v=6
+2018-04-07 23:39:55,623 [MainThread  ] [INFO ]  sent the identify payload to create the websocket
+2018-04-07 23:39:57,917 [MainThread  ] [INFO ]  Bot is ready.
+2018-04-07 23:41:31,770 [MainThread  ] [INFO ]  Starting Bot.
+2018-04-07 23:41:31,771 [MainThread  ] [WARNI]  PyNaCl is not installed, voice will NOT be supported
+2018-04-07 23:41:31,771 [MainThread  ] [INFO ]  logging in using static token
+2018-04-07 23:41:32,316 [MainThread  ] [INFO ]  Created websocket connected to wss://gateway.discord.gg?encoding=json&v=6
+2018-04-07 23:41:32,317 [MainThread  ] [INFO ]  sent the identify payload to create the websocket
+2018-04-07 23:41:34,465 [MainThread  ] [INFO ]  Bot is ready.
+2018-04-07 23:48:12,779 [MainThread  ] [INFO ]  Starting Bot.
+2018-04-07 23:48:12,780 [MainThread  ] [WARNI]  PyNaCl is not installed, voice will NOT be supported
+2018-04-07 23:48:12,780 [MainThread  ] [INFO ]  logging in using static token
+2018-04-07 23:48:13,413 [MainThread  ] [INFO ]  Created websocket connected to wss://gateway.discord.gg?encoding=json&v=6
+2018-04-07 23:48:13,414 [MainThread  ] [INFO ]  sent the identify payload to create the websocket
+2018-04-07 23:48:15,585 [MainThread  ] [INFO ]  Bot is ready.
+2018-04-07 23:48:36,110 [MainThread  ] [INFO ]  Starting Bot.
+2018-04-07 23:48:36,111 [MainThread  ] [WARNI]  PyNaCl is not installed, voice will NOT be supported
+2018-04-07 23:48:36,112 [MainThread  ] [INFO ]  logging in using static token
+2018-04-07 23:48:36,631 [MainThread  ] [INFO ]  Created websocket connected to wss://gateway.discord.gg?encoding=json&v=6
+2018-04-07 23:48:36,632 [MainThread  ] [INFO ]  sent the identify payload to create the websocket
+2018-04-07 23:48:38,777 [MainThread  ] [INFO ]  Bot is ready.
