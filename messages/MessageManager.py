@@ -1,0 +1,55 @@
+from messages.StoredMessage import StoredMessage
+import logging
+LOGGER = logging.getLogger('discord')
+
+
+class MessageManager(object):
+
+    def __init__(self, messages=None):
+        # Messages passed shall be a dictionary of the form { command_message_id -> stored message }
+        if isinstance(messages, dict):
+            self.messages = messages
+        elif messages is None:
+            self.messages = dict()
+        else:
+            raise TypeError(
+                "The provided messages object is not of type %s, but %s.\n"
+                "We expect a dictionary oft the form: { message_ID -> message}" % (dict.__name__, messages))
+        self.commandmessage_id_to_storedmessage_id = dict()
+        self.postedmessage_id_to_storedmessage_id = dict()
+        self.id_counter = len(self.messages)
+
+    def create_message(self, commandmessage, postedmessage):
+        self.id_counter += 1
+        stored_message = StoredMessage(id=self.id_counter, commandmessage=commandmessage, postedmessage=postedmessage)
+        self.add_message(stored_message)
+        self.postedmessage_id_to_storedmessage_id[postedmessage.id] = stored_message.id
+        self.commandmessage_id_to_storedmessage_id[commandmessage.id] = stored_message.id
+        LOGGER.info("Created StoredMessage #%d, cmd: %s, post: %s" %(self.id_counter, commandmessage.content, postedmessage.content))
+
+    def get_message(self, msg_id=None, commandmessage_id=None, postedmessage_id=None):
+        if commandmessage_id and commandmessage_id in self.commandmessage_id_to_storedmessage_id:
+            msg_id = self.commandmessage_id_to_storedmessage_id[commandmessage_id]
+        elif postedmessage_id and postedmessage_id in self.postedmessage_id_to_storedmessage_id:
+            msg_id = self.postedmessage_id_to_storedmessage_id[postedmessage_id]
+        if msg_id is not None:
+            return self.messages[msg_id]
+        else:
+            return None
+
+    def add_message(self, message):
+        if isinstance(message, StoredMessage):
+            self.messages[message.id] = message
+        else:
+            raise TypeError("parameter message is not of type %s but %s" % (StoredMessage.__name__, message.__class__))
+
+    def delete_message(self, message_id):
+        self.messages.pop(message_id, None)
+
+    def restore_messages(self, storage):
+        self.messages = storage.messages
+        self.commandmessage_id_to_storedmessage_id = storage.commandmessage_id_to_storedmessage_id
+        self.postedmessage_id_to_storedmessage_id = storage.postedmessage_id_to_storedmessage_id
+
+
+
