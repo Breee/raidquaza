@@ -117,9 +117,13 @@ class ReportBot(commands.Bot):
     async def uptime(self):
         await self.say("Online for %s" % str(datetime.datetime.utcnow() - self.start_time))
 
-    @commands.command(hidden=True)
-    async def stats(self):
-        await self.say(self.statistic_manager.king_of_the_hill())
+    @commands.command(hidden=True, pass_context=True)
+    async def stats(self, ctx, here=None):
+        content = self.statistic_manager.king_of_the_hill()
+        if here:
+            await self.send_message(destination=ctx.message.channel, content=content)
+        else:
+            await self.send_message(destination=ctx.message.author, content=content)
 
     @commands.command(hidden=True, pass_context=True)
     async def exterminate(self, ctx, number):
