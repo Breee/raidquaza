@@ -66,7 +66,7 @@ class StatisticManager(object):
             msg += "Rank #%d -- %s (%d) \n" % (rank + 1, user_amount[0].name, user_amount[1])
 
         sorted_rare = sorted(self.user_to_rare_reports.items(), key=operator.itemgetter(1))
-        msg += "\n__**Rare and high IV report ranking #####**__\n"
+        msg += "\n__**Rare and high IV report ranking**__\n"
         for rank, user_amount in enumerate(sorted_rare):
             msg += "Rank #%d -- %s (%d) \n" % (rank + 1, user_amount[0].name, user_amount[1])
 
