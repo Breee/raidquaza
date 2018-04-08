@@ -59,6 +59,7 @@ class ReportBot(commands.Bot):
         self.add_command(self.rare)
         self.add_command(self.nest)
         self.add_command(self.stats)
+        self.add_command(self.exterminate)
         self.start_time = 0
         self.session = aiohttp.ClientSession(loop=self.loop)
         #
@@ -119,6 +120,14 @@ class ReportBot(commands.Bot):
     @commands.command(hidden=True)
     async def stats(self):
         await self.say(self.statistic_manager.king_of_the_hill())
+
+    @commands.command(hidden=True, pass_context=True)
+    async def exterminate(self, ctx, number):
+        mgs = []  # Empty list to put all the messages in the log
+        number = int(number)  # Converting the amount of messages to delete to an integer
+        async for x in self.logs_from(ctx.message.channel, limit=number):
+            mgs.append(x)
+        await self.delete_messages(mgs)
 
     @commands.command(pass_context=True)
     async def help(self, ctx, here=None):

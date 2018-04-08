@@ -43,8 +43,6 @@ class StatisticManager(object):
         self.user_to_total_reports = dict()
 
     def increase_user_stats(self, user, report_type: ReportType):
-        print(user)
-        print(report_type)
         if report_type is ReportType.QUEST:
             self.user_to_quest_reports[user] = self.user_to_quest_reports.get(user, 0) + 1
         elif report_type is ReportType.RAID:
