@@ -29,8 +29,9 @@ logger = logging.getLogger('discord')
 
 
 class Storage(object):
-    def __init__(self, message_manager: MessageManager, client_messages):
+    def __init__(self, message_manager: MessageManager, client_messages, statistic_manager):
         self.messages = message_manager.messages
         self.commandmessage_id_to_storedmessage_id = message_manager.commandmessage_id_to_storedmessage_id
         self.postedmessage_id_to_storedmessage_id = message_manager.postedmessage_id_to_storedmessage_id
         self.client_messages = client_messages
+        self.statistic_manager = statistic_manager

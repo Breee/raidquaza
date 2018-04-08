@@ -34,8 +34,8 @@ class StorageManager(object):
         self.storage = None
         self.dump_file_name = "storage.pickle"
 
-    def update_storage(self, message_manager,  client_messages):
-        self.storage = Storage(message_manager=message_manager, client_messages=client_messages)
+    def update_storage(self, message_manager,  client_messages, statistic_manager):
+        self.storage = Storage(message_manager=message_manager, client_messages=client_messages, statistic_manager=statistic_manager)
         self.dump_storage()
 
     def dump_storage(self):
