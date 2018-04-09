@@ -1,0 +1,8 @@
+#::# ID: 0, 3-Grams: $$f $fo foo oot otb tba bal all
+Football    DE  2015    10
+#::# ID: 1, 3-Grams: $$f $fo foo oob oba bar
+foobar  DE  2015    10
+#::# ID: 2, 3-Grams: $$f $fo foo oot ots tsa sal
+Footsal DE  2015    10
+#::# ID: 3, 3-Grams: $$f $fo foo oot ot_ t_b _ba bar arc rca
+Foot Barca  DE  2015    10

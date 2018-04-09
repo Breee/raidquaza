@@ -216,7 +216,7 @@ class QgramIndex:
         """
         return self.inverted_lists.get(qgram, [])
 
-    def find_matches(self, query, delta=5, k=5, use_qindex=True):
+    def find_matches(self, query, delta, k=5, use_qindex=True):
         """ Find the top-k matches for prefix with PED at most delta.
 
         >>> qi = QgramIndex(3)
@@ -242,7 +242,7 @@ class QgramIndex:
             record_lists = [self.get_posting_list(qgram) for qgram in qgrams]
             merged_lists = merge(record_lists)
             n_ped_computations = 0
-            threshold = len(query) - (self.q * delta)
+            threshold = len(query) - self.q * delta
             start = time.time()
             for record_id, count in merged_lists:
                 if count >= threshold:
