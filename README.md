@@ -4,7 +4,7 @@ Bot which will post quest/raid/rareIV in an according channel, if a user sends t
 The idea is to have a single discord channel, in which trainers can post reports of spotted raids, nests, quests or rare/high IV pokemon.
 
 # Setup
-## 1. requirements: 
+## 1. Requirements: 
 - python3
 - pip3
 - discord bot user (https://discordapp.com/developers/applications/me)
