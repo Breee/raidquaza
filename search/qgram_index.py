@@ -228,9 +228,9 @@ class QgramIndex:
         >>> len(qi.find_matches("foos", 0))
         0
         >>> len(qi.find_matches("ball", 1))
-        0
-        >>> len(qi.find_matches("football", 1))
         1
+        >>> len(qi.find_matches("football", 1))
+        2
         >>> len(qi.find_matches("football", 10))
         4
             """
