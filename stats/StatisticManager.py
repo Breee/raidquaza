@@ -74,6 +74,12 @@ class StatisticManager(object):
         msg += "\n__**Nest report ranking**__\n"
         for rank, user_amount in enumerate(sorted_nest):
             msg += "Rank #%d -- %s (%d) \n" % (rank + 1, user_amount[0].name, user_amount[1])
+
+        sorted_total = sorted(self.user_to_total_reports.items(), key=operator.itemgetter(1))
+        msg += "\n__**Overall report ranking**__\n"
+        for rank, user_amount in enumerate(sorted_total):
+            msg += "Rank #%d -- %s (%d) \n" % (rank + 1, user_amount[0].name, user_amount[1])
+
         return msg
 
 

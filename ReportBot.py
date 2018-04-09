@@ -33,6 +33,7 @@ import os
 from messages.MessageManager import MessageManager
 from storage.StorageManager import StorageManager
 from stats.StatisticManager import StatisticManager, ReportType
+from search.FuzzySearcher import FuzzySearcher
 
 LOGGER = logging.getLogger('discord')
 if os.path.isfile('help_msg.txt'):
@@ -60,12 +61,14 @@ class ReportBot(commands.Bot):
         self.add_command(self.nest)
         self.add_command(self.stats)
         self.add_command(self.exterminate)
+        self.add_command(self.search)
         self.start_time = 0
         self.session = aiohttp.ClientSession(loop=self.loop)
         #
         self.message_manager = MessageManager()
         self.storage_manager = StorageManager()
         self.statistic_manager = StatisticManager()
+        self.fuzzy_searcher = FuzzySearcher(self.config.gyms_csv)
 
     """
     ################ EVENTS ###############
@@ -168,6 +171,16 @@ class ReportBot(commands.Bot):
         timestamp = datetime.now()
         msg = "__**Nest: %s**__\n\nReported by %s || %s" % (report, ctx.message.author.mention, '{:%H:%M:%S}'.format(timestamp))
         await self.send_and_store_message(ctx_message=ctx.message, channel=chan, message_content=msg, report_type=ReportType.NEST)
+
+    @commands.command(pass_context=True)
+    async def search(self, ctx, *, query):
+        msg = "__**Top results for query '%s'**__\n" % query
+        results = self.fuzzy_searcher.search(query)
+        for arena, location, ed in results:
+            msg += "*Arena:* %s - *Location:* <%s>  (distance: %d)\n" % (arena, location.replace(" \n", ""),ed)
+        await self.say(msg)
+
+
 
     """
     ################ UTILS ###############
