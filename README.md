@@ -40,4 +40,5 @@ python3 start_bot.py
 - `!raid <Boss + location + time>` to report a raid, the bot will post in the specified channel with the id `raid-channel-id`
 - `!rare <Pokemon + IV + location>` to report a rare or high IV pokemon, the bot will post in the specified channel with the id `rare-channel-id`
 - `!nest <Pokemon + location>` to report a pokemon cluster spawn / frequent spawn, the bot will post in the specified channel with the id `nest-channel-id`
-- `!quest <Quest + reward + location>` to report a quest, the bot will post in the specified channel with the id `quest-channel-id`  
+- `!quest <Quest + reward + location>` to report a quest, the bot will post in the specified channel with the id `quest-channel-id`
+- `!stats (here)` will send a ranking via PM/directly in a channel
