@@ -30,8 +30,13 @@ where:
 - `<channel-id>` is the ID of the discord channel where you want the bot to post. 
 
 
-# Commands
+## 4. Starting the bot
+Call:
+```
+python3 start_bot.py
+```
 
+# Commands
 - `!raid <Boss + location + time>` to report a raid, the bot will post in the specified channel with the id `raid-channel-id`
 - `!rare <Pokemon + IV + location>` to report a rare or high IV pokemon, the bot will post in the specified channel with the id `rare-channel-id`
 - `!nest <Pokemon + location>` to report a pokemon cluster spawn / frequent spawn, the bot will post in the specified channel with the id `nest-channel-id`
