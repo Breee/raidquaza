@@ -176,8 +176,12 @@ class ReportBot(commands.Bot):
     async def search(self, ctx, *, query):
         msg = "__**Top results for query '%s'**__\n" % query
         results = self.fuzzy_searcher.search(query)
-        for arena, location, ed in results:
-            msg += "*Arena:* %s - *Location:* <%s>  (distance: %d)\n" % (arena, location.replace(" \n", ""),ed)
+        if results:
+            for arena, location, ed in results:
+                msg += "**Arena:** %s - **Location:** <%s> (prefix edit distance: %d)\n" % (
+                arena, location.replace(" \n", ""), ed)
+        else:
+            msg += "No results found ..."
         await self.say(msg)
 
 

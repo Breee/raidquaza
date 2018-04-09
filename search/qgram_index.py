@@ -216,7 +216,7 @@ class QgramIndex:
         """
         return self.inverted_lists.get(qgram, [])
 
-    def find_matches(self, prefix, delta=8, k=5, use_qindex=True):
+    def find_matches(self, query, delta=5, k=5, use_qindex=True):
         """ Find the top-k matches for prefix with PED at most delta.
 
         >>> qi = QgramIndex(3)
@@ -238,24 +238,22 @@ class QgramIndex:
         n_ped_computations = 0
         # We use the q-gram index to pre-filter.
         if use_qindex:
-            qgrams = get_qgrams(prefix, self.q)
+            qgrams = get_qgrams(query, self.q)
             record_lists = [self.get_posting_list(qgram) for qgram in qgrams]
             merged_lists = merge(record_lists)
             n_ped_computations = 0
-            threshold = len(prefix) - self.q * delta
+            threshold = len(query) - (self.q * delta)
             start = time.time()
             for record_id, count in merged_lists:
                 if count >= threshold:
                     record = self.vocab[record_id]
                     word = re.sub("[ \W+\n]", "", record).lower()
-                    ed = levenshtein(word, prefix)
-                    print("ED(%s,%s) = %d" % (word,prefix,ed))
-                    print("delta = %d" % delta)
+                    ed = compute_ped(prefix=query, str=word, delta=delta)
                     n_ped_computations += 1
                     coordinates = self.coordinates[record_id]
                     result_words.append((record, coordinates, ed))
-        duration = (time.time() - start) * 1000
-        sys.stderr.write("Computing PED for %s words took %.0f ms.\n" %
+            duration = (time.time() - start) * 1000
+            sys.stderr.write("Computing PED for %s words took %.0f ms.\n" %
                          (n_ped_computations, duration))
         result = sorted(result_words, key=lambda x: x[2], reverse=False)[:k]
 
