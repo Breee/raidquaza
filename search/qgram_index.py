@@ -255,7 +255,7 @@ class QgramIndex:
             record_lists = [self.get_posting_list(qgram) for qgram in qgrams]
             merged_lists = merge(record_lists)
             n_ped_computations = 0
-            threshold = (len(query) - self.q * delta) / 2
+            threshold = (len(query) - self.q * delta)
             start = time.time()
             for record_id, count in merged_lists:
                 if count >= threshold :

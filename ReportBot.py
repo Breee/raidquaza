@@ -34,6 +34,7 @@ from messages.MessageManager import MessageManager
 from storage.StorageManager import StorageManager
 from stats.StatisticManager import StatisticManager, ReportType
 from search.FuzzySearcher import FuzzySearcher
+from bitly.BitlyLinkShortener import BitlyLinkShortener
 
 LOGGER = logging.getLogger('discord')
 if os.path.isfile('help_msg.txt'):
@@ -68,8 +69,8 @@ class ReportBot(commands.Bot):
         self.message_manager = MessageManager()
         self.storage_manager = StorageManager()
         self.statistic_manager = StatisticManager()
-        print(self.config.gyms_csv)
         self.fuzzy_searcher = FuzzySearcher(self.config.gyms_csv)
+        self.link_shortener = BitlyLinkShortener(access_token=self.config.bitly_access_token)
 
     """
     ################ EVENTS ###############
@@ -149,18 +150,7 @@ class ReportBot(commands.Bot):
         # Send report to the quest-channel-id specified in the config.
         chan = self.get_channel(id=self.config.quest_channel_id)
         timestamp = datetime.now()
-        search_results = self.fuzzy_searcher.search(query=report, num_results=3)
-        print(search_results)
-        top_stops = ""
-        if search_results:
-            for stop, location, type, ed in search_results:
-                if type == "Pokestop":
-                    top_stops += "**-%s:** %s, **Location:** <%s> (ped: %d)\n" % (
-                        type, stop, location.replace("\n", "").strip(), ed)
-
-        else:
-            top_stops = "*No results found, maybe you did not write the Pokestop-name correctly*"
-        msg = "__**Quest: %s**__\n\n**Search results:**\n%s\nReported by %s || %s" % (report,top_stops, ctx.message.author.mention, '{:%H:%M:%S}'.format(timestamp))
+        msg = "__**Quest: %s**__\n\nReported by %s || %s" % (report, ctx.message.author.mention, '{:%H:%M:%S}'.format(timestamp))
         await self.send_and_store_message(ctx_message=ctx.message, channel=chan, message_content=msg, report_type=ReportType.QUEST)
 
     @commands.command(pass_context=True)
@@ -200,8 +190,8 @@ class ReportBot(commands.Bot):
         results = self.fuzzy_searcher.search(query, num_results=5)
         if results:
             for arena, location, type, ed in results:
-                msg += "**%s:** %s - **Location:** <%s> (ped: %d)\n" % (
-                type, arena, location.replace("\n", "").strip(), ed)
+                msg += "**%s:** %s** [Google maps:** <%s>] (ped: %d)\n" % (
+                type, arena, self.link_shortener.shorten_link(location.replace("\n", "").strip()), ed)
         else:
             msg += "No results found ..."
         await self.say(msg)
@@ -234,9 +224,3 @@ class ReportBot(commands.Bot):
         self.statistic_manager.increase_user_stats(user=ctx_message.author, report_type=report_type)
         self.message_manager.create_message(commandmessage=ctx_message, postedmessage=postedmessage)
         self.storage_manager.update_storage(self.message_manager, self.messages, self.statistic_manager)
-
-
-    def create_map_embed(self):
-        embed  =  discord.Embed()
-
-

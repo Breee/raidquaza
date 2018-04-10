@@ -37,7 +37,7 @@ class Configuration(object):
         self.raid_channel_id = ""
         self.nest_channel_id = ""
         self.gyms_csv = ""
-        self.stops_csv = ""
+        self.bitly_access_token = ""
         self.read_config_file(config_file)
 
     def read_config_file(self, config_file):
@@ -66,6 +66,8 @@ class Configuration(object):
                     self.nest_channel_id = line[line.find("=") + 1:].rstrip("\n")
                 if line.startswith("gyms-csv="):
                     self.gyms_csv = line[line.find("=") + 1:].rstrip("\n")
-                if line.startswith("stops-csv="):
-                    self.stops_csv = line[line.find("=") + 1:].rstrip("\n")
+                if line.startswith("bitly-access-token="):
+                    self.bitly_access_token = line[line.find("=") + 1:].rstrip("\n")
+
+
 
