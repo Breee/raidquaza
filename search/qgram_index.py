@@ -152,6 +152,8 @@ class QgramIndex:
         self.q = q
         self.vocab = dict()
         self.coordinates = []
+        self.types = []
+
 
     def build_from_file(self, file_name):
         """ Build index for text in given file, one record per line. """
@@ -168,12 +170,23 @@ class QgramIndex:
                 record = splitted[0].strip()
                 self.vocab[record_id] = record
                 # the if/else contructs are necessary because the file lines
-                # dont got always 4 entries
-                # second tab, country
+                # dont got always 3 entries
+                # second tab, coordinates
                 if(len(splitted) > 1):
                     self.coordinates.append(splitted[1])
                 else:
                     self.coordinates.append(None)
+
+                # second tab, coordinates
+                if (len(splitted) > 2):
+                    if splitted[2] == 'Arena\n':
+                        self.types.append("Arena")
+                    elif splitted[2] == 'Pokestop\n':
+                        self.types.append("Pokestop")
+                    else:
+                        self.types.append(None)
+                else:
+                    self.types.append(None)
 
                 # on the fly calc qgrams
                 word = re.sub("[ \W+\n]", "", record).lower()
@@ -242,19 +255,20 @@ class QgramIndex:
             record_lists = [self.get_posting_list(qgram) for qgram in qgrams]
             merged_lists = merge(record_lists)
             n_ped_computations = 0
-            threshold = len(query) - self.q * delta
+            threshold = (len(query) - self.q * delta) / 2
             start = time.time()
             for record_id, count in merged_lists:
-                if count >= threshold:
+                if count >= threshold :
                     record = self.vocab[record_id]
                     word = re.sub("[ \W+\n]", "", record).lower()
                     ed = compute_ped(prefix=query, str=word, delta=delta)
                     n_ped_computations += 1
                     coordinates = self.coordinates[record_id]
-                    result_words.append((record, coordinates, ed))
+                    type = self.types[record_id]
+                    result_words.append((record, coordinates, type, ed))
             duration = (time.time() - start) * 1000
             sys.stderr.write("Computing PED for %s words took %.0f ms.\n" %
                          (n_ped_computations, duration))
-        result = sorted(result_words, key=lambda x: x[2], reverse=False)[:k]
+        result = sorted(result_words, key=lambda x: x[3], reverse=False)[:k]
 
         return result

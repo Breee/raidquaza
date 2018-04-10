@@ -39,13 +39,12 @@ class FuzzySearcher(object):
         # build index
         self.fuzzy.build_from_file(input_file)
 
-    def search(self, query):
+    def search(self, query, num_results=5):
         LOGGER.info("Received query %s " % query)
         query = re.sub("[ \W+\n]", "", query).lower()
         query = re.sub("%", " ", query).lower()
-        k = 5
         delta = int(math.floor(len(query) / 4))
-        result = self.fuzzy.find_matches(query, delta, k, True)
+        result = self.fuzzy.find_matches(query, delta, k=num_results, use_qindex=True)
         return result
 
 
