@@ -34,7 +34,6 @@ from messages.MessageManager import MessageManager
 from storage.StorageManager import StorageManager
 from stats.StatisticManager import StatisticManager, ReportType
 from search.FuzzySearcher import FuzzySearcher
-from bitly.BitlyLinkShortener import BitlyLinkShortener
 
 LOGGER = logging.getLogger('discord')
 if os.path.isfile('help_msg.txt'):
@@ -63,6 +62,7 @@ class ReportBot(commands.Bot):
         self.add_command(self.stats)
         self.add_command(self.exterminate)
         self.add_command(self.search)
+        self.add_command(self.example_embed)
         self.start_time = 0
         self.session = aiohttp.ClientSession(loop=self.loop)
         #
@@ -70,7 +70,6 @@ class ReportBot(commands.Bot):
         self.storage_manager = StorageManager()
         self.statistic_manager = StatisticManager()
         self.fuzzy_searcher = FuzzySearcher(self.config.gyms_csv)
-        self.link_shortener = BitlyLinkShortener(access_token=self.config.bitly_access_token)
 
     """
     ################ EVENTS ###############
@@ -162,7 +161,7 @@ class ReportBot(commands.Bot):
         if search_results:
             for arena, location, type, ed in search_results:
                 if type == "Arena":
-                    top_arenas += "**-%s:** %s, **Location:** <%s> (ped: %d)\n" % (
+                    top_arenas += "**-%s:** %s[<%s>] (ed: %d)\n" % (
                         type, arena, location.replace("\n", "").strip(), ed)
 
         else:
@@ -186,15 +185,22 @@ class ReportBot(commands.Bot):
 
     @commands.command(pass_context=True)
     async def search(self, ctx, *, query):
-        msg = "__**Top results for query '%s'**__\n" % query
+        msg = ""
         results = self.fuzzy_searcher.search(query, num_results=5)
         if results:
             for arena, location, type, ed in results:
-                msg += "**%s:** %s** [Google maps:** <%s>] (ped: %d)\n" % (
-                type, arena, self.link_shortener.shorten_link(location.replace("\n", "").strip()), ed)
+                msg += "**%s:** [%s](%s) (ed: %d)\n" % (
+                type, arena, location.replace("\n", "").strip(), ed)
         else:
             msg += "No results found ..."
-        await self.say(msg)
+        embed = discord.Embed(title="Top results for query '%s'" % query,
+                              description=msg)
+        await self.send_message(destination=ctx.message.channel, content="", embed=embed)
+
+    @commands.command()
+    async def example_embed(self):
+        embed = discord.Embed(title="Top results for query", description="[link text](http://google.com)\n[link text](http://google.com)\n[link text](http://google.com)")
+        await self.say(embed=embed)
 
 
 

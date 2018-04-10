@@ -258,10 +258,10 @@ class QgramIndex:
             threshold = (len(query) - self.q * delta)
             start = time.time()
             for record_id, count in merged_lists:
-                if count >= threshold :
+                if count >= 2:
                     record = self.vocab[record_id]
                     word = re.sub("[ \W+\n]", "", record).lower()
-                    ed = compute_ped(prefix=query, str=word, delta=delta)
+                    ed = levenshtein(query,word)
                     n_ped_computations += 1
                     coordinates = self.coordinates[record_id]
                     type = self.types[record_id]
