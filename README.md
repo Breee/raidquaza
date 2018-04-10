@@ -8,6 +8,7 @@ The idea is to have a single discord channel, in which trainers can post reports
 - python3
 - pip3
 - discord bot user (https://discordapp.com/developers/applications/me)
+- Bitly Access token(https://app.bitly.com/)
 
 ## 2. Install discord.py using pip:
 ```
@@ -25,6 +26,7 @@ rare-channel-id=<channel-id>
 nest-channel-id=<channel-id>
 quest-channel-id=<channel-id>
 gyms-csv=<.csv file>
+bitly-access-token=<Bitly access token>
 ```
 where:
 - `<discord bot user token>` is the token of your discord bot user.
