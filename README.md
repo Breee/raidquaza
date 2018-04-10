@@ -47,3 +47,4 @@ python3 start_bot.py
 - `!nest <Pokemon + location>` to report a pokemon cluster spawn / frequent spawn, the bot will post in the specified channel with the id `nest-channel-id`
 - `!quest <Quest + reward + location>` to report a quest, the bot will post in the specified channel with the id `quest-channel-id`
 - `!stats (here)` will send a ranking via PM/directly in a channel
+- `!search <query>`will search for an Arena/Pokestop and return the top 5 results. (Arena/Pokestop + Google maps link)
