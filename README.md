@@ -8,7 +8,6 @@ The idea is to have a single discord channel, in which trainers can post reports
 - python3
 - pip3
 - discord bot user (https://discordapp.com/developers/applications/me)
-- Bitly Access token(https://app.bitly.com/)
 
 ## 2. Install discord.py using pip:
 ```
@@ -26,14 +25,12 @@ rare-channel-id=<channel-id>
 nest-channel-id=<channel-id>
 quest-channel-id=<channel-id>
 gyms-csv=<.csv file>
-bitly-access-token=<Bitly access token>
 ```
 where:
 - `<discord bot user token>` is the token of your discord bot user.
 - `<channel-id>` is the ID of the discord channel where you want the bot to post. 
 - `<.csv file>` is a .csv file, which consists of 3 colums: Name <tab> Location <tab> Type(Arena/Pokestop)
   an example file is `gyms_stops.csv` which contains all pokestops and arenas of the city Freiburg.
-
 
 ## 4. Starting the bot
 Call:
