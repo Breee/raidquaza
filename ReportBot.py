@@ -62,7 +62,6 @@ class ReportBot(commands.Bot):
         self.add_command(self.stats)
         self.add_command(self.exterminate)
         self.add_command(self.search)
-        self.add_command(self.example_embed)
         self.start_time = 0
         self.session = aiohttp.ClientSession(loop=self.loop)
         #
@@ -161,13 +160,15 @@ class ReportBot(commands.Bot):
         if search_results:
             for arena, location, type, ed in search_results:
                 if type == "Arena":
-                    top_arenas += "**-%s:** %s[<%s>] (ed: %d)\n" % (
+                    top_arenas += "**-%s:** [%s](%s) (ed: %d)\n" % (
                         type, arena, location.replace("\n", "").strip(), ed)
 
         else:
             top_arenas = "*No results found, maybe you did not write the Arena-name correctly*"
-        msg = "__**Raid: %s**__\n\n**Search results:**\n%s\nReported by %s || %s" % (report, top_arenas, ctx.message.author.mention, '{:%H:%M:%S}'.format(timestamp))
-        await self.send_and_store_message(ctx_message=ctx.message, channel=chan, message_content=msg, report_type=ReportType.RAID)
+        msg = "__**Raid: %s**__\n\nReported by %s || %s" % (report, ctx.message.author.mention, '{:%H:%M:%S}'.format(timestamp))
+        embed = discord.Embed(title="Top gym results",
+                              description=top_arenas)
+        await self.send_and_store_message(ctx_message=ctx.message, channel=chan, message_content=msg, report_type=ReportType.RAID, embed=embed)
 
     @commands.command(pass_context=True)
     async def rare(self, ctx, *, report):
@@ -197,12 +198,6 @@ class ReportBot(commands.Bot):
                               description=msg)
         await self.send_message(destination=ctx.message.channel, content="", embed=embed)
 
-    @commands.command()
-    async def example_embed(self):
-        embed = discord.Embed(title="Top results for query", description="[link text](http://google.com)\n[link text](http://google.com)\n[link text](http://google.com)")
-        await self.say(embed=embed)
-
-
 
     """
     ################ UTILS ###############
@@ -224,8 +219,11 @@ class ReportBot(commands.Bot):
         else:
             LOGGER.info("Storage is empty..")
 
-    async def send_and_store_message(self, ctx_message, channel, message_content, report_type):
-        postedmessage = await self.send_message(destination=channel, content=message_content)
+    async def send_and_store_message(self, ctx_message, channel, message_content, report_type, embed=None):
+        if embed:
+            postedmessage = await self.send_message(destination=channel, content=message_content, embed=embed)
+        else:
+            postedmessage = await self.send_message(destination=channel, content=message_content)
         # finally, Store the message.
         self.statistic_manager.increase_user_stats(user=ctx_message.author, report_type=report_type)
         self.message_manager.create_message(commandmessage=ctx_message, postedmessage=postedmessage)
