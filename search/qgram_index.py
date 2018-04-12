@@ -184,7 +184,7 @@ class QgramIndex:
                     elif splitted[2] == 'Pokestop\n':
                         self.types.append("Pokestop")
                     else:
-                        self.types.append(None)
+                        self.types.append("Arena/Pokestop")
                 else:
                     self.types.append(None)
 
@@ -248,7 +248,6 @@ class QgramIndex:
         4
             """
         result_words = []
-        n_ped_computations = 0
         # We use the q-gram index to pre-filter.
         if use_qindex:
             qgrams = get_qgrams(query, self.q)
@@ -267,7 +266,7 @@ class QgramIndex:
                     type = self.types[record_id]
                     result_words.append((record, coordinates, type, ed))
             duration = (time.time() - start) * 1000
-            sys.stderr.write("Computing PED for %s words took %.0f ms.\n" %
+            sys.stderr.write("Computing ED for %s words took %.0f ms.\n" %
                          (n_ped_computations, duration))
         result = sorted(result_words, key=lambda x: x[3], reverse=False)[:k]
 
