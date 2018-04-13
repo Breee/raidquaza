@@ -190,7 +190,7 @@ class ReportBot(commands.Bot):
         results = self.fuzzy_searcher.search(query, num_results=5)
         if results:
             for arena, location, type, ed in results:
-                msg += "- **%s**\t[%s](%s)\t(ed: %d)\n" % (
+                msg += "- **%s:**\t[%s](%s)\t(ed: %d)\n" % (
                 type.strip(), arena.strip(), location.replace("\n", "").strip(), ed)
         else:
             msg += "No results found ..."
