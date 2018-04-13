@@ -2,3 +2,9 @@ discord.py
 numpy
 scipy
 nltk
+matplotlib
+ipython
+jupyter
+pandas
+sympy
+nose
