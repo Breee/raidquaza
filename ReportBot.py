@@ -62,7 +62,7 @@ class ReportBot(commands.Bot):
         self.add_command(self.stats)
         self.add_command(self.exterminate)
         self.add_command(self.search)
-        self.add_command(self.getmessages)
+        self.add_command(self.collect)
         self.start_time = 0
         self.session = aiohttp.ClientSession(loop=self.loop)
         #
@@ -200,16 +200,19 @@ class ReportBot(commands.Bot):
         await self.send_message(destination=ctx.message.channel, content="", embed=embed)
 
     @commands.command(pass_context=True)
-    async def getmessages(self, ctx, number):
+    async def collect(self, ctx, number, type):
+        LOGGER.info("Collecting and storing messages...")
         mgs = []  # Empty list to put all the messages in the log
         number = int(number)  # Converting the amount of messages to delete to an integer
         async for x in self.logs_from(ctx.message.channel, limit=number):
             if x.author != self.user:
                 mgs.append(x)
 
-        with open("messages.log", "w") as message_file:
+        with open("%s.log" % type, "w") as message_file:
             for message in mgs:
-                message_file.write(message.content + "\n")
+                message_file.write("%s\t%s\n" % (type, message.content))
+        LOGGER.info("Done")
+        await self.delete_message(ctx.message)
 
 
 
