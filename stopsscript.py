@@ -2,7 +2,7 @@ def read_stops_write_links(input_file):
     stopslist = []
     with open(input_file, mode="r") as stops:
         for line in stops:
-            splitted  = line.split(";")
+            splitted  = line.split(",")
             stop = splitted[0]
             lat = splitted[1]
             lon = splitted[2]
@@ -17,5 +17,5 @@ def write_stops(stopslist, output):
             stops.write("%s\t%s" % (stop, link))
 
 if __name__ == "__main__":
-    st = read_stops_write_links("stops.csv")
-    write_stops(st, "newstops.csv")
+    st = read_stops_write_links("arenen_EM.csv")
+    write_stops(st, "newarenen.csv")
