@@ -9,10 +9,12 @@ The idea is to have a single discord channel, in which trainers can post reports
 - pip3
 - discord bot user (https://discordapp.com/developers/applications/me)
 
-## 2. Install discord.py using pip:
+## 2. Install discord.p and numpy using pip:
 ```
 pip3 install discord.py
+pip3 install numpy
 ```
+
 ## 3. Configuration:
 Copy the file `config.conf.dist` to `config.conf` (or create it). 
 The configuration file is of the form: 
