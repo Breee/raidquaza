@@ -190,8 +190,8 @@ class ReportBot(commands.Bot):
         results = self.fuzzy_searcher.search(query, num_results=5)
         if results:
             for arena, location, type, ed in results:
-                msg += "**%s:** [%s](%s) (ed: %d)\n" % (
-                type, arena, location.replace("\n", "").strip(), ed)
+                msg += "- **%s**\t[%s](%s)\t(ed: %d)\n" % (
+                type.strip(), arena.strip(), location.replace("\n", "").strip(), ed)
         else:
             msg += "No results found ..."
         embed = discord.Embed(color=0xa80000, title="Top results for query '%s'" % query,
