@@ -166,7 +166,7 @@ class ReportBot(commands.Bot):
         else:
             top_arenas = "*No results found, maybe you did not write the Arena-name correctly*"
         msg = "__**Raid: %s**__\n\nReported by %s || %s" % (report, ctx.message.author.mention, '{:%H:%M:%S}'.format(timestamp))
-        embed = discord.Embed(title="Top gym results",
+        embed = discord.Embed(color=0xa80000, title="Top gym results",
                               description=top_arenas)
         await self.send_and_store_message(ctx_message=ctx.message, channel=chan, message_content=msg, report_type=ReportType.RAID, embed=embed)
 
@@ -194,7 +194,7 @@ class ReportBot(commands.Bot):
                 type, arena, location.replace("\n", "").strip(), ed)
         else:
             msg += "No results found ..."
-        embed = discord.Embed(title="Top results for query '%s'" % query,
+        embed = discord.Embed(color=0xa80000, title="Top results for query '%s'" % query,
                               description=msg)
         await self.send_message(destination=ctx.message.channel, content="", embed=embed)
 
