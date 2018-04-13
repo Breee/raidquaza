@@ -34,6 +34,7 @@ from messages.MessageManager import MessageManager
 from storage.StorageManager import StorageManager
 from stats.StatisticManager import StatisticManager, ReportType
 from search.FuzzySearcher import FuzzySearcher
+from classification.classify import Classifier
 
 LOGGER = logging.getLogger('discord')
 if os.path.isfile('help_msg.txt'):
@@ -63,6 +64,7 @@ class ReportBot(commands.Bot):
         self.add_command(self.exterminate)
         self.add_command(self.search)
         self.add_command(self.collect)
+        self.add_command(self.classify)
         self.start_time = 0
         self.session = aiohttp.ClientSession(loop=self.loop)
         #
@@ -70,6 +72,9 @@ class ReportBot(commands.Bot):
         self.storage_manager = StorageManager()
         self.statistic_manager = StatisticManager()
         self.fuzzy_searcher = FuzzySearcher(self.config.gyms_csv)
+        self.classifier = Classifier()
+        self.classifier.read_training_data("classification/test.csv")
+        self.classifier.process_training_data()
 
     """
     ################ EVENTS ###############
@@ -130,6 +135,11 @@ class ReportBot(commands.Bot):
             await self.send_message(destination=ctx.message.author, content=content)
 
     @commands.command(hidden=True, pass_context=True)
+    async def classify(self,ctx,*, query):
+        res = self.classifier.classify(sentence=query)
+        await self.say(res)
+
+    @commands.command(hidden=True, pass_context=True)
     async def exterminate(self, ctx, number):
         mgs = []  # Empty list to put all the messages in the log
         number = int(number)  # Converting the amount of messages to delete to an integer
@@ -184,6 +194,8 @@ class ReportBot(commands.Bot):
         timestamp = datetime.now()
         msg = "__**Nest: %s**__\n\nReported by %s || %s" % (report, ctx.message.author.mention, '{:%H:%M:%S}'.format(timestamp))
         await self.send_and_store_message(ctx_message=ctx.message, channel=chan, message_content=msg, report_type=ReportType.NEST)
+
+
 
     @commands.command(pass_context=True)
     async def search(self, ctx, *, query):
