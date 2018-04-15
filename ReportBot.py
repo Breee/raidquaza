@@ -213,7 +213,7 @@ class ReportBot(commands.Bot):
 
 
 
-    @commands.command(pass_context=True, enabled=False)
+    @commands.command(pass_context=True, enabled=True)
     async def search(self, ctx, *, query):
         msg = ""
         results = self.fuzzy_searcher.search(query, num_results=5)
