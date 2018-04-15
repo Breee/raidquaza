@@ -35,6 +35,7 @@ from storage.StorageManager import StorageManager
 from stats.StatisticManager import StatisticManager, ReportType
 from search.FuzzySearcher import FuzzySearcher
 from classification.classify import Classifier
+from search.qgram_index import SCORING_TYPE
 
 LOGGER = logging.getLogger('discord')
 if os.path.isfile('help_msg.txt'):
@@ -63,8 +64,11 @@ class ReportBot(commands.Bot):
         self.add_command(self.stats)
         self.add_command(self.exterminate)
         self.add_command(self.search)
+        self.add_command(self.arena)
+        self.add_command(self.stop)
         self.add_command(self.collect)
         self.add_command(self.classify)
+        self.add_command(self.scoring)
         self.start_time = 0
         self.session = aiohttp.ClientSession(loop=self.loop)
         #
@@ -147,6 +151,18 @@ class ReportBot(commands.Bot):
             mgs.append(x)
         await self.delete_messages(mgs)
 
+    @commands.command(hidden=True, pass_context=True)
+    async def scoring(self, ctx, type):
+        if type == "needleman_wunsch":
+            self.fuzzy_searcher.fuzzy.scoring_method = SCORING_TYPE.NEEDLEMAN_WUNSCH
+            await self.say("Changed scoring method to %s" % type)
+        elif type == "levenshtein":
+            self.fuzzy_searcher.fuzzy.scoring_method = SCORING_TYPE.LEVENSHTEIN
+            await self.say("Changed scoring method to %s" % type)
+        await self.delete_message(ctx.message)
+
+
+
     @commands.command(pass_context=True)
     async def help(self, ctx, here=None):
         if not here:
@@ -197,7 +213,7 @@ class ReportBot(commands.Bot):
 
 
 
-    @commands.command(pass_context=True)
+    @commands.command(pass_context=True, enabled=False)
     async def search(self, ctx, *, query):
         msg = ""
         results = self.fuzzy_searcher.search(query, num_results=5)
@@ -205,6 +221,42 @@ class ReportBot(commands.Bot):
             for arena, location, type, ed in results:
                 msg += "- **%s:**\t[%s](%s)\t(ed: %d)\n" % (
                 type.strip(), arena.strip(), location.replace("\n", "").strip(), ed)
+        else:
+            msg += "No results found ..."
+        embed = discord.Embed(color=0xa80000, title="Top results for query '%s'" % query,
+                              description=msg)
+        await self.send_message(destination=ctx.message.channel, content="", embed=embed)
+
+
+    @commands.command(pass_context=True)
+    async def arena(self, ctx, *, query):
+        msg = ""
+        results = self.fuzzy_searcher.search(query, num_results=15)
+        result_count = 0
+        if results:
+            for arena, location, type, ed in results:
+                if type == "Arena" and result_count < 5:
+                    msg += "- **%s:**\t[%s](%s)\t(ed: %d)\n" % (
+                    type.strip(), arena.strip(), location.replace("\n", "").strip(), ed)
+                    result_count += 1
+        else:
+            msg += "No results found ..."
+        embed = discord.Embed(color=0xa80000, title="Top results for query '%s'" % query,
+                              description=msg)
+        await self.send_message(destination=ctx.message.channel, content="", embed=embed)
+
+
+    @commands.command(pass_context=True)
+    async def stop(self, ctx, *, query):
+        msg = ""
+        results = self.fuzzy_searcher.search(query, num_results=15)
+        result_count = 0
+        if results:
+            for arena, location, type, ed in results:
+                if type == "Pokestop" and result_count < 5:
+                    msg += "- **%s:**\t[%s](%s)\t(ed: %d)\n" % (
+                        type.strip(), arena.strip(), location.replace("\n", "").strip(), ed)
+                    result_count += 1
         else:
             msg += "No results found ..."
         embed = discord.Embed(color=0xa80000, title="Top results for query '%s'" % query,
