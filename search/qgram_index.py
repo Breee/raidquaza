@@ -10,20 +10,26 @@ import time
 import re
 import numpy as np
 from collections import Counter
+import math
+from enum import Enum
+
+class SCORING_TYPE(Enum):
+    LEVENSHTEIN = 1,
+    NEEDLEMAN_WUNSCH = 2
 
 
 def get_qgrams(str, q):
     """ Returns all q-grams for str.
         >>> get_qgrams("bananarana", 3)
-        ['$$b', '$ba', 'ban', 'ana', 'nan', 'ana', 'nar', 'ara', 'ran', 'ana']
+        ['$$b', '$ba', 'ban', 'ana', 'nan', 'ana', 'nar', 'ara', 'ran', 'ana', 'na$', 'a$$']
         >>> get_qgrams("b", 3)
-        ['$$b']
+        ['$$b', '$b$', 'b$$']
         >>> get_qgrams("ba", 4)
-        ['$$$b', '$$ba']
+        ['$$$b', '$$ba', '$ba$', 'ba$$', 'a$$$']
         >>> get_qgrams("banana", 2)
-        ['$b', 'ba', 'an', 'na', 'an', 'na']
+        ['$b', 'ba', 'an', 'na', 'an', 'na', 'a$']
         """
-    str = "$" * (q - 1) + str
+    str = "$" * (q - 1) + str + "$" * (q - 1)
     qgrams = []
     for i in range(0, len(str) - q + 1):
         qgram = str[i:i + q]
@@ -109,6 +115,9 @@ def compute_ped(prefix, str, delta):
     return ped
 
 def levenshtein(seq1, seq2):
+    match = 0
+    mismatch = 1
+    gap_penalty = 1
     size_x = len(seq1) + 1
     size_y = len(seq2) + 1
     matrix = np.zeros ((size_x, size_y))
@@ -121,18 +130,46 @@ def levenshtein(seq1, seq2):
         for y in range(1, size_y):
             if seq1[x-1] == seq2[y-1]:
                 matrix [x,y] = min(
-                    matrix[x-1, y] + 1,
-                    matrix[x-1, y-1],
-                    matrix[x, y-1] + 1
+                    matrix[x-1, y] + gap_penalty,
+                    matrix[x-1, y-1] + match,
+                    matrix[x, y-1] + gap_penalty
                 )
             else:
                 matrix [x,y] = min(
-                    matrix[x-1,y] + 1,
-                    matrix[x-1,y-1] + 1,
-                    matrix[x,y-1] + 1
+                    matrix[x-1,y] + gap_penalty,
+                    matrix[x-1,y-1] + mismatch,
+                    matrix[x,y-1] + gap_penalty
                 )
     return (matrix[size_x - 1, size_y - 1])
 
+
+def needleman_wunsch_scoring(seq1, seq2):
+    match = -1
+    mismatch = 1
+    gap_penalty = 0
+    size_x = len(seq1) + 1
+    size_y = len(seq2) + 1
+    matrix = np.zeros ((size_x, size_y))
+    for x in range(size_x):
+        matrix [x, 0] = x
+    for y in range(size_y):
+        matrix [0, y] = y
+
+    for x in range(1, size_x):
+        for y in range(1, size_y):
+            if seq1[x-1] == seq2[y-1]:
+                matrix [x,y] = min(
+                    matrix[x-1, y] + gap_penalty,
+                    matrix[x-1, y-1] + match,
+                    matrix[x, y-1] + gap_penalty
+                )
+            else:
+                matrix [x,y] = min(
+                    matrix[x-1,y] + gap_penalty,
+                    matrix[x-1,y-1] + mismatch,
+                    matrix[x,y-1] + gap_penalty
+                )
+    return (matrix[size_x - 1, size_y - 1])
 
 class QgramIndex:
     """ A q-gram index, adapted from the inverted index code from Lecture 1.
@@ -153,6 +190,7 @@ class QgramIndex:
         self.vocab = dict()
         self.coordinates = []
         self.types = []
+        self.scoring_method = SCORING_TYPE.NEEDLEMAN_WUNSCH
 
 
     def build_from_file(self, file_name):
@@ -204,7 +242,6 @@ class QgramIndex:
                 word = re.sub("[ \W+\n]", "", record).lower()
                 qgrams = get_qgrams(word, self.q)
                 for qgram in qgrams:
-                    # print(qgram)
                     if qgram not in self.inverted_lists:
                         self.inverted_lists[qgram] = list()
                     self.inverted_lists[qgram].append(record_id)
@@ -230,7 +267,7 @@ class QgramIndex:
         return self.inverted_lists.get(qgram, [])
 
     def find_matches(self, query, delta, k=5, use_qindex=True):
-        """ Find the top-k matches for prefix with PED at most delta.
+        """ Find the top-k matches
 
         >>> qi = QgramIndex(3)
         >>> qi.build_from_file("example_solution.txt")
@@ -239,13 +276,15 @@ class QgramIndex:
         >>> len(qi.find_matches("foos", 1))
         4
         >>> len(qi.find_matches("foos", 0))
-        0
+        4
         >>> len(qi.find_matches("ball", 1))
         1
         >>> len(qi.find_matches("football", 1))
-        2
+        4
         >>> len(qi.find_matches("football", 10))
         4
+        >>> len(qi.find_matches("kartoffelsalat", 3))
+        0
             """
         result_words = []
         # We use the q-gram index to pre-filter.
@@ -253,14 +292,22 @@ class QgramIndex:
             qgrams = get_qgrams(query, self.q)
             record_lists = [self.get_posting_list(qgram) for qgram in qgrams]
             merged_lists = merge(record_lists)
+            threshold = (len(query) + self.q - 1) /3
+            sys.stderr.write("query %s\n" % (query))
+            sys.stderr.write("Threshold %d\n" % (threshold))
             n_ped_computations = 0
-            threshold = (len(query) - self.q * delta)
             start = time.time()
             for record_id, count in merged_lists:
-                if count >= 2:
-                    record = self.vocab[record_id]
-                    word = re.sub("[ \W+\n]", "", record).lower()
-                    ed = levenshtein(query,word)
+                record = self.vocab[record_id]
+                word = re.sub("[ \W+\n]", "", record).lower()
+                sys.stderr.write("Word: %s -- Qgrams in common: %d\n" % (word, count))
+                if count >= int(threshold):
+                    if self.scoring_method == SCORING_TYPE.LEVENSHTEIN:
+                        ed = levenshtein(query,word)
+                    elif self.scoring_method == SCORING_TYPE.NEEDLEMAN_WUNSCH:
+                        ed = needleman_wunsch_scoring(query, word)
+                    else:
+                        ed = levenshtein(query, word)
                     n_ped_computations += 1
                     coordinates = self.coordinates[record_id]
                     type = self.types[record_id]
@@ -269,5 +316,4 @@ class QgramIndex:
             sys.stderr.write("Computing ED for %s words took %.0f ms.\n" %
                          (n_ped_computations, duration))
         result = sorted(result_words, key=lambda x: x[3], reverse=False)[:k]
-
         return result
