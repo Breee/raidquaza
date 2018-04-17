@@ -303,7 +303,7 @@ class QgramIndex:
                 sys.stderr.write("Word: %s -- Qgrams in common: %d\n" % (word, count))
                 if count >= int(threshold):
                     if self.scoring_method == SCORING_TYPE.LEVENSHTEIN:
-                        ed = levenshtein(query,word)
+                        ed = levenshtein(query, word)
                     elif self.scoring_method == SCORING_TYPE.NEEDLEMAN_WUNSCH:
                         ed = needleman_wunsch_scoring(query, word)
                     else:
