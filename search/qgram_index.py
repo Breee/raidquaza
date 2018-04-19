@@ -292,7 +292,7 @@ class QgramIndex:
             qgrams = get_qgrams(query, self.q)
             record_lists = [self.get_posting_list(qgram) for qgram in qgrams]
             merged_lists = merge(record_lists)
-            threshold = (len(query) + self.q - 1) /3
+            threshold = (len(query) + self.q - 1) / 4
             sys.stderr.write("query %s\n" % (query))
             sys.stderr.write("Threshold %d\n" % (threshold))
             n_ped_computations = 0
