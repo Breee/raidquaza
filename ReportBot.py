@@ -159,6 +159,9 @@ class ReportBot(commands.Bot):
         elif type == "levenshtein":
             self.fuzzy_searcher.fuzzy.scoring_method = SCORING_TYPE.LEVENSHTEIN
             await self.say("Changed scoring method to %s" % type)
+        elif type == "affine":
+            self.fuzzy_searcher.fuzzy.scoring_method = SCORING_TYPE.AFFINE_GAPS
+            await self.say("Changed scoring method to %s" % type)
         await self.delete_message(ctx.message)
 
 

@@ -15,7 +15,8 @@ from enum import Enum
 
 class SCORING_TYPE(Enum):
     LEVENSHTEIN = 1,
-    NEEDLEMAN_WUNSCH = 2
+    NEEDLEMAN_WUNSCH = 2,
+    AFFINE_GAPS = 3
 
 
 def get_qgrams(str, q):
@@ -146,7 +147,9 @@ def levenshtein(seq1, seq2):
 def needleman_wunsch_scoring(seq1, seq2):
     match = -1
     mismatch = 1
-    gap_penalty = 0
+    gap_penalty = 1
+    gap_opening = 3
+    gap_opened = False
     size_x = len(seq1) + 1
     size_y = len(seq2) + 1
     matrix = np.zeros ((size_x, size_y))
@@ -169,6 +172,48 @@ def needleman_wunsch_scoring(seq1, seq2):
                     matrix[x-1,y-1] + mismatch,
                     matrix[x,y-1] + gap_penalty
                 )
+            if (matrix[x, y] == matrix[x - 1, y] + gap_penalty or matrix[x, y - 1] + gap_penalty) and not gap_opened:
+                matrix[x, y] += gap_opening
+                gap_opened = True
+            else:
+                gap_opened = False
+
+    return (matrix[size_x - 1, size_y - 1])
+
+def affine_gap_scoring(seq1, seq2):
+    match = -3
+    mismatch = 1
+    gap_penalty = 0.5
+    gap_opening = 3
+    gap_opened = False
+    size_x = len(seq1) + 1
+    size_y = len(seq2) + 1
+    matrix = np.zeros ((size_x, size_y))
+    for x in range(size_x):
+        matrix [x, 0] = x
+    for y in range(size_y):
+        matrix [0, y] = y
+
+    for x in range(1, size_x):
+        for y in range(1, size_y):
+            if seq1[x-1] == seq2[y-1]:
+                matrix [x,y] = min(
+                    matrix[x-1, y] + gap_penalty,
+                    matrix[x-1, y-1] + match,
+                    matrix[x, y-1] + gap_penalty
+                )
+            else:
+                matrix [x,y] = min(
+                    matrix[x-1,y] + gap_penalty,
+                    matrix[x-1,y-1] + mismatch,
+                    matrix[x,y-1] + gap_penalty
+                )
+            if (matrix[x, y] == matrix[x - 1, y] + gap_penalty or matrix[x, y - 1] + gap_penalty):
+                if not gap_opened:
+                    matrix[x, y] += gap_opening
+                    gap_opened = True
+            else:
+                gap_opened = False
     return (matrix[size_x - 1, size_y - 1])
 
 class QgramIndex:
@@ -306,6 +351,8 @@ class QgramIndex:
                         ed = levenshtein(query, word)
                     elif self.scoring_method == SCORING_TYPE.NEEDLEMAN_WUNSCH:
                         ed = needleman_wunsch_scoring(query, word)
+                    elif self.scoring_method == SCORING_TYPE.AFFINE_GAPS:
+                        ed = affine_gap_scoring(query, word)
                     else:
                         ed = levenshtein(query, word)
                     n_ped_computations += 1
