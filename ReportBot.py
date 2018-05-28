@@ -76,9 +76,9 @@ class ReportBot(commands.Bot):
         self.storage_manager = StorageManager()
         self.statistic_manager = StatisticManager()
         self.fuzzy_searcher = FuzzySearcher(self.config.gyms_csv)
-        self.classifier = Classifier()
-        self.classifier.read_training_data("classification/test.csv")
-        self.classifier.process_training_data()
+        #self.classifier = Classifier()
+        #self.classifier.read_training_data("classification/test.csv")
+        #self.classifier.process_training_data()
 
     """
     ################ EVENTS ###############
