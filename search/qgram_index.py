@@ -235,7 +235,7 @@ class QgramIndex:
         self.vocab = dict()
         self.coordinates = []
         self.types = []
-        self.scoring_method = SCORING_TYPE.NEEDLEMAN_WUNSCH
+        self.scoring_method = SCORING_TYPE.AFFINE_GAPS
 
 
     def build_from_file(self, file_name):
