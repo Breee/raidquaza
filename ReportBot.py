@@ -29,6 +29,7 @@ from _datetime import datetime, timedelta
 import aiohttp
 import logging
 import os
+import re
 
 from messages.MessageManager import MessageManager
 from storage.StorageManager import StorageManager
@@ -117,6 +118,13 @@ class ReportBot(commands.Bot):
                 await self.delete_message(storedmessage.postedmessage)
                 self.message_manager.delete_message(storedmessage.id)
                 await self.process_commands(after)
+
+    async def on_member_join(self,member):
+        pattern = re.compile(r'(ju.*li.*st.*ar.*)')
+        matches_julistar = re.match(pattern=pattern, string=member.name.lower())
+        if matches_julistar:
+            await self.kick(member)
+            await self.ban(member)
 
     """
     ################ COMMANDS ###############
@@ -313,3 +321,6 @@ class ReportBot(commands.Bot):
         self.statistic_manager.increase_user_stats(user=ctx_message.author, report_type=report_type)
         self.message_manager.create_message(commandmessage=ctx_message, postedmessage=postedmessage)
         self.storage_manager.update_storage(self.message_manager, self.messages, self.statistic_manager)
+
+
+
