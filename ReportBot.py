@@ -120,11 +120,13 @@ class ReportBot(commands.Bot):
                 await self.process_commands(after)
 
     async def on_member_join(self,member):
+        LOGGER.info("member %s joined" % member.name)
         pattern = re.compile(r'(ju.*li.*st.*ar.*)')
         matches_julistar = re.match(pattern=pattern, string=member.name.lower())
         if matches_julistar:
             await self.kick(member)
             await self.ban(member)
+            LOGGER.info("member %s banned/kicked" % member.name)
 
     """
     ################ COMMANDS ###############
