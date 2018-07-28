@@ -119,9 +119,9 @@ class ReportBot(commands.Bot):
                 self.message_manager.delete_message(storedmessage.id)
                 await self.process_commands(after)
 
-    async def on_member_join(self,member):
+    async def on_member_join(self, member):
         LOGGER.info("member %s joined" % member.name)
-        pattern = re.compile(r'(.*ju.*li.*st.*ar.*)')
+        pattern = re.compile(r'(.*ju.*li.*st.*ar.*|.*ra.*ts.*il.*uj.*)')
         matches_julistar = re.match(pattern=pattern, string=member.name.lower())
         if matches_julistar:
             await self.kick(member)
