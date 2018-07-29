@@ -13,7 +13,6 @@ The idea is to have a single discord channel, in which trainers can post reports
 ```
 pip3 install discord.py
 pip3 install numpy
-pip3 install nltk
 ```
 scipy requires more packages, thus it it recommended to follow the instructions on the webpage:
 https://www.scipy.org/install.html#scientific-python-distributions
@@ -34,8 +33,8 @@ gyms-csv=<.csv file>
 where:
 - `<discord bot user token>` is the token of your discord bot user.
 - `<channel-id>` is the ID of the discord channel where you want the bot to post. 
-- `<.csv file>` is a .csv file, which consists of 3 colums: Name <tab> Location <tab> Type(Arena/Pokestop)
-  an example file is `gyms_stops.csv` which contains all pokestops and arenas of the city Freiburg.
+- `<.csv file>` is a .csv file, which consists of 4 columns: Name, long, lat,Type(Arena/Pokestop)
+  an example file is `data/gyms_stops.csv` which contains all pokestops and arenas of the city Freiburg.
 
 ## 4. Starting the bot
 Call:
@@ -50,3 +49,5 @@ python3 start_bot.py
 - `!quest <Quest + reward + location>` to report a quest, the bot will post in the specified channel with the id `quest-channel-id`
 - `!stats (here)` will send a ranking via PM/directly in a channel
 - `!search <query>`will search for an Arena/Pokestop and return the top 5 results. (Arena/Pokestop + Google maps link)
+- `!arena <query>`will search for an Arena return the top 5 results. (Arena + Google maps link)
+- `!stop <query>`will search for an Stop return the top 5 results. (Stop + Google maps link)
