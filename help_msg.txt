@@ -1,39 +1,11 @@
-__**Report von Quests**__
-Das Kommando lautet:
-```
-!quest <Quest + Reward + Ort (desto genauer, desto besser)>
-```
-Beispiel:
-```
-!quest Fange 3 Myrapla/knofensa - Reward: Tangela - Pokestop: "Adler" (Technische Fakultät)
-```
+__**Suchen von Arenen/Pokestops**__
+mit ```!search suchbegriff ``` sucht man nach Arena + Pokestop gleichzeitig.
 
-__**Report von Raids**__
-Das Kommando lautet:
-```
-!raid <Boss + Ort + Hatch/Despawn Zeit>
-```
-Beispiel:
-```
-!raid Rayquaza - Jump & Twist (Technische Fakultät) - hatch 12:00
-```
+mit  ```!arena  suchbegriff ``` sucht man nach einer Arena.
 
-__**Report von Nestern**__
-Das Kommando lautet:
-```
-!nest <Ort + Pokemon>
-```
-Beispiel:
-```
-!nest Escholzpark - Rihorn
-```
+mit  ```!stop suchbegriff ``` sucht man nach einem Pokestop.
 
-__**Report von Rare und high IV pokemon**__
-Das Kommando lautet:
-```
-!rare <Pokemon + IV + Ort>
-```
-Beispiel:
-```
-!rare Dratini 100% - Rathausplatz :D
-```
+Die Suchergebnisse werden dann in Form von klickbaren Links angezeigt,  die auf Google Maps weiterleiten.
+Wenn eine Arena oder ein Pokestop mal nicht gefunden wird,  fragt Ihr am besten in #public  nach.
+
+Sollte ein neuer Pokestop  oder eine neue Arena auftauchen, wäre es lieb wenn Ihr @Bree#2002 **Name + Google Maps link **  schickt.

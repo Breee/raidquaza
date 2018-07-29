@@ -35,7 +35,6 @@ from messages.MessageManager import MessageManager
 from storage.StorageManager import StorageManager
 from stats.StatisticManager import StatisticManager, ReportType
 from search.FuzzySearcher import FuzzySearcher
-from classification.classify import Classifier
 from search.qgram_index import SCORING_TYPE
 
 LOGGER = logging.getLogger('discord')
@@ -68,7 +67,6 @@ class ReportBot(commands.Bot):
         self.add_command(self.arena)
         self.add_command(self.stop)
         self.add_command(self.collect)
-        self.add_command(self.classify)
         self.add_command(self.scoring)
         self.start_time = 0
         self.session = aiohttp.ClientSession(loop=self.loop)
@@ -77,9 +75,6 @@ class ReportBot(commands.Bot):
         self.storage_manager = StorageManager()
         self.statistic_manager = StatisticManager()
         self.fuzzy_searcher = FuzzySearcher(self.config.gyms_csv)
-        #self.classifier = Classifier()
-        #self.classifier.read_training_data("classification/test.csv")
-        #self.classifier.process_training_data()
 
     """
     ################ EVENTS ###############
@@ -140,10 +135,6 @@ class ReportBot(commands.Bot):
         else:
             await self.send_message(destination=ctx.message.author, content=content)
 
-    @commands.command(hidden=True, pass_context=True)
-    async def classify(self,ctx,*, query):
-        res = self.classifier.classify(sentence=query)
-        await self.say(res)
 
     @commands.command(hidden=True, pass_context=True)
     async def exterminate(self, ctx, number):
@@ -165,7 +156,6 @@ class ReportBot(commands.Bot):
             self.fuzzy_searcher.fuzzy.scoring_method = SCORING_TYPE.AFFINE_GAPS
             await self.say("Changed scoring method to %s" % type)
         await self.delete_message(ctx.message)
-
 
 
     @commands.command(pass_context=True)
@@ -224,8 +214,9 @@ class ReportBot(commands.Bot):
         results = self.fuzzy_searcher.search(query, num_results=5)
         if results:
             for arena, location, type, ed in results:
+                maps_link = "https://www.google.com/maps/place/%s,%s" % (location[0], location[1])
                 msg += "- **%s:**\t[%s](%s)\t(ed: %d)\n" % (
-                type.strip(), arena.strip(), location.replace("\n", "").strip(), ed)
+                type.strip(), arena.strip(), maps_link.replace("\n", "").strip(), ed)
         else:
             msg += "No results found ..."
         embed = discord.Embed(color=0xa80000, title="Top results for query '%s'" % query,
@@ -240,9 +231,10 @@ class ReportBot(commands.Bot):
         result_count = 0
         if results:
             for arena, location, type, ed in results:
+                maps_link = "https://www.google.com/maps/place/%s,%s" % (location[0], location[1])
                 if type == "Arena" and result_count < 5:
                     msg += "- **%s:**\t[%s](%s)\t(ed: %d)\n" % (
-                    type.strip(), arena.strip(), location.replace("\n", "").strip(), ed)
+                    type.strip(), arena.strip(), maps_link.replace("\n", "").strip(), ed)
                     result_count += 1
         else:
             msg += "No results found ..."
@@ -258,9 +250,10 @@ class ReportBot(commands.Bot):
         result_count = 0
         if results:
             for arena, location, type, ed in results:
+                maps_link = "https://www.google.com/maps/place/%s,%s" % (location[0], location[1])
                 if type == "Pokestop" and result_count < 5:
                     msg += "- **%s:**\t[%s](%s)\t(ed: %d)\n" % (
-                        type.strip(), arena.strip(), location.replace("\n", "").strip(), ed)
+                        type.strip(), arena.strip(), maps_link.replace("\n", "").strip(), ed)
                     result_count += 1
         else:
             msg += "No results found ..."

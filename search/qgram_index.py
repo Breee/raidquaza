@@ -233,7 +233,8 @@ class QgramIndex:
         self.inverted_lists = dict()
         self.q = q
         self.vocab = dict()
-        self.coordinates = []
+        self.longitude = []
+        self.latitude = []
         self.types = []
         self.scoring_method = SCORING_TYPE.AFFINE_GAPS
 
@@ -248,7 +249,7 @@ class QgramIndex:
                 if line.startswith("#::#"):
                     continue
                 # split line by tabs.
-                splitted = re.split(r'\t+', line)
+                splitted = re.split(r',', line)
                 # first tab is the city name/record
                 record = splitted[0].strip()
                 self.vocab[record_id] = record
@@ -256,15 +257,20 @@ class QgramIndex:
                 # dont got always 3 entries
                 # second tab, coordinates
                 if(len(splitted) > 1):
-                    self.coordinates.append(splitted[1])
+                    self.longitude.append(splitted[1])
                 else:
-                    self.coordinates.append(None)
+                    self.longitude.append(None)
+
+                if (len(splitted) > 2):
+                    self.latitude.append(splitted[2])
+                else:
+                    self.latitude.append(None)
 
                 # second tab, coordinates
-                if (len(splitted) > 2):
-                    if splitted[2] == 'Arena\n':
+                if (len(splitted) > 3):
+                    if splitted[3] == 'Arena\n':
                         self.types.append("Arena")
-                    elif splitted[2] == 'Pokestop\n':
+                    elif splitted[3] == 'Pokestop\n':
                         self.types.append("Pokestop")
                     else:
                         self.types.append("Arena/Pokestop")
@@ -275,7 +281,6 @@ class QgramIndex:
                 word = re.sub("[ \W+\n]", "", record).lower()
                 qgrams = get_qgrams(word, self.q)
                 for qgram in qgrams:
-                    # print(qgram)
                     if qgram not in self.inverted_lists:
                         self.inverted_lists[qgram] = list()
                     self.inverted_lists[qgram].append(record_id)
@@ -345,7 +350,7 @@ class QgramIndex:
             for record_id, count in merged_lists:
                 record = self.vocab[record_id]
                 word = re.sub("[ \W+\n]", "", record).lower()
-                sys.stderr.write("Word: %s -- Qgrams in common: %d\n" % (word, count))
+                #sys.stderr.write("Word: %s -- Qgrams in common: %d\n" % (word, count))
                 if count >= int(threshold):
                     if self.scoring_method == SCORING_TYPE.LEVENSHTEIN:
                         ed = levenshtein(query, word)
@@ -356,9 +361,10 @@ class QgramIndex:
                     else:
                         ed = levenshtein(query, word)
                     n_ped_computations += 1
-                    coordinates = self.coordinates[record_id]
+                    longitude = self.longitude[record_id]
+                    latitude = self.latitude[record_id]
                     type = self.types[record_id]
-                    result_words.append((record, coordinates, type, ed))
+                    result_words.append((record, (longitude,latitude), type, ed))
             duration = (time.time() - start) * 1000
             sys.stderr.write("Computing ED for %s words took %.0f ms.\n" %
                          (n_ped_computations, duration))
