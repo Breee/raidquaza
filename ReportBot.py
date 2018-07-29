@@ -119,14 +119,6 @@ class ReportBot(commands.Bot):
                 self.message_manager.delete_message(storedmessage.id)
                 await self.process_commands(after)
 
-    async def on_member_join(self, member):
-        LOGGER.info("member %s joined" % member.name)
-        pattern = re.compile(r'(.*ju.*li.*st.*ar.*|.*ra.*ts.*il.*uj.*|.*au.*gu.*.*st.*st.*ar.*|.*septemberstar.*|.*oktoberstar.*|.*dezemberstar.*|.*januarstar.*|.*februarstar.*)')
-        matches_julistar = re.match(pattern=pattern, string=member.name.lower())
-        if matches_julistar:
-            await self.kick(member)
-            await self.ban(member)
-            LOGGER.info("member %s banned/kicked" % member.name)
 
     """
     ################ COMMANDS ###############
