@@ -14,8 +14,6 @@ The idea is to have a single discord channel, in which trainers can post reports
 pip3 install discord.py
 pip3 install numpy
 ```
-scipy requires more packages, thus it it recommended to follow the instructions on the webpage:
-https://www.scipy.org/install.html#scientific-python-distributions
 
 ## 3. Configuration:
 Copy the file `config.conf.dist` to `config.conf` (or create it). 
