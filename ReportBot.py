@@ -81,7 +81,7 @@ class ReportBot(commands.Bot):
     """
 
     async def on_member_join(self, member):
-        await self.kick(member)
+        await self.ban(member,delete_message_days=7)
 
     async def on_ready(self):
         LOGGER.info("Bot is ready.")
