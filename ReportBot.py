@@ -81,6 +81,7 @@ class ReportBot(commands.Bot):
     """
 
     async def on_member_join(self, member):
+        LOGGER.info("ban %s" % member.name)
         await self.ban(member,delete_message_days=7)
 
     async def on_ready(self):
