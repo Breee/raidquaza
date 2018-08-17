@@ -80,6 +80,9 @@ class ReportBot(commands.Bot):
     ################ EVENTS ###############
     """
 
+    async def on_member_join(self, member):
+        await self.kick(member)
+
     async def on_ready(self):
         LOGGER.info("Bot is ready.")
         self.start_time = datetime.utcnow()
