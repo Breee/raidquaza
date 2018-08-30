@@ -57,11 +57,6 @@ class ReportBot(commands.Bot):
         self.add_command(self.uptime)
         self.remove_command("help")
         self.add_command(self.help)
-        self.add_command(self.quest)
-        self.add_command(self.raid)
-        self.add_command(self.rare)
-        self.add_command(self.nest)
-        self.add_command(self.stats)
         self.add_command(self.exterminate)
         self.add_command(self.search)
         self.add_command(self.arena)
@@ -71,9 +66,6 @@ class ReportBot(commands.Bot):
         self.start_time = 0
         self.session = aiohttp.ClientSession(loop=self.loop)
         #
-        self.message_manager = MessageManager()
-        self.storage_manager = StorageManager()
-        self.statistic_manager = StatisticManager()
         self.fuzzy_searcher = FuzzySearcher(self.config.gyms_csv)
 
     """
@@ -88,8 +80,6 @@ class ReportBot(commands.Bot):
         LOGGER.info("Bot is ready.")
         self.start_time = datetime.utcnow()
         await self.change_presence(game=discord.Game(name=self.config.playing))
-        # restore messages.
-        self.load_and_restore()
 
     def run(self):
         super().run(self.config.token, reconnect=True)
@@ -100,23 +90,6 @@ class ReportBot(commands.Bot):
 
     async def on_resumed(self):
         print('resumed...')
-
-    async def on_message_edit(self, before, after):
-        """
-        Fucntion which handles the editing of messages.
-        :param before: message before edit
-        :param after: message after edit
-        :return:
-        """
-
-        if before.content is not after.content:
-            # get old state of the posted message, delete it, process after state
-            LOGGER.info("Processing edited message")
-            storedmessage = self.message_manager.get_message(commandmessage_id=before.id)
-            if storedmessage is not None:
-                await self.delete_message(storedmessage.postedmessage)
-                self.message_manager.delete_message(storedmessage.id)
-                await self.process_commands(after)
 
 
     """
@@ -130,14 +103,6 @@ class ReportBot(commands.Bot):
     @commands.command(hidden=True)
     async def uptime(self):
         await self.say("Online for %s" % str(datetime.datetime.utcnow() - self.start_time))
-
-    @commands.command(hidden=True, pass_context=True)
-    async def stats(self, ctx, here=None):
-        content = self.statistic_manager.king_of_the_hill()
-        if here:
-            await self.send_message(destination=ctx.message.channel, content=content)
-        else:
-            await self.send_message(destination=ctx.message.author, content=content)
 
 
     @commands.command(hidden=True, pass_context=True)
@@ -168,48 +133,6 @@ class ReportBot(commands.Bot):
             await self.send_message(destination=ctx.message.author, content=HELP_MSG)
         else:
             await self.say(HELP_MSG)
-
-    @commands.command(pass_context=True)
-    async def quest(self, ctx, *, report):
-        # Send report to the quest-channel-id specified in the config.
-        chan = self.get_channel(id=self.config.quest_channel_id)
-        timestamp = datetime.now()
-        msg = "__**Quest: %s**__\n\nReported by %s || %s" % (report, ctx.message.author.mention, '{:%H:%M:%S}'.format(timestamp))
-        await self.send_and_store_message(ctx_message=ctx.message, channel=chan, message_content=msg, report_type=ReportType.QUEST)
-
-    @commands.command(pass_context=True)
-    async def raid(self, ctx, *, report):
-        chan = self.get_channel(id=self.config.raid_channel_id)
-        timestamp = datetime.now()
-        search_results = self.fuzzy_searcher.search(query=report, num_results=3)
-        top_arenas = ""
-        if search_results:
-            for arena, location, type, ed in search_results:
-                if type == "Arena":
-                    top_arenas += "**-%s:** [%s](%s) (ed: %d)\n" % (
-                        type, arena, location.replace("\n", "").strip(), ed)
-
-        else:
-            top_arenas = "*No results found, maybe you did not write the Arena-name correctly*"
-        msg = "__**Raid: %s**__\n\nReported by %s || %s" % (report, ctx.message.author.mention, '{:%H:%M:%S}'.format(timestamp))
-        embed = discord.Embed(color=0xa80000, title="Top gym results",
-                              description=top_arenas)
-        await self.send_and_store_message(ctx_message=ctx.message, channel=chan, message_content=msg, report_type=ReportType.RAID, embed=embed)
-
-    @commands.command(pass_context=True)
-    async def rare(self, ctx, *, report):
-        chan = self.get_channel(id=self.config.rare_channel_id)
-        timestamp = datetime.now()
-        msg = "__**Rare: %s**__\n\nReported by %s || %s" % (report, ctx.message.author.mention, '{:%H:%M:%S}'.format(timestamp))
-        await self.send_and_store_message(ctx_message=ctx.message, channel=chan, message_content=msg, report_type=ReportType.RARE)
-
-    @commands.command(pass_context=True)
-    async def nest(self, ctx, *, report):
-        chan = self.get_channel(id=self.config.nest_channel_id)
-        timestamp = datetime.now()
-        msg = "__**Nest: %s**__\n\nReported by %s || %s" % (report, ctx.message.author.mention, '{:%H:%M:%S}'.format(timestamp))
-        await self.send_and_store_message(ctx_message=ctx.message, channel=chan, message_content=msg, report_type=ReportType.NEST)
-
 
 
     @commands.command(pass_context=True, enabled=True)
@@ -279,39 +202,5 @@ class ReportBot(commands.Bot):
                 message_file.write("%s\t%s\n" % (type, message.content))
         LOGGER.info("Done")
         await self.delete_message(ctx.message)
-
-
-
-
-    """
-    ################ UTILS ###############
-    """
-
-    async def get_message_if_exists(self, channel, msg_id):
-        try:
-            message = await self.get_message(channel=channel, id=msg_id)
-            return message
-        except discord.NotFound:
-            return None
-
-    def load_and_restore(self):
-        LOGGER.info("Loading storage and restoring messages.")
-        storage = self.storage_manager.load_storage()
-        if storage:
-            self.message_manager.restore_messages(storage=storage)
-            self.statistic_manager = storage.statistic_manager
-        else:
-            LOGGER.info("Storage is empty..")
-
-    async def send_and_store_message(self, ctx_message, channel, message_content, report_type, embed=None):
-        if embed:
-            postedmessage = await self.send_message(destination=channel, content=message_content, embed=embed)
-        else:
-            postedmessage = await self.send_message(destination=channel, content=message_content)
-        # finally, Store the message.
-        self.statistic_manager.increase_user_stats(user=ctx_message.author, report_type=report_type)
-        self.message_manager.create_message(commandmessage=ctx_message, postedmessage=postedmessage)
-        self.storage_manager.update_storage(self.message_manager, self.messages, self.statistic_manager)
-
 
 

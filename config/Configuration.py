@@ -31,11 +31,6 @@ class Configuration(object):
     def __init__(self, config_file):
         self.token = ""
         self.playing = ""
-        self.server_id = ""
-        self.quest_channel_id = ""
-        self.rare_channel_id = ""
-        self.raid_channel_id = ""
-        self.nest_channel_id = ""
         self.gyms_csv = ""
         self.read_config_file(config_file)
 
@@ -55,14 +50,6 @@ class Configuration(object):
                     self.token = line[line.find("=") + 1:].rstrip("\n")
                 if line.startswith("playing="):
                     self.playing = line[line.find("=") + 1:].rstrip("\n")
-                if line.startswith("raid-channel-id="):
-                    self.raid_channel_id = line[line.find("=") + 1:].rstrip("\n")
-                if line.startswith("rare-channel-id="):
-                    self.rare_channel_id = line[line.find("=") + 1:].rstrip("\n")
-                if line.startswith("quest-channel-id="):
-                    self.quest_channel_id = line[line.find("=") + 1:].rstrip("\n")
-                if line.startswith("nest-channel-id="):
-                    self.nest_channel_id = line[line.find("=") + 1:].rstrip("\n")
                 if line.startswith("gyms-csv="):
                     self.gyms_csv = line[line.find("=") + 1:].rstrip("\n")
 
