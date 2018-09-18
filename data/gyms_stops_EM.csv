@@ -1,3 +1,4 @@
+Name,lat,lon,tze
 "Hochburg ""Deo aeterniate sacrum.""",48.11768600000000,7.90015200000000,Pokestop
 Hochburg Küferhof-Brunnen,48.11745700000000,7.90062700000000,Pokestop
 Honig,48.11747000000000,7.89868400000000,Pokestop
@@ -641,7 +642,7 @@ INRI,48.083719,7.922833,Arena
 Kirchberghalle,48.051561,7.904589,Arena
 Quell der Freude,48.109641,7.85277,Pokestop
 Kleeblatt-Skulptur,48.110246,7.850596,Pokestop
-"Zentrum für Kunst,Kultur und Handwerk Emmendingen",48.110566,7.849842,Pokestop
+"Zentrum für Kunst, Kultur und Handwerk Emmendingen",48.110566,7.849842,Pokestop
 Abenteuer Spielplatz Wasser,48.096842,7.859872,Pokestop
 Wachmann am Weiherschloss,48.11719,7.8697,Pokestop
 Spielplatz Kollmarsreute,48.100919,7.875622,Pokestop
