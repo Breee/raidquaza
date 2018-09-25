@@ -29,11 +29,6 @@ from _datetime import datetime, timedelta
 import aiohttp
 import logging
 import os
-import re
-
-from messages.MessageManager import MessageManager
-from storage.StorageManager import StorageManager
-from stats.StatisticManager import StatisticManager, ReportType
 from search.FuzzySearcher import FuzzySearcher
 from search.qgram_index import SCORING_TYPE
 
@@ -71,10 +66,6 @@ class ReportBot(commands.Bot):
     """
     ################ EVENTS ###############
     """
-
-    #async def on_member_join(self, member):
-    #    LOGGER.info("ban %s" % member.name)
-    #    await self.ban(member,delete_message_days=7)
 
     async def on_ready(self):
         LOGGER.info("Bot is ready.")

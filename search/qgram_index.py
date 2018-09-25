@@ -9,9 +9,11 @@ import sys
 import time
 import re
 import numpy as np
+import csv
 from collections import Counter
 import math
 from enum import Enum
+
 
 class SCORING_TYPE(Enum):
     LEVENSHTEIN = 1,
@@ -244,33 +246,31 @@ class QgramIndex:
 
         with open(file_name, 'r', encoding='utf-8', errors='replace') as file:
             record_id = 0
-            for line in file:
-                # If the line starts with a tie-fighter we continue.
-                if line.startswith("#::#"):
-                    continue
-                # split line by tabs.
-                splitted = re.split(r',', line)
-                # first tab is the city name/record
-                record = splitted[0].strip()
+            reader = csv.reader(file, delimiter=',', quotechar='|')
+            # skip header
+            next(reader, None)
+            for row in reader:
+                # first tab is the name/record
+                record = row[0].strip()
                 self.vocab[record_id] = record
                 # the if/else contructs are necessary because the file lines
                 # dont got always 3 entries
-                # second tab, coordinates
-                if(len(splitted) > 1):
-                    self.longitude.append(splitted[1])
+                # second tab, longitude
+                if(len(row) > 1):
+                    self.longitude.append(row[1])
                 else:
                     self.longitude.append(None)
-
-                if (len(splitted) > 2):
-                    self.latitude.append(splitted[2])
+                # third tab, latitude
+                if (len(row) > 2):
+                    self.latitude.append(row[2])
                 else:
                     self.latitude.append(None)
 
                 # second tab, coordinates
-                if (len(splitted) > 3):
-                    if splitted[3] == 'Arena\n':
+                if (len(row) > 3):
+                    if row[3] == 'Arena':
                         self.types.append("Arena")
-                    elif splitted[3] == 'Pokestop\n':
+                    elif row[3] == 'Pokestop':
                         self.types.append("Pokestop")
                     else:
                         self.types.append("Arena/Pokestop")
