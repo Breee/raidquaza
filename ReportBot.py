@@ -180,18 +180,26 @@ class ReportBot(commands.Bot):
         await self.send_message(destination=ctx.message.channel, content="", embed=embed)
 
     @commands.command(pass_context=True)
-    async def collect(self, ctx, number, type):
+    async def collect(self, ctx, number):
         LOGGER.info("Collecting and storing messages...")
         mgs = []  # Empty list to put all the messages in the log
+        msg_count = dict()
         number = int(number)  # Converting the amount of messages to delete to an integer
         async for x in self.logs_from(ctx.message.channel, limit=number):
-            if x.author != self.user:
+            if x.author != self.user and x.content != ctx.message.content:
                 mgs.append(x)
+                if x.content.strip().lower() in msg_count:
+                    msg_count[x.content.strip().lower()] += 1
+                else:
+                    msg_count[x.content.strip().lower()] = 1
 
-        with open("%s.log" % type, "w") as message_file:
-            for message in mgs:
-                message_file.write("%s\t%s\n" % (type, message.content))
+        content = ""
+        for msg, count in sorted(msg_count.items()):
+            content += "%s : %d\n" % (msg, count)
+
+        await self.send_message(destination=ctx.message.channel, content=content)
         LOGGER.info("Done")
         await self.delete_message(ctx.message)
+
 
 
