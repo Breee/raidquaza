@@ -15,7 +15,7 @@ Disco Wand,48.10716600000000,7.86114200000000,Pokestop
 Old Niemännle ,48.10581000000000,7.86114700000000,Pokestop
 Stone Face,48.10544600000000,7.86571000000000,Pokestop
 Ziegelhof Brunnen,48.10274000000000,7.77450400000000,Pokestop
-Den gefallenen Helden,48.10305700000000,7.77697600000000,Pokestop
+Den gefallenen Helden,48.10305700000000,7.77697600000000,Arena
 Mühlenrad,48.08073500000000,7.91902300000000,Pokestop
 Figuren Im Raum,48.10536800000000,7.86599900000000,Pokestop
 Baden und Camping am Silbersee,48.06052100000000,7.82035000000000,Pokestop
@@ -179,7 +179,7 @@ Gasthaus Zum Übergang,48.13088200000000,7.82131900000000,Pokestop
 Gedenkstein Übergang zur Heimat,48.13118200000000,7.82077200000000,Pokestop
 Schönste Mauer Mundingen,48.13214100000000,7.82899500000000,Pokestop
 Weinprinzessin Mundingen,48.12988700000000,7.82751200000000,Pokestop
-"History of ""Mönchshof""",48.13658600000000,7.83710400000000,Pokestop
+"History of ""Mönchshof""",48.13658600000000,7.83710400000000,Arena
 Brunnen Rebflurbereinigung,48.13793200000000,7.82441400000000,Pokestop
 Heimbacher Wappen,48.16208400000000,7.83042400000000,Pokestop
 Antiker Engel,48.16060600000000,7.82964500000000,Pokestop
@@ -441,7 +441,6 @@ Storchenturm Denzlingen,48.06926000000000,7.87576000000000,Pokestop
 Hohlweg Dürleberg,48.14502500000000,7.74414600000000,Pokestop
 Erdskulptur der Erde,48.14642300000000,7.74480900000000,Pokestop
 Westtor von Lager 1,48.15180700000000,7.74611700000000,Pokestop
-Freundschaft La Ravoire Teningen,48.12267100000000,7.81779800000000,Pokestop
 Bewachsener Mühlstein,48.07016300000000,7.87250000000000,Pokestop
 Alter Brunnen,48.09035600000000,7.89304200000000,Pokestop
 Windmühle,48.09046100000000,7.89222000000000,Pokestop
@@ -650,3 +649,5 @@ Spielplatz Kollmarsreute,48.100919,7.875622,Pokestop
 Historische Kirche,48.079958,7.810497,Pokestop
 Skulpturenweg,48.106722,7.864071,Pokestop
 Alles Aus Einer Hand,48.0762,7.881215,Pokestop
+Altes Rathaus Kollmarsreute,48.101198,7.881869,Pokestop
+Sand Brunnen Mundingen Von 1870,48.135587,7.836183,Pokestop
