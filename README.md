@@ -13,7 +13,7 @@ pip3 install -r requirements.txt
 ```
 
 ## 3. Configuration:
-Copy the file `config.conf.dist` to `config.conf` (or create it). 
+Copy the file `config.ini.example` to `config.ini` (or create it). 
 The configuration file is of the form: 
 
 ```
@@ -38,6 +38,8 @@ where:
   an example file is `data/gyms_stops.csv` which contains all pokestops and arenas of the city Freiburg.
 - In the `database` section you can define the database, from which the bot shall pull gyms and pokestops.  (e.g. monocle)
 The database must have tables  `forts`  and `pokestops`,  both must have columns `name`, `lat`, `lon` 
+
+You must either use csv file or a database. 
 
 
 ## 4. Starting the bot
