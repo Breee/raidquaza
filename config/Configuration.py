@@ -82,16 +82,16 @@ class Configuration(object):
             for item in items:
                 conf[item[0]] = item[1]
         else:
-            logger.info('{0} not found in the {1} file, assuming no csv used'.format('bot', filename))
+            logger.info('{0} not found in the {1} file, assuming no csv used'.format('csv', filename))
 
-        if parser.has_section('mysql'):
-            items = parser.items('mysql')
+        if parser.has_section('database'):
+            items = parser.items('database')
             for item in items:
                 conf[item[0]] = item[1]
         else:
             logger.info('{0} not found in the {1} file, assuming no database used'.format('bot', filename))
 
-        if not parser.has_section('csv') and not parser.has_section('mysql'):
+        if not parser.has_section('csv') and not parser.has_section('database'):
             raise Exception('No csv file or database specified, please do at least one.')
 
         if 'token' in conf.keys():
@@ -104,7 +104,6 @@ class Configuration(object):
 
         if 'point_of_interests' in conf.keys():
             self.point_of_interests = conf['point_of_interests']
-
 
         if 'use_database' in conf.keys():
             if conf['use_database'] == 'True':

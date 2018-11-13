@@ -5,7 +5,7 @@ playing = u mom lel
 [csv]
 point_of_interests = ../data/gyms_stops.csv
 
-[mysql]
+[database]
 use_database = True
 host = localhost
 database = db_name
