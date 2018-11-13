@@ -18,14 +18,28 @@ Copy the file `config.conf.dist` to `config.conf` (or create it).
 The configuration file is of the form: 
 
 ```
-token=<discord bot user token>
-playing=hide and seek
-gyms-csv=<.csv file>
+[bot]
+token = <bot_token>
+playing = u mom lel
+
+[csv]
+point_of_interests = <.csv file>
+
+[database]
+use_database = True
+host = localhost
+database = db_name
+user = user_name
+password = password
+port = 3306
 ```
 where:
-- `<discord bot user token>` is the token of your discord bot user.
+- `<bot_token>` is the token of your discord bot user.
 - `<.csv file>` is a .csv file, which consists of 4 columns: Name, long, lat,Type(Arena/Pokestop)
   an example file is `data/gyms_stops.csv` which contains all pokestops and arenas of the city Freiburg.
+- In the `database` section you can define the database, from which the bot shall pull gyms and pokestops.  (e.g. monocle)
+The database must have tables  `forts`  and `pokestops`,  both must have columns `name`, `lat`, `lon` 
+
 
 ## 4. Starting the bot
 Call:
