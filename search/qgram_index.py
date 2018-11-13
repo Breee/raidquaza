@@ -266,7 +266,7 @@ class QgramIndex:
                 else:
                     self.latitude.append(None)
 
-                # second tab, coordinates
+                # fourth tab, type
                 if (len(row) > 3):
                     if row[3] == 'Arena':
                         self.types.append("Arena")
@@ -286,16 +286,47 @@ class QgramIndex:
                     self.inverted_lists[qgram].append(record_id)
                 record_id += 1
 
-            for record in file:
-                record = record.strip()
-                self.vocab[record_id] = record
-                word = re.sub("[ \W+\n]", "", record).lower()
-                qgrams = get_qgrams(word, self.q)
-                for qgram in qgrams:
-                    if qgram not in self.inverted_lists:
-                        self.inverted_lists[qgram] = list()
-                    self.inverted_lists[qgram].append(record_id)
-                record_id += 1
+    def build_from_lists(self, input):
+        """ Build index for text in given file, one record per line. """
+        record_id = 0
+        # skip header
+        for row in input:
+            # first tab is the name/record
+            record = row[0].strip()
+            self.vocab[record_id] = record
+            # the if/else contructs are necessary because the file lines
+            # dont got always 3 entries
+            # second tab, longitude
+            if (len(row) > 1):
+                self.longitude.append(row[1])
+            else:
+                self.longitude.append(None)
+            # third tab, latitude
+            if (len(row) > 2):
+                self.latitude.append(row[2])
+            else:
+                self.latitude.append(None)
+
+            # fourth tab, type
+            if (len(row) > 3):
+                if row[3] == 'Arena':
+                    self.types.append("Arena")
+                elif row[3] == 'Pokestop':
+                    self.types.append("Pokestop")
+                else:
+                    self.types.append("Arena/Pokestop")
+            else:
+                self.types.append(None)
+
+            # on the fly calc qgrams
+            word = re.sub("[ \W+\n]", "", record).lower()
+            self.vocab[record_id] = record
+            qgrams = get_qgrams(word, self.q)
+            for qgram in qgrams:
+                if qgram not in self.inverted_lists:
+                    self.inverted_lists[qgram] = list()
+                self.inverted_lists[qgram].append(record_id)
+            record_id += 1
 
     def get_posting_list(self, qgram):
         """ Returns the posting list for the given word if it exists else an
@@ -304,13 +335,13 @@ class QgramIndex:
         >>> qi = QgramIndex(3)
         >>> qi.build_from_file("example_solution.txt")
         >>> qi.get_posting_list("foo")
-        [0, 1, 2, 3]
+        [0, 2, 4, 6]
         >>> qi.get_posting_list("$$f")
         [0, 1, 2, 3]
         >>> qi.get_posting_list("all")
         [0]
         >>> qi.get_posting_list("tsa")
-        [2]
+        [4]
         >>> qi.get_posting_list("ned")
         []
         """

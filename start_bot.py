@@ -43,5 +43,5 @@ from ReportBot import ReportBot
 
 if __name__ == "__main__":
     LOGGER.info("Starting Bot.")
-    bot = ReportBot(prefix="!", description="", config_file="config.conf")
+    bot = ReportBot(prefix="!", description="", config_file="config/config.ini")
     bot.run()

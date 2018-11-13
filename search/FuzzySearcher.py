@@ -27,17 +27,33 @@ import math
 import re
 from search.qgram_index import QgramIndex
 LOGGER = logging.getLogger('discord')
+from db.dbmanager import DbHandler
 
 
 class FuzzySearcher(object):
 
-    def __init__(self, input_file, q=3, k=5):
+    def __init__(self,config, q=3, k=5):
         self.q = q
         self.k = k
         # init search engine
         self.fuzzy = QgramIndex(3)
         # build index
-        self.fuzzy.build_from_file(input_file)
+        input = None
+        if config.use_database:
+            LOGGER.info("Using database")
+            self.db_handler = DbHandler(host=config.db_host, db=config.db_name, port=config.db_port,
+                                        user=config.db_user, password=config.db_password)
+            forts,stops = self.db_handler.get_forts_stops()
+            input = [*forts, *stops]
+            self.db_handler.disconnect()
+
+        if isinstance(input, list):
+            LOGGER.info("Using forts/stops from database")
+            self.fuzzy.build_from_lists(input)
+        else:
+            LOGGER.info("Using forts/stops from file")
+            input = config.point_of_interests
+            self.fuzzy.build_from_file(input)
 
     def search(self, query, num_results=5):
         LOGGER.info("Received query %s " % query)

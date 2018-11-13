@@ -61,7 +61,7 @@ class ReportBot(commands.Bot):
         self.start_time = 0
         self.session = aiohttp.ClientSession(loop=self.loop)
         #
-        self.fuzzy_searcher = FuzzySearcher(self.config.gyms_csv)
+        self.fuzzy_searcher = FuzzySearcher(self.config)
 
     """
     ################ EVENTS ###############
@@ -200,6 +200,3 @@ class ReportBot(commands.Bot):
         await self.send_message(destination=ctx.message.channel, content=content)
         LOGGER.info("Done")
         await self.delete_message(ctx.message)
-
-
-

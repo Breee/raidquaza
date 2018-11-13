@@ -1,0 +1,14 @@
+[bot]
+token = <bot_token>
+playing = u mom lel
+
+[csv]
+point_of_interests = ../data/gyms_stops.csv
+
+[mysql]
+use_database = True
+host = localhost
+database = db_name
+user = user_name
+password = password
+port = 3306
