@@ -9,8 +9,7 @@ Bot to search a Arena/Pokestop via discord.
 
 ## 2. Install discord.py and numpy:
 ```
-pip3 install discord.py
-pip3 install numpy
+pip3 install -r requirements.txt
 ```
 
 ## 3. Configuration:
