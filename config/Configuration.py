@@ -32,7 +32,7 @@ class Configuration(object):
     def __init__(self, config_file):
         self.token = ""
         self.playing = ""
-        self.point_of_interests = ""
+        self.point_of_interests = "../data/gyms_stops.csv"
         self.use_database = False
         self.db_host = ""
         self.db_name = ""
@@ -104,6 +104,7 @@ class Configuration(object):
 
         if 'point_of_interests' in conf.keys():
             self.point_of_interests = conf['point_of_interests']
+
 
         if 'use_database' in conf.keys():
             if conf['use_database'] == 'True':
