@@ -64,11 +64,13 @@ class DbHandler(object):
         stops = []
         self.cursor.execute("SELECT name, lat, lon FROM forts")
         for row in self.cursor:
-            forts.append(row + ('Arena',))
+            if row[0]:
+                forts.append(row + ('Arena',))
 
         self.cursor.execute("SELECT name, lat, lon FROM pokestops")
         for row in self.cursor:
-            stops.append(row + ('Pokestop',))
+            if row[0]:
+                stops.append(row + ('Pokestop',))
         LOGGER.info("Done.")
         return forts, stops
 
