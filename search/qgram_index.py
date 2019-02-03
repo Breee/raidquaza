@@ -13,6 +13,8 @@ import csv
 from collections import Counter
 import math
 from enum import Enum
+from abc import ABC, abstractmethod
+
 
 
 class SCORING_TYPE(Enum):
@@ -218,7 +220,8 @@ def affine_gap_scoring(seq1, seq2):
                 gap_opened = False
     return (matrix[size_x - 1, size_y - 1])
 
-class QgramIndex:
+
+class QgramIndex(ABC):
     """ A q-gram index, adapted from the inverted index code from Lecture 1.
     """
 
@@ -231,6 +234,37 @@ class QgramIndex:
         self.latitude = []
         self.types = []
         self.scoring_method = SCORING_TYPE.AFFINE_GAPS
+
+    @abstractmethod
+    def build_from_file(self, file_name):
+        """ Build index for text in given file, one record per line. """
+        pass
+
+    @abstractmethod
+    def build_from_lists(self, input):
+        """ Build index of point of interest, from a list which contains tuples of the form (name,lat,lon,type)"""
+        pass
+
+    @abstractmethod
+    def get_posting_list(self, qgram):
+        """ Returns the posting list for the given word if it exists else an
+        empty list.
+        """
+        pass
+
+    @abstractmethod
+    def find_matches(self, query, delta, k=5, use_qindex=True):
+        pass
+
+class PointOfInterestQgramIndex(QgramIndex):
+    """ A q-gram index for Point of interests.
+    A point of interest is a tuple (name,latitude,longitude,type)
+    types are Arena,Pokestop.
+    """
+
+    def __init__(self, q):
+        """ Create an empty q-gram index for given q (size of the q-grams). """
+        super().__init__(q)
 
 
     def build_from_file(self, file_name):
@@ -279,9 +313,8 @@ class QgramIndex:
                 record_id += 1
 
     def build_from_lists(self, input):
-        """ Build index for text in given file, one record per line. """
+        """ Build index of point of interest, from a list which contains tuples of the form (name,lat,lon,type)"""
         record_id = 0
-        # skip header
         for row in input:
             # first tab is the name/record
             record = row[0].strip()
@@ -352,7 +385,7 @@ class QgramIndex:
                     elif self.scoring_method == SCORING_TYPE.AFFINE_GAPS:
                         ed = affine_gap_scoring(query, word)
                     else:
-                        ed = levenshtein(query, word)
+                        raise NotImplementedError(f'scoring method {self.scoring_method} not implemented.')
                     n_ped_computations += 1
                     longitude = self.longitude[record_id]
                     latitude = self.latitude[record_id]
@@ -363,3 +396,31 @@ class QgramIndex:
                          (n_ped_computations, duration))
         result = sorted(result_words, key=lambda x: x[3], reverse=False)[:k]
         return result
+
+class QuestQgramIndex(QgramIndex):
+    """ A q-gram index for Quests.
+    """
+
+    def __init__(self, q):
+        """ Create an empty q-gram index for given q (size of the q-grams). """
+        super().__init__(q)
+
+
+    def build_from_file(self, file_name):
+        """ Build index for text in given file, one record per line. """
+        raise NotImplementedError("not implemented for this index.")
+
+    def build_from_lists(self, input):
+        """ Build index of point of interest, from a list which contains tuples of the form (name,lat,lon,type)"""
+        raise NotImplementedError("not implemented for this index.")
+
+    def get_posting_list(self, qgram):
+        """ Returns the posting list for the given word if it exists else an
+        empty list.
+        """
+        raise NotImplementedError("not implemented for this index.")
+
+    def find_matches(self, query, delta, k=5, use_qindex=True):
+        """ Find the top-k matches
+            """
+        raise NotImplementedError("not implemented for this index.")

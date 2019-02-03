@@ -25,7 +25,7 @@ SOFTWARE.
 import logging
 import math
 import re
-from search.qgram_index import QgramIndex
+from search.qgram_index import QgramIndex, PointOfInterestQgramIndex
 LOGGER = logging.getLogger('discord')
 from db.dbmanager import DbHandler
 
@@ -36,7 +36,7 @@ class FuzzySearcher(object):
         self.q = q
         self.k = k
         # init search engine
-        self.fuzzy = QgramIndex(3)
+        self.fuzzy = PointOfInterestQgramIndex(3)
         # build index
         input = None
         if config.use_database:
