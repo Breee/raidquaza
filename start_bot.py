@@ -22,22 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import logging
-
-log_path = '.'
-log_file = 'reportbot'
-
-logFormatter = logging.Formatter("%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s")
-LOGGER = logging.getLogger('discord')
-
-fileHandler = logging.FileHandler("{0}/{1}.log".format(log_path, log_file))
-fileHandler.setFormatter(logFormatter)
-LOGGER.addHandler(fileHandler)
-
-consoleHandler = logging.StreamHandler()
-consoleHandler.setFormatter(logFormatter)
-LOGGER.addHandler(consoleHandler)
-LOGGER.setLevel(level=logging.INFO)
+from globals.globals import LOGGER
 
 from ReportBot import ReportBot
 

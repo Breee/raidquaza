@@ -31,8 +31,8 @@ import logging
 import os
 from search.FuzzySearcher import FuzzySearcher
 from search.qgram_index import SCORING_TYPE
+from globals.globals import LOGGER
 
-LOGGER = logging.getLogger('discord')
 if os.path.isfile('help_msg.txt'):
     with open('help_msg.txt', 'r') as helpfile:
         HELP_MSG = helpfile.read()
@@ -52,11 +52,9 @@ class ReportBot(commands.Bot):
         self.add_command(self.uptime)
         self.remove_command("help")
         self.add_command(self.help)
-        self.add_command(self.exterminate)
         self.add_command(self.search)
         self.add_command(self.arena)
         self.add_command(self.stop)
-        self.add_command(self.collect)
         self.add_command(self.scoring)
         self.start_time = 0
         self.session = aiohttp.ClientSession(loop=self.loop)
@@ -97,23 +95,15 @@ class ReportBot(commands.Bot):
 
 
     @commands.command(hidden=True, pass_context=True)
-    async def exterminate(self, ctx, number):
-        mgs = []  # Empty list to put all the messages in the log
-        number = int(number)  # Converting the amount of messages to delete to an integer
-        async for x in self.logs_from(ctx.message.channel, limit=number):
-            mgs.append(x)
-        await self.delete_messages(mgs)
-
-    @commands.command(hidden=True, pass_context=True)
     async def scoring(self, ctx, type):
         if type == "needleman_wunsch":
-            self.fuzzy_searcher.fuzzy.scoring_method = SCORING_TYPE.NEEDLEMAN_WUNSCH
+            self.fuzzy_searcher.point_of_interest_index.scoring_method = SCORING_TYPE.NEEDLEMAN_WUNSCH
             await self.say("Changed scoring method to %s" % type)
         elif type == "levenshtein":
-            self.fuzzy_searcher.fuzzy.scoring_method = SCORING_TYPE.LEVENSHTEIN
+            self.fuzzy_searcher.point_of_interest_index.scoring_method = SCORING_TYPE.LEVENSHTEIN
             await self.say("Changed scoring method to %s" % type)
         elif type == "affine":
-            self.fuzzy_searcher.fuzzy.scoring_method = SCORING_TYPE.AFFINE_GAPS
+            self.fuzzy_searcher.point_of_interest_index.scoring_method = SCORING_TYPE.AFFINE_GAPS
             await self.say("Changed scoring method to %s" % type)
         await self.delete_message(ctx.message)
 
@@ -129,7 +119,7 @@ class ReportBot(commands.Bot):
     @commands.command(pass_context=True, enabled=True)
     async def search(self, ctx, *, query):
         msg = ""
-        results = self.fuzzy_searcher.search(query, num_results=5)
+        results = self.fuzzy_searcher.search(query, num_results=5, channel_id=ctx.message.channel.id)
         if results:
             for arena, location, type, ed in results:
                 maps_link = "https://www.google.com/maps/place/%s,%s" % (location[0], location[1])
@@ -145,7 +135,7 @@ class ReportBot(commands.Bot):
     @commands.command(pass_context=True)
     async def arena(self, ctx, *, query):
         msg = ""
-        results = self.fuzzy_searcher.search(query, num_results=15)
+        results = self.fuzzy_searcher.search(query, num_results=15, channel_id=ctx.message.channel.id)
         result_count = 0
         if results:
             for arena, location, type, ed in results:
@@ -164,7 +154,7 @@ class ReportBot(commands.Bot):
     @commands.command(pass_context=True)
     async def stop(self, ctx, *, query):
         msg = ""
-        results = self.fuzzy_searcher.search(query, num_results=15)
+        results = self.fuzzy_searcher.search(query, num_results=15,channel_id=ctx.message.channel.id)
         result_count = 0
         if results:
             for arena, location, type, ed in results:
@@ -178,25 +168,3 @@ class ReportBot(commands.Bot):
         embed = discord.Embed(color=0xa80000, title="Top results for query '%s'" % query,
                               description=msg)
         await self.send_message(destination=ctx.message.channel, content="", embed=embed)
-
-    @commands.command(pass_context=True)
-    async def collect(self, ctx, number):
-        LOGGER.info("Collecting and storing messages...")
-        mgs = []  # Empty list to put all the messages in the log
-        msg_count = dict()
-        number = int(number)  # Converting the amount of messages to delete to an integer
-        async for x in self.logs_from(ctx.message.channel, limit=number):
-            if x.author != self.user and x.content != ctx.message.content:
-                mgs.append(x)
-                if x.content.strip().lower() in msg_count:
-                    msg_count[x.content.strip().lower()] += 1
-                else:
-                    msg_count[x.content.strip().lower()] = 1
-
-        content = ""
-        for msg, count in sorted(msg_count.items()):
-            content += "%s : %d\n" % (msg, count)
-
-        await self.send_message(destination=ctx.message.channel, content=content)
-        LOGGER.info("Done")
-        await self.delete_message(ctx.message)
