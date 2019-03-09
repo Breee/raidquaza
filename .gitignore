@@ -8,3 +8,5 @@ __pycache__/
 \.idea/
 
 config/config\.ini
+
+venv/
