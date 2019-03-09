@@ -56,6 +56,7 @@ class ReportBot(commands.Bot):
         self.add_command(self.arena)
         self.add_command(self.stop)
         self.add_command(self.scoring)
+        self.add_command(self.reindex)
         self.start_time = 0
         self.session = aiohttp.ClientSession(loop=self.loop)
         #
@@ -92,6 +93,11 @@ class ReportBot(commands.Bot):
     @commands.command(hidden=True)
     async def uptime(self):
         await self.say("Online for %s" % str(datetime.datetime.utcnow() - self.start_time))
+
+    @commands.command(hidden=True)
+    async def reindex(self):
+        self.fuzzy_searcher.index(self.config)
+        await self.say("new index built, happy searching!")
 
 
     @commands.command(hidden=True, pass_context=True)
