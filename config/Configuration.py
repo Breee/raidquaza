@@ -22,23 +22,25 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import logging
 from configparser import ConfigParser
-
-logger = logging.getLogger('discord')
+from globals.globals import LOGGER
+import json
+import os
 
 class Configuration(object):
 
     def __init__(self, config_file):
         self.token = ""
         self.playing = ""
-        self.point_of_interests = "../data/gyms_stops.csv"
+        self.point_of_interests = ""
         self.use_database = False
         self.db_host = ""
         self.db_name = ""
         self.db_user = ""
         self.db_password = ""
         self.db_port = 3306
+        self.use_geofences = False
+        self.channel_to_geofences = dict()
         self.read_config_file(config_file)
 
     def read_config_file(self, filename='config.ini.example'):
@@ -63,6 +65,9 @@ class Configuration(object):
         'user_name'
         >>> c.db_password
         'password'
+        >>> c.channel_to_geofences
+        {'12321425124': '/home/bree/repos/pokemon-discord-report-bot/config/geofence.txt'}
+
         """
         # create parser and read ini configuration file
         parser = ConfigParser()
@@ -82,14 +87,21 @@ class Configuration(object):
             for item in items:
                 conf[item[0]] = item[1]
         else:
-            logger.info('{0} not found in the {1} file, assuming no csv used'.format('csv', filename))
+            LOGGER.warning('{0} not found in the {1} file, assuming no csv provided'.format('csv', filename))
 
         if parser.has_section('database'):
             items = parser.items('database')
             for item in items:
                 conf[item[0]] = item[1]
         else:
-            logger.info('{0} not found in the {1} file, assuming no database used'.format('bot', filename))
+            LOGGER.warning('{0} not found in the {1} file, assuming no database used'.format('bot', filename))
+
+        if parser.has_section('geofences'):
+            items = parser.items('geofences')
+            for item in items:
+                conf[item[0]] = item[1]
+        else:
+            LOGGER.warning('{0} not found in the {1} file, assuming no database used'.format('bot', filename))
 
         if not parser.has_section('csv') and not parser.has_section('database'):
             raise Exception('No csv file or database specified, please do at least one.')
@@ -125,11 +137,36 @@ class Configuration(object):
             if 'password' in conf.keys():
                 self.db_password = conf['password']
             else:
-                logger.info("No password set, assuming none.")
+                LOGGER.warning("No password set, assuming none.")
             if 'port' in conf.keys():
                 self.db_port = conf['port']
             else:
-                logger.info("No port set, assuming %d." % self.db_port)
+                LOGGER.warning("No port set, assuming %d." % self.db_port)
+
+        if 'use_geofences' in conf.keys():
+            if conf['use_geofences'] == 'True':
+                self.use_geofences = True
+
+        if self.use_geofences:
+            geofences = None
+            channels = None
+            if 'geofences' in conf.keys():
+                geofences = json.loads(conf['geofences'])
+                geofences = [os.path.abspath(x) for x in geofences]
+            if 'channels' in conf.keys():
+                channels = json.loads(conf['channels'])
+
+            if not geofences or not channels or len(channels) != len(geofences):
+                raise Exception("You specified to use geofences.\n"
+                                "The Number of channels must match number of geofences.\n"
+                                "Both are lists, defining a one-to-one mapping channels[i] -> geofences[i].\n"
+                                "Example:\n\n"
+                                "geofences = ['geofencefile1.txt']\nchannels = ['discord_channel_id_1']\n"
+                                "--> To define that in channel << discord_channel_id_1 >> we only search for coordinates that lay in the geofence defined by << geofencefile1.txt >>")
+            self.channel_to_geofences = dict(zip(channels, geofences))
+
+
+
 
 
 

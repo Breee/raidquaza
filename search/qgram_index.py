@@ -1,10 +1,3 @@
-"""
-Copyright 2015, University of Freiburg.
-Chair of Algorithms and Data Structures.
-Elmar Haussmann <haussmann@cs.uni-freiburg.de>
-Julian Löffler <Loeffler.uni@gmail.com>
-"""
-
 import sys
 import time
 import re
@@ -14,13 +7,19 @@ from collections import Counter
 import math
 from enum import Enum
 from abc import ABC, abstractmethod
-
-
+from globals.globals import LOGGER
+from geofence.geofencehelper import GeofenceHelper
+from config.Configuration import Configuration
 
 class SCORING_TYPE(Enum):
     LEVENSHTEIN = 1,
     NEEDLEMAN_WUNSCH = 2,
     AFFINE_GAPS = 3
+
+class RECORD_TYPE(Enum):
+    GYM = 1,
+    POKESTOP = 2,
+    QUEST = 3
 
 
 def get_qgrams(str, q):
@@ -241,7 +240,7 @@ class QgramIndex(ABC):
         pass
 
     @abstractmethod
-    def build_from_lists(self, input):
+    def build_from_lists(self, input, geofence=None):
         """ Build index of point of interest, from a list which contains tuples of the form (name,lat,lon,type)"""
         pass
 
@@ -262,10 +261,14 @@ class PointOfInterestQgramIndex(QgramIndex):
     types are Arena,Pokestop.
     """
 
-    def __init__(self, q):
+    def __init__(self, q, config: Configuration):
         """ Create an empty q-gram index for given q (size of the q-grams). """
         super().__init__(q)
-
+        self.use_geofences = config.use_geofences
+        self.channel_to_geofence_helper = dict()
+        if self.use_geofences:
+            for channel_id, geofence in config.channel_to_geofences.items():
+                self.channel_to_geofence_helper[channel_id] = GeofenceHelper(geofence)
 
     def build_from_file(self, file_name):
         """ Build index for text in given file, one record per line. """
@@ -323,12 +326,12 @@ class PointOfInterestQgramIndex(QgramIndex):
             # dont got always 3 entries
             # second tab, longitude
             if (len(row) > 1):
-                self.longitude.append(row[1])
+                self.longitude.append(row[2])
             else:
                 self.longitude.append(None)
             # third tab, latitude
             if (len(row) > 2):
-                self.latitude.append(row[2])
+                self.latitude.append(row[1])
             else:
                 self.latitude.append(None)
 
@@ -359,7 +362,19 @@ class PointOfInterestQgramIndex(QgramIndex):
         """
         return self.inverted_lists.get(qgram, [])
 
-    def find_matches(self, query, delta, k=5, use_qindex=True):
+    def get_score(self, query, word):
+        if self.scoring_method == SCORING_TYPE.LEVENSHTEIN:
+            ed = levenshtein(query, word)
+        elif self.scoring_method == SCORING_TYPE.NEEDLEMAN_WUNSCH:
+            ed = needleman_wunsch_scoring(query, word)
+        elif self.scoring_method == SCORING_TYPE.AFFINE_GAPS:
+            ed = affine_gap_scoring(query, word)
+        else:
+            raise NotImplementedError(f'scoring method {self.scoring_method} not implemented.')
+        return ed
+
+
+    def find_matches(self, query, delta, k=5, use_qindex=True, channel_id=None):
         """ Find the top-k matches
             """
         result_words = []
@@ -369,31 +384,21 @@ class PointOfInterestQgramIndex(QgramIndex):
             record_lists = [self.get_posting_list(qgram) for qgram in qgrams]
             merged_lists = merge(record_lists)
             threshold = (len(query) + self.q - 1) / 4
-            sys.stderr.write("query %s\n" % (query))
-            sys.stderr.write("Threshold %d\n" % (threshold))
-            n_ped_computations = 0
-            start = time.time()
             for record_id, count in merged_lists:
                 record = self.vocab[record_id]
                 word = re.sub("[ \W+\n]", "", record).lower()
-                #sys.stderr.write("Word: %s -- Qgrams in common: %d\n" % (word, count))
                 if count >= int(threshold):
-                    if self.scoring_method == SCORING_TYPE.LEVENSHTEIN:
-                        ed = levenshtein(query, word)
-                    elif self.scoring_method == SCORING_TYPE.NEEDLEMAN_WUNSCH:
-                        ed = needleman_wunsch_scoring(query, word)
-                    elif self.scoring_method == SCORING_TYPE.AFFINE_GAPS:
-                        ed = affine_gap_scoring(query, word)
-                    else:
-                        raise NotImplementedError(f'scoring method {self.scoring_method} not implemented.')
-                    n_ped_computations += 1
+                    ed = self.get_score(query, word)
                     longitude = self.longitude[record_id]
                     latitude = self.latitude[record_id]
                     type = self.types[record_id]
-                    result_words.append((record, (longitude,latitude), type, ed))
-            duration = (time.time() - start) * 1000
-            sys.stderr.write("Computing ED for %s words took %.0f ms.\n" %
-                         (n_ped_computations, duration))
+                    if self.use_geofences and channel_id and channel_id in self.channel_to_geofence_helper:
+                        geofence_helper = self.channel_to_geofence_helper[channel_id]
+                        # check if point is in geofence
+                        if geofence_helper.is_in_any_geofence(latitude, longitude):
+                            result_words.append((record, (latitude, longitude), type, ed))
+                    else:
+                        result_words.append((record, (latitude,longitude), type, ed))
         result = sorted(result_words, key=lambda x: x[3], reverse=False)[:k]
         return result
 
