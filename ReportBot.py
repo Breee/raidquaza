@@ -1,75 +1,31 @@
-"""
-MIT License
-
-Copyright (c) 2018 Breee@github
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-"""
-
+'\nMIT License\n\nCopyright (c) 2018 Breee@github\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the "Software"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.\n'
 from config.Configuration import Configuration
 from discord.ext import commands
 import discord
 from _datetime import datetime, timedelta
 import aiohttp
-import logging
-import os
 from search.FuzzySearcher import FuzzySearcher
 from search.qgram_index import SCORING_TYPE
 from globals.globals import LOGGER
-
-if os.path.isfile('help_msg.txt'):
-    with open('help_msg.txt', 'r') as helpfile:
-        HELP_MSG = helpfile.read()
-
-BANNED_USERS = []
-if os.path.isfile('banned_users.txt'):
-    with open('banned_users.txt', 'r') as banned_users:
-        for line in banned_users:
-            BANNED_USERS.append(line)
+from cogs.searchcog import SearchCog
 
 
 class ReportBot(commands.Bot):
+
     def __init__(self, prefix, description, config_file):
         super().__init__(command_prefix=prefix, description=description, pm_help=None, help_attrs=dict(hidden=True))
         self.config = Configuration(config_file)
-        self.add_command(self.ping)
-        self.add_command(self.uptime)
-        self.remove_command("help")
-        self.add_command(self.help)
-        self.add_command(self.search)
-        self.add_command(self.arena)
-        self.add_command(self.stop)
-        self.add_command(self.scoring)
-        self.add_command(self.reindex)
+        self.fuzzy_searcher = FuzzySearcher(self.config)
+        self.add_cog(SearchCog(self))
         self.start_time = 0
         self.session = aiohttp.ClientSession(loop=self.loop)
-        #
-        self.fuzzy_searcher = FuzzySearcher(self.config)
 
-    """
-    ################ EVENTS ###############
-    """
+    '################ EVENTS ###############'
 
     async def on_ready(self):
-        LOGGER.info("Bot is ready.")
+        LOGGER.info('Bot is ready.')
         self.start_time = datetime.utcnow()
-        await self.change_presence(game=discord.Game(name=self.config.playing))
+        await self.change_presence(activity=discord.Game(name=self.config.playing))
 
     def run(self):
         super().run(self.config.token, reconnect=True)
@@ -80,97 +36,3 @@ class ReportBot(commands.Bot):
 
     async def on_resumed(self):
         print('resumed...')
-
-
-    """
-    ################ COMMANDS ###############
-    """
-
-    @commands.command(hidden=True)
-    async def ping(self):
-        await self.say("pong!")
-
-    @commands.command(hidden=True)
-    async def uptime(self):
-        await self.say("Online for %s" % str(datetime.datetime.utcnow() - self.start_time))
-
-    @commands.command(hidden=True)
-    async def reindex(self):
-        self.fuzzy_searcher.index(self.config)
-        await self.say("new index built, happy searching!")
-
-
-    @commands.command(hidden=True, pass_context=True)
-    async def scoring(self, ctx, type):
-        if type == "needleman_wunsch":
-            self.fuzzy_searcher.point_of_interest_index.scoring_method = SCORING_TYPE.NEEDLEMAN_WUNSCH
-            await self.say("Changed scoring method to %s" % type)
-        elif type == "levenshtein":
-            self.fuzzy_searcher.point_of_interest_index.scoring_method = SCORING_TYPE.LEVENSHTEIN
-            await self.say("Changed scoring method to %s" % type)
-        elif type == "affine":
-            self.fuzzy_searcher.point_of_interest_index.scoring_method = SCORING_TYPE.AFFINE_GAPS
-            await self.say("Changed scoring method to %s" % type)
-        await self.delete_message(ctx.message)
-
-
-    @commands.command(pass_context=True)
-    async def help(self, ctx, here=None):
-        if not here:
-            await self.send_message(destination=ctx.message.author, content=HELP_MSG)
-        else:
-            await self.say(HELP_MSG)
-
-
-    @commands.command(pass_context=True, enabled=True)
-    async def search(self, ctx, *, query):
-        msg = ""
-        results = self.fuzzy_searcher.search(query, num_results=5, channel_id=ctx.message.channel.id)
-        if results:
-            for arena, location, type, ed in results:
-                maps_link = "https://www.google.com/maps/place/%s,%s" % (location[0], location[1])
-                msg += "- **%s:**\t[%s](%s)\t(ed: %d)\n" % (
-                type.strip(), arena.strip(), maps_link.replace("\n", "").strip(), ed)
-        else:
-            msg += "No results found ..."
-        embed = discord.Embed(color=0xa80000, title="Top results for query '%s'" % query,
-                              description=msg)
-        await self.send_message(destination=ctx.message.channel, content="", embed=embed)
-
-
-    @commands.command(pass_context=True)
-    async def arena(self, ctx, *, query):
-        msg = ""
-        results = self.fuzzy_searcher.search(query, num_results=15, channel_id=ctx.message.channel.id)
-        result_count = 0
-        if results:
-            for arena, location, type, ed in results:
-                maps_link = "https://www.google.com/maps/place/%s,%s" % (location[0], location[1])
-                if type == "Arena" and result_count < 5:
-                    msg += "- **%s:**\t[%s](%s)\t(ed: %d)\n" % (
-                    type.strip(), arena.strip(), maps_link.replace("\n", "").strip(), ed)
-                    result_count += 1
-        else:
-            msg += "No results found ..."
-        embed = discord.Embed(color=0xa80000, title="Top results for query '%s'" % query,
-                              description=msg)
-        await self.send_message(destination=ctx.message.channel, content="", embed=embed)
-
-
-    @commands.command(pass_context=True)
-    async def stop(self, ctx, *, query):
-        msg = ""
-        results = self.fuzzy_searcher.search(query, num_results=15,channel_id=ctx.message.channel.id)
-        result_count = 0
-        if results:
-            for arena, location, type, ed in results:
-                maps_link = "https://www.google.com/maps/place/%s,%s" % (location[0], location[1])
-                if type == "Pokestop" and result_count < 5:
-                    msg += "- **%s:**\t[%s](%s)\t(ed: %d)\n" % (
-                        type.strip(), arena.strip(), maps_link.replace("\n", "").strip(), ed)
-                    result_count += 1
-        else:
-            msg += "No results found ..."
-        embed = discord.Embed(color=0xa80000, title="Top results for query '%s'" % query,
-                              description=msg)
-        await self.send_message(destination=ctx.message.channel, content="", embed=embed)
