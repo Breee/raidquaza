@@ -8,16 +8,15 @@ from search.FuzzySearcher import FuzzySearcher
 from search.qgram_index import SCORING_TYPE
 from globals.globals import LOGGER
 from cogs.searchcog import SearchCog
-
+from cogs.utilscog import UtilsCog
 
 class ReportBot(commands.Bot):
 
     def __init__(self, prefix, description, config_file):
         super().__init__(command_prefix=prefix, description=description, pm_help=None, help_attrs=dict(hidden=True))
         self.config = Configuration(config_file)
-        self.fuzzy_searcher = FuzzySearcher(self.config)
-        self.add_cog(SearchCog(self))
-        self.start_time = 0
+        self.add_cog(SearchCog(self, self.config))
+        self.add_cog(UtilsCog(self))
         self.session = aiohttp.ClientSession(loop=self.loop)
 
     '################ EVENTS ###############'
