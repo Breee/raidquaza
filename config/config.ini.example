@@ -15,5 +15,5 @@ port = 3306
 
 [geofences]
 use_geofences = True
-geofences = ["geofence.txt"]
-channels = ["12321425124"]
+geofences = ["geofence1.txt", "geofence2.txt"]
+channels = [12321425124, 12321425124]
