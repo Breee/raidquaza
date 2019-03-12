@@ -39,6 +39,8 @@ class Configuration(object):
         self.db_user = ""
         self.db_password = ""
         self.db_port = 3306
+        self.pokestop_table_name = "pokestops"
+        self.gym_table_name = "forts"
         self.use_geofences = False
         self.channel_to_geofences = dict()
         self.read_config_file(config_file)
@@ -66,7 +68,11 @@ class Configuration(object):
         >>> c.db_password
         'password'
         >>> c.channel_to_geofences
-        {'12321425124': '/home/bree/repos/pokemon-discord-report-bot/config/geofence.txt'}
+        {12321425124: '/home/bree/repos/pokemon-discord-report-bot/config/config/geofence1.txt'}
+        >>> c.pokestop_table_name
+        'pokestops'
+        >>> c.gym_table_name
+        'forts'
 
         """
         # create parser and read ini configuration file
@@ -142,6 +148,16 @@ class Configuration(object):
                 self.db_port = conf['port']
             else:
                 LOGGER.warning("No port set, assuming %d." % self.db_port)
+
+            if 'pokestop_table_name' in conf.keys():
+                self.pokestop_table_name = conf['pokestop_table_name']
+            else:
+                LOGGER.warning("No pokestop_table_name set, assuming %d." % self.pokestop_table_name)
+
+            if 'gym_table_name' in conf.keys():
+                self.gym_table_name = conf['gym_table_name']
+            else:
+                LOGGER.warning("No pokestop_table_name set, assuming %d." % self.pokestop_table_name)
 
         if 'use_geofences' in conf.keys():
             if conf['use_geofences'] == 'True':

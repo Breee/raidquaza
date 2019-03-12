@@ -28,14 +28,17 @@ from globals.globals import LOGGER
 
 class DbHandler(object):
 
-    def __init__(self, host, db, port, user, password):
+    def __init__(self, host, db, port, user, password,pokestop_table_name, gym_table_name):
         self.host = host
         self.db = db
         self.port = port
         self.user = user
         self.password = password
+        self.pokestop_table_name = pokestop_table_name
+        self.gym_table_name = gym_table_name
         self.conn = None
         self.cursor = None
+
         try:
             config = {'user': self.user,
                       'password': self.password,
@@ -62,12 +65,12 @@ class DbHandler(object):
         LOGGER.info("Pulling forts and stops from DB")
         forts = []
         stops = []
-        self.cursor.execute("SELECT name, lat, lon FROM forts")
+        self.cursor.execute(f"SELECT name, lat, lon FROM {self.gym_table_name}")
         for row in self.cursor:
             if row[0]:
                 forts.append(row + ('Arena',))
 
-        self.cursor.execute("SELECT name, lat, lon FROM pokestops")
+        self.cursor.execute(f"SELECT name, lat, lon FROM {self.pokestop_table_name}")
         for row in self.cursor:
             if row[0]:
                 stops.append(row + ('Pokestop',))

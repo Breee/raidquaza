@@ -42,7 +42,9 @@ class FuzzySearcher(object):
         if config.use_database:
             LOGGER.info("Using database")
             self.db_handler = DbHandler(host=config.db_host, db=config.db_name, port=config.db_port,
-                                        user=config.db_user, password=config.db_password)
+                                        user=config.db_user, password=config.db_password,
+                                        pokestop_table_name=config.pokestop_table_name,
+                                        gym_table_name=config.gym_table_name)
             forts, stops = self.db_handler.get_forts_stops()
             input = [*forts, *stops]
             self.db_handler.disconnect()
