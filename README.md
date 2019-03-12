@@ -22,7 +22,7 @@ pip3 install -U -r requirements.txt
 
 ## 3. Configuration:
 Copy the file `config.ini.example` to `config.ini` (or create it). 
-The configuration file is of the form: 
+The configuration file can contain sections of the form: 
 
 ```
 [bot]
