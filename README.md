@@ -47,12 +47,12 @@ channels = [12321425124, 12321425124]
 ```
 where:
 
-- [bot]: 
+### [bot] section: 
  -`<bot_token>` is the token of your discord bot user.
-- [csv]:
+###  [csv] section:
   * `<.csv file>` is a .csv file, which consists of 4 columns: Name, long, lat,Type(Arena/Pokestop)
   an example file is `data/gyms_stops.csv` which contains all pokestops and arenas of the city Freiburg.
-- [database]: 
+### [database] section: 
  In the `database` section you can define the database, from which the bot shall pull gyms and pokestops.  (e.g. monocle)
 The database must have tables  `forts`  and `pokestops`,  both must have columns `name`, `lat`, `lon` 
   * `use_database`: (True|False)
@@ -62,10 +62,11 @@ The database must have tables  `forts`  and `pokestops`,  both must have columns
   * `password`: Database Password of your user.
 
 You must choose between using a csv file or a database.
+Just delete the section you do not need.
 **Currently we only support mysql/mariadb databases**
 
-- [geofences]
- * If your set of Point of Interests is really big and covers multiple regions, you can use geofences. 
+### [geofences] section:
+ * If your set of Point of Interests is really big and covers multiple regions, you can use geofences 
  * `use_geofences`: True | False  - Enables the usage of geofences.
  * `geofences` defines a list of geofences, an entry in the list defines a path to a geofence (starting from the repository root)
  * `channels` defines a list of discord-channel IDs. You can find out the ID of a channel, by enabling the developer mode in discord; When enabled, you can right click a channel and copy its ID. Channel IDs are **integers**, not strings.
@@ -85,6 +86,7 @@ channels = [CHANNEL_ID_1, CHANNEL_ID_2]
 Which means that in channel `CHANNEL_ID_1` you can only search within the geofences defined in `"config/geofence1.txt"`,
 and in channel `CHANNEL_ID_2` you can only search within the geofences defined in `"config/geofence2.txt"`.
 
+If you do not need this feature, just delete the section in the config.
 
 ## 4. Starting the bot
 Call:
