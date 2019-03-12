@@ -24,7 +24,7 @@ SOFTWARE.
 
 from mysql.connector import MySQLConnection, Error
 import logging
-LOGGER = logging.getLogger('discord')
+from globals.globals import LOGGER
 
 class DbHandler(object):
 
@@ -71,7 +71,7 @@ class DbHandler(object):
         for row in self.cursor:
             if row[0]:
                 stops.append(row + ('Pokestop',))
-        LOGGER.info("Done.")
+        LOGGER.info("Pulled %d forts and %d stops" % (len(forts), len(stops)))
         return forts, stops
 
 
