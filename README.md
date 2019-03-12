@@ -39,6 +39,8 @@ database = db_name
 user = user_name
 password = password
 port = 3306
+pokestop_table_name = pokestops
+gym_table_name = forts
 
 [geofences]
 use_geofences = True
@@ -49,21 +51,31 @@ where:
 
 ### [bot] section: 
  -`<bot_token>` is the token of your discord bot user.
-###  [csv] section:
+
+### Defining the source of Point of Interests. 
+You must choose between using a csv file or a database.
+Just the section you need.
+
+**Limitations:** 
+- Currently we only support mysql/mariadb databases
+- Currently we only support databases which have tables names tables  `forts`  and `pokestops`
+
+
+####  [csv] section:
   * `<.csv file>` is a .csv file, which consists of 4 columns: Name, long, lat,Type(Arena/Pokestop)
   an example file is `data/gyms_stops.csv` which contains all pokestops and arenas of the city Freiburg.
-### [database] section: 
+
+
+#### [database] section: 
  In the `database` section you can define the database, from which the bot shall pull gyms and pokestops.  (e.g. monocle)
 The database must have tables  `forts`  and `pokestops`,  both must have columns `name`, `lat`, `lon` 
-  * `use_database`: (True|False)
+  * `use_database`: True False - enables the use of database.
   * `host`:  Database host
   * `database`: Database Name
   * `user`: Database User
   * `password`: Database Password of your user.
-
-You must choose between using a csv file or a database.
-Just delete the section you do not need.
-**Currently we only support mysql/mariadb databases**
+  * `pokestop_table_name` : table which contains pokestops.
+  * `gym_table_name`: table which contains gyms.
 
 ### [geofences] section:
  * If your set of Point of Interests is really big and covers multiple regions, you can use geofences 
