@@ -39,6 +39,11 @@ database = db_name
 user = user_name
 password = password
 port = 3306
+
+[geofences]
+use_geofences = True
+geofences = ["config/geofence1.txt", "config/geofence2.txt"]
+channels = [12321425124, 12321425124]
 ```
 where:
 
@@ -50,13 +55,36 @@ where:
 - [database]: 
  In the `database` section you can define the database, from which the bot shall pull gyms and pokestops.  (e.g. monocle)
 The database must have tables  `forts`  and `pokestops`,  both must have columns `name`, `lat`, `lon` 
-  * use_database: (True|False)
-  * host:  Database host
-  * database: Database Name
-  * user: Database User
-  * password: Database Password of your user.
+  * `use_database`: (True|False)
+  * `host`:  Database host
+  * `database`: Database Name
+  * `user`: Database User
+  * `password`: Database Password of your user.
 
 You must choose between using a csv file or a database.
+**Currently we only support mysql/mariadb databases**
+
+- [geofences]
+ * If your set of Point of Interests is really big and covers multiple regions, you can use geofences. 
+ * `use_geofences`: True | False  - Enables the usage of geofences.
+ * `geofences` defines a list of geofences, an entry in the list defines a path to a geofence (starting from the repository root)
+ * `channels` defines a list of discord-channel IDs. You can find out the ID of a channel, by enabling the developer mode in discord; When enabled, you can right click a channel and copy its ID. Channel IDs are **integers**, not strings.
+ 
+The lists  `geofences` and `channels` define a one-to-one mapping.
+
+Example:
+The follwing definition
+```
+geofences = ["config/geofence1.txt", "config/geofence2.txt"]
+channels = [CHANNEL_ID_1, CHANNEL_ID_2]
+```
+- Defines a mapping: 
+* `CHANNEL_ID_1` -> `"config/geofence1.txt"`
+* `CHANNEL_ID_2` -> `"config/geofence2.txt"`
+
+Which means that in channel `CHANNEL_ID_1` you can only search within the geofences defined in `"config/geofence1.txt"`,
+and in channel `CHANNEL_ID_2` you can only search within the geofences defined in `"config/geofence2.txt"`.
+
 
 ## 4. Starting the bot
 Call:
