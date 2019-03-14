@@ -58,7 +58,7 @@ Just the section you need.
 
 **Limitations:** 
 - Currently we only support mysql/mariadb databases
-- Currently we only support databases which have tables names tables  `forts`  and `pokestops`
+
 
 
 ####  [csv] section:
