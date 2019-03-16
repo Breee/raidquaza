@@ -45,7 +45,7 @@ class FuzzySearcher(object):
                                         user=config.db_user, password=config.db_password,
                                         pokestop_table_name=config.pokestop_table_name,
                                         gym_table_name=config.gym_table_name)
-            forts, stops = self.db_handler.get_forts_stops()
+            forts, stops = self.db_handler.get_gyms_stops()
             input = [*forts, *stops]
             self.db_handler.disconnect()
 

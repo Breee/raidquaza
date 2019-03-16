@@ -25,6 +25,7 @@ SOFTWARE.
 from mysql.connector import MySQLConnection, Error
 import logging
 from globals.globals import LOGGER
+from search.enums import RECORD_TYPE
 
 class DbHandler(object):
 
@@ -61,26 +62,26 @@ class DbHandler(object):
         self.conn.close()
         LOGGER.info("disconnected from DB")
 
-    def get_forts_stops(self):
+    def get_gyms_stops(self):
         LOGGER.info("Pulling forts and stops from DB")
-        forts = []
+        gyms = []
         stops = []
         self.cursor.execute(f"SELECT name, lat, lon FROM {self.gym_table_name}")
         for row in self.cursor:
             if row[0]:
-                forts.append(row + ('Arena',))
+                gyms.append(row + (RECORD_TYPE.GYM,))
 
         self.cursor.execute(f"SELECT name, lat, lon FROM {self.pokestop_table_name}")
         for row in self.cursor:
             if row[0]:
-                stops.append(row + ('Pokestop',))
-        LOGGER.info("Pulled %d forts and %d stops" % (len(forts), len(stops)))
-        return forts, stops
+                stops.append(row + (RECORD_TYPE.POKESTOP,))
+        LOGGER.info("Pulled %d forts and %d stops" % (len(gyms), len(stops)))
+        return gyms, stops
 
 
 if __name__ == '__main__':
     db = DbHandler(host = 'localhost', db = 'monocle', user = 'monocleuser', password = 'test123', port = 3306)
-    forts, stops = db.get_forts_stops()
+    forts, stops = db.get_gyms_stops()
     print(len(forts), forts)
     print(len(stops), stops)
     db.disconnect()

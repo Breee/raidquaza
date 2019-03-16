@@ -1,8 +1,8 @@
 import discord
 from discord.ext import commands
 from search.FuzzySearcher import FuzzySearcher
-from search.qgram_index import SCORING_TYPE
 from globals.globals import LOGGER
+from search.enums import SCORING_TYPE,RECORD_TYPE
 
 class SearchCog(commands.Cog, name="Search"):
     def __init__(self, bot, config):
@@ -35,50 +35,49 @@ class SearchCog(commands.Cog, name="Search"):
         if not msg:
             msg = 'Changed scoring method to %s' % type
         await ctx.send(msg)
-        await ctx.message.delete()
 
-    @commands.command(help="Search for a Point of Interest")
+    @commands.command(help="Search for a Point of Interest", aliases=['s', 'query', 'q'])
     async def search(self, ctx, *, query):
         msg = ''
         results = self.fuzzy_searcher.search(query, num_results=5, channel_id=ctx.channel.id)
         if results:
-            for (arena, location, type, ed) in results:
+            for (poi, location, type, ed) in results:
                 maps_link = 'https://www.google.com/maps/place/%s,%s' % (location[0], location[1])
                 msg += '- **%s:**\t[%s](%s)\t(ed: %d)\n' % (
-                type.strip(), arena.strip(), maps_link.replace('\n', '').strip(), ed)
+                type.value[0], poi.strip(), maps_link.replace('\n', '').strip(), ed)
         else:
             msg += 'No results found ...'
         embed = discord.Embed(color=11010048, title="Top results for query '%s'" % query, description=msg)
         await ctx.channel.send(content='', embed=embed)
 
-    @commands.command(help="Search for an Arena")
-    async def arena(self, ctx, *, query):
+    @commands.command(help="Search for a Gym", aliases=['arena'])
+    async def gym(self, ctx, *, query):
         msg = ''
         results = self.fuzzy_searcher.search(query, num_results=15, channel_id=ctx.channel.id)
         result_count = 0
         if results:
-            for (arena, location, type, ed) in results:
+            for (gym, location, type, ed) in results:
                 maps_link = 'https://www.google.com/maps/place/%s,%s' % (location[0], location[1])
-                if (type == 'Arena') and (result_count < 5):
+                if (type == RECORD_TYPE.GYM) and (result_count < 5):
                     msg += '- **%s:**\t[%s](%s)\t(ed: %d)\n' % (
-                    type.strip(), arena.strip(), maps_link.replace('\n', '').strip(), ed)
+                    type.value[0], gym.strip(), maps_link.replace('\n', '').strip(), ed)
                     result_count += 1
         else:
             msg += 'No results found ...'
         embed = discord.Embed(color=11010048, title="Top results for query '%s'" % query, description=msg)
         await ctx.channel.send(content='', embed=embed)
 
-    @commands.command(help="Search for a Pokestop")
+    @commands.command(help="Search for a Pokestop", aliases=['pokestop'])
     async def stop(self, ctx, *, query):
         msg = ''
         results = self.fuzzy_searcher.search(query, num_results=15, channel_id=ctx.channel.id)
         result_count = 0
         if results:
-            for (arena, location, type, ed) in results:
+            for (pokestop, location, type, ed) in results:
                 maps_link = 'https://www.google.com/maps/place/%s,%s' % (location[0], location[1])
-                if (type == 'Pokestop') and (result_count < 5):
+                if (type == RECORD_TYPE.POKESTOP) and (result_count < 5):
                     msg += '- **%s:**\t[%s](%s)\t(ed: %d)\n' % (
-                    type.strip(), arena.strip(), maps_link.replace('\n', '').strip(), ed)
+                    type.value[0], pokestop.strip(), maps_link.replace('\n', '').strip(), ed)
                     result_count += 1
         else:
             msg += 'No results found ...'

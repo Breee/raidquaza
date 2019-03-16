@@ -4,23 +4,11 @@ import re
 import numpy as np
 import csv
 from collections import Counter
-import math
-from enum import Enum
 from abc import ABC, abstractmethod
 from globals.globals import LOGGER
 from geofence.geofencehelper import GeofenceHelper
 from config.Configuration import Configuration
-
-class SCORING_TYPE(Enum):
-    LEVENSHTEIN = 1,
-    NEEDLEMAN_WUNSCH = 2,
-    AFFINE_GAPS = 3
-
-class RECORD_TYPE(Enum):
-    GYM = 1,
-    POKESTOP = 2,
-    QUEST = 3
-
+from search.enums import SCORING_TYPE,RECORD_TYPE
 
 def get_qgrams(str, q):
     """ Returns all q-grams for str.
@@ -297,12 +285,12 @@ class PointOfInterestQgramIndex(QgramIndex):
 
                 # fourth tab, type
                 if (len(row) > 3):
-                    if row[3] == 'Arena':
-                        self.types.append("Arena")
+                    if row[3] == 'Gym':
+                        self.types.append(RECORD_TYPE.GYM)
                     elif row[3] == 'Pokestop':
-                        self.types.append("Pokestop")
+                        self.types.append(RECORD_TYPE.POKESTOP)
                     else:
-                        self.types.append("Arena/Pokestop")
+                        self.types.append(RECORD_TYPE.UNKNOWN)
                 else:
                     self.types.append(None)
 
@@ -337,14 +325,13 @@ class PointOfInterestQgramIndex(QgramIndex):
 
             # fourth tab, type
             if (len(row) > 3):
-                if row[3] == 'Arena':
-                    self.types.append("Arena")
-                elif row[3] == 'Pokestop':
-                    self.types.append("Pokestop")
+                record_type = row[3]
+                if record_type == RECORD_TYPE.GYM or record_type == RECORD_TYPE.POKESTOP:
+                    self.types.append(record_type)
                 else:
-                    self.types.append("Arena/Pokestop")
+                    self.types.append(RECORD_TYPE.UNKNOWN)
             else:
-                self.types.append(None)
+                self.types.append(RECORD_TYPE.UNKNOWN)
 
             # on the fly calc qgrams
             word = re.sub("[ \W+\n]", "", record).lower()
