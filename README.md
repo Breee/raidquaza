@@ -54,7 +54,7 @@ where:
 
 ### Defining the source of Point of Interests. 
 You must choose between using a csv file or a database.
-Just the section you need.
+Just use the section you need.
 
 **Limitations:** 
 - Currently we only support mysql/mariadb databases
@@ -68,14 +68,14 @@ Just the section you need.
 
 #### [database] section: 
  In the `database` section you can define the database, from which the bot shall pull gyms and pokestops.  (e.g. monocle)
-The database must have tables  `forts`  and `pokestops`,  both must have columns `name`, `lat`, `lon` 
   * `use_database`: True False - enables the use of database.
   * `host`:  Database host
   * `database`: Database Name
   * `user`: Database User
   * `password`: Database Password of your user.
-  * `pokestop_table_name` : table which contains pokestops.
+  * `pokestop_table_name` : table which contains pokestops
   * `gym_table_name`: table which contains gyms.
+  The tables `pokestop_table_name` + `gym_table_name` must have columns `name`, `lat`, `lon`.
 
 ### [geofences] section:
  * If your set of Point of Interests is really big and covers multiple regions, you can use geofences 
