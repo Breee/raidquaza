@@ -1,8 +1,9 @@
 import discord
 from discord.ext import commands
-from search.FuzzySearcher import FuzzySearcher
+from search.fuzzysearch import FuzzySearcher
 from globals.globals import LOGGER
-from search.enums import SCORING_TYPE,RECORD_TYPE
+from search.enums import SCORING_TYPE, RECORD_TYPE
+
 
 class SearchCog(commands.Cog, name="Search"):
     def __init__(self, bot, config):
@@ -16,7 +17,8 @@ class SearchCog(commands.Cog, name="Search"):
         self.fuzzy_searcher.index(self.bot.config)
         await ctx.channel.send("New index built, happy searching!")
 
-    @commands.command(help="Change the scoring method of the searchengine.\n!scoring (needleman_wunsch | levenshtein | affine)")
+    @commands.command(
+            help="Change the scoring method of the searchengine.\n!scoring (needleman_wunsch | levenshtein | affine)")
     @commands.is_owner()
     async def scoring(self, ctx, type):
         msg = None
@@ -44,7 +46,7 @@ class SearchCog(commands.Cog, name="Search"):
             for (poi, location, type, ed) in results:
                 maps_link = 'https://www.google.com/maps/place/%s,%s' % (location[0], location[1])
                 msg += '- **%s:**\t[%s](%s)\t(ed: %d)\n' % (
-                type.value[0], poi.strip(), maps_link.replace('\n', '').strip(), ed)
+                    type.value[0], poi.strip(), maps_link.replace('\n', '').strip(), ed)
         else:
             msg += 'No results found ...'
         embed = discord.Embed(color=11010048, title="Top results for query '%s'" % query, description=msg)
@@ -60,7 +62,7 @@ class SearchCog(commands.Cog, name="Search"):
                 maps_link = 'https://www.google.com/maps/place/%s,%s' % (location[0], location[1])
                 if (type == RECORD_TYPE.GYM) and (result_count < 5):
                     msg += '- **%s:**\t[%s](%s)\t(ed: %d)\n' % (
-                    type.value[0], gym.strip(), maps_link.replace('\n', '').strip(), ed)
+                        type.value[0], gym.strip(), maps_link.replace('\n', '').strip(), ed)
                     result_count += 1
         else:
             msg += 'No results found ...'
@@ -77,7 +79,7 @@ class SearchCog(commands.Cog, name="Search"):
                 maps_link = 'https://www.google.com/maps/place/%s,%s' % (location[0], location[1])
                 if (type == RECORD_TYPE.POKESTOP) and (result_count < 5):
                     msg += '- **%s:**\t[%s](%s)\t(ed: %d)\n' % (
-                    type.value[0], pokestop.strip(), maps_link.replace('\n', '').strip(), ed)
+                        type.value[0], pokestop.strip(), maps_link.replace('\n', '').strip(), ed)
                     result_count += 1
         else:
             msg += 'No results found ...'

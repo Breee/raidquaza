@@ -27,9 +27,10 @@ import logging
 from globals.globals import LOGGER
 from search.enums import RECORD_TYPE
 
-class DbHandler(object):
 
-    def __init__(self, host, db, port, user, password,pokestop_table_name, gym_table_name):
+class SearchDatabaseHandler(object):
+
+    def __init__(self, host, db, port, user, password, pokestop_table_name, gym_table_name):
         self.host = host
         self.db = db
         self.port = port
@@ -41,11 +42,12 @@ class DbHandler(object):
         self.cursor = None
 
         try:
-            config = {'user': self.user,
+            config = {'user':     self.user,
                       'password': self.password,
                       'database': self.db,
-                      'host': self.host,
-                      'port': self.port}
+                      'host':     self.host,
+                      'port':     self.port
+                      }
             LOGGER.info('Connecting to MySQL database...')
             self.conn = MySQLConnection(**config)
             self.cursor = self.conn.cursor()
@@ -80,9 +82,8 @@ class DbHandler(object):
 
 
 if __name__ == '__main__':
-    db = DbHandler(host = 'localhost', db = 'monocle', user = 'monocleuser', password = 'test123', port = 3306)
+    db = DbHandler(host='localhost', db='monocle', user='monocleuser', password='test123', port=3306)
     forts, stops = db.get_gyms_stops()
     print(len(forts), forts)
     print(len(stops), stops)
     db.disconnect()
-

@@ -26,23 +26,42 @@ from configparser import ConfigParser
 from globals.globals import LOGGER
 import json
 import os
+from ConfigObject import ConfigObject
+import enum
+
+
+class DataSource(enum.Enum):
+    CSV = 1,
+    DATABASE = 2
+
 
 class Configuration(object):
 
     def __init__(self, config_file):
         self.token = ""
         self.playing = ""
-        self.point_of_interests = ""
-        self.use_database = False
-        self.db_host = ""
-        self.db_name = ""
-        self.db_user = ""
-        self.db_password = ""
-        self.db_port = 3306
+        self.use_search = False
+        self.data_source = DataSource.CSV
+        self.use_geofences = False
+        self.use_polls = False
+        self.csv_file = ""
+        self.search_db_host = ""
+        self.search_db_name = ""
+        self.search_db_user = ""
+        self.search_db_password = ""
+        self.search_db_port = 3306
         self.pokestop_table_name = "pokestops"
         self.gym_table_name = "forts"
-        self.use_geofences = False
         self.channel_to_geofences = dict()
+        self.use_polls = None
+        self.poll_db_host = None
+        self.poll_db_user = None
+        self.poll_db_password = None
+        self.poll_db_port = None
+        self.poll_db_database = None
+        self.poll_db_dialect = None
+        self.poll_db_driver = None
+        self.parser = ConfigParser()
         self.read_config_file(config_file)
 
     def read_config_file(self, filename='config.ini.example'):
@@ -53,150 +72,66 @@ class Configuration(object):
         >>> c = Configuration(config_file='config.ini.example')
         >>> c.token
         '<bot_token>'
-        >>> c.playing
-        'u mom lel'
-        >>> c.point_of_interests
-        '../data/gyms_stops.csv'
-        >>> c.use_database
-        True
-        >>> c.db_host
-        'localhost'
-        >>> c.db_name
-        'db_name'
-        >>> c.db_user
-        'user_name'
-        >>> c.db_password
-        'password'
-        >>> c.channel_to_geofences
-        {12321425124: '/home/bree/repos/pokemon-discord-report-bot/config/config/geofence1.txt'}
-        >>> c.pokestop_table_name
-        'pokestops'
-        >>> c.gym_table_name
-        'forts'
 
         """
-        # create parser and read ini configuration file
-        parser = ConfigParser()
-        parser.read(filename)
+        self.parser.read(filename)
 
-        # get section, default to mysql
-        conf = {}
-        if parser.has_section('bot'):
-            items = parser.items('bot')
-            for item in items:
-                conf[item[0]] = item[1]
+        # BOT SECTION
+        if self.parser.has_section('bot'):
+            bot_section = self.parser['bot']
+            if 'token' not in bot_section:
+                raise Exception("No Bot Token specified, this is required")
+            else:
+                self.token = bot_section['token']
+
+            if 'playing' in bot_section:
+                self.playing = bot_section['playing']
         else:
-            raise Exception('{0} not found in the {1} file'.format('bot', filename))
+            raise Exception(f'bot section not found in config {filename}, this is required')
 
-        if parser.has_section('csv'):
-            items = parser.items('csv')
-            for item in items:
-                conf[item[0]] = item[1]
-        else:
-            LOGGER.warning('{0} not found in the {1} file, assuming no csv provided'.format('csv', filename))
+        # SEARCH SECTION
+        if self.parser.has_section('search'):
+            self.use_search = True
+            search_section = self.parser['search']
+            if 'data_source' in search_section:
+                data_source = search_section['data_source']
+                if data_source == 'database':
+                    self.data_source = DataSource.DATABASE
+                elif data_source == 'csv':
+                    self.data_source = DataSource.CSV
+                else:
+                    raise Exception(f'datasource {data_source} unknown, choose: database / csv')
 
-        if parser.has_section('database'):
-            items = parser.items('database')
-            for item in items:
-                conf[item[0]] = item[1]
-        else:
-            LOGGER.warning('{0} not found in the {1} file, assuming no database used'.format('bot', filename))
-
-        if parser.has_section('geofences'):
-            items = parser.items('geofences')
-            for item in items:
-                conf[item[0]] = item[1]
-        else:
-            LOGGER.warning('{0} not found in the {1} file, assuming no database used'.format('bot', filename))
-
-        if not parser.has_section('csv') and not parser.has_section('database'):
-            raise Exception('No csv file or database specified, please do at least one.')
-
-        if 'token' in conf.keys():
-            self.token = conf['token']
-        else:
-            raise Exception("No Bot Token specified, this is required")
-
-        if 'playing' in conf.keys():
-            self.playing = conf['playing']
-
-        if 'point_of_interests' in conf.keys():
-            self.point_of_interests = conf['point_of_interests']
-
-        if 'use_database' in conf.keys():
-            if conf['use_database'] == 'True':
-                self.use_database = True
-
-        if self.use_database:
-            if 'host' in conf.keys():
-                self.db_host = conf['host']
-            else:
-                raise Exception("use_database = true, host is required")
-            if 'database' in conf.keys():
-                self.db_name = conf['database']
-            else:
-                raise Exception("use_database = true, database is required")
-            if 'user' in conf.keys():
-                self.db_user = conf['user']
-            else:
-                raise Exception("use_database = true, database user is required")
-            if 'password' in conf.keys():
-                self.db_password = conf['password']
-            else:
-                LOGGER.warning("No password set, assuming none.")
-            if 'port' in conf.keys():
-                self.db_port = conf['port']
-            else:
-                LOGGER.warning("No port set, assuming %d." % self.db_port)
-
-            if 'pokestop_table_name' in conf.keys():
-                self.pokestop_table_name = conf['pokestop_table_name']
-            else:
-                LOGGER.warning("No pokestop_table_name set, assuming %d." % self.pokestop_table_name)
-
-            if 'gym_table_name' in conf.keys():
-                self.gym_table_name = conf['gym_table_name']
-            else:
-                LOGGER.warning("No pokestop_table_name set, assuming %d." % self.pokestop_table_name)
-
-        if 'use_geofences' in conf.keys():
-            if conf['use_geofences'] == 'True':
-                self.use_geofences = True
-
-        if self.use_geofences:
-            geofences = None
-            channels = None
-            if 'geofences' in conf.keys():
-                geofences = json.loads(conf['geofences'])
-                geofences = [os.path.abspath(x) for x in geofences]
-            if 'channels' in conf.keys():
-                channels = json.loads(conf['channels'])
-
+            if self.data_source == DataSource.DATABASE:
+                self.search_db_host = search_section['host']
+                self.search_db_name = search_section['database']
+                self.search_db_user = search_section['user']
+                self.search_db_password = search_section['password']
+                self.search_db_port = search_section['port']
+                self.pokestop_table_name = search_section['pokestop_table_name']
+                self.gym_table_name = search_section['gym_table_name']
+            elif self.data_source == DataSource.CSV:
+                self.csv_file = search_section['csv_file']
+            # GEOFENCES
+            geofences = [os.path.abspath(x) for x in json.loads(search_section['geofences'])]
+            channels = json.loads(search_section['channels'])
             if not geofences or not channels or len(channels) != len(geofences):
-                raise Exception("You specified to use geofences.\n"
-                                "The Number of channels must match number of geofences.\n"
+                raise Exception("The Number of channels must match number of geofences.\n"
                                 "Both are lists, defining a one-to-one mapping channels[i] -> geofences[i].\n"
                                 "Example:\n\n"
                                 "geofences = ['geofencefile1.txt']\nchannels = ['discord_channel_id_1']\n"
-                                "--> To define that in channel << discord_channel_id_1 >> we only search for coordinates that lay in the geofence defined by << geofencefile1.txt >>")
+                                "--> To define that in channel << discord_channel_id_1 >> we only search for "
+                                "coordinates that lay in the geofence defined by << geofencefile1.txt >>")
             self.channel_to_geofences = dict(zip(channels, geofences))
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        # POLLS
+        if self.parser.has_section('polls'):
+            poll_section = self.parser['polls']
+            self.use_polls = True
+            self.poll_db_host = poll_section['host']
+            self.poll_db_user = poll_section['user']
+            self.poll_db_password = poll_section['password']
+            self.poll_db_port = poll_section['port']
+            self.poll_db_database = poll_section['database']
+            self.poll_db_dialect = poll_section['dialect']
+            self.poll_db_driver = poll_section['driver']

@@ -25,26 +25,28 @@ import math
 import re
 from search.qgram_index import PointOfInterestQgramIndex
 from globals.globals import LOGGER
-from db.dbmanager import DbHandler
+from search.dbmanager import SearchDatabaseHandler
+from config.Configuration import DataSource, Configuration
 
 
 class FuzzySearcher(object):
 
-    def __init__(self,config, q=3, k=5):
+    def __init__(self, config: Configuration, q=3, k=5):
         self.q = q
         self.k = k
         # init search engine
         self.index(config)
 
     def index(self, config):
-        self.point_of_interest_index = PointOfInterestQgramIndex(3,config)
+        self.point_of_interest_index = PointOfInterestQgramIndex(3, config)
         input = None
-        if config.use_database:
+        if config.data_source == DataSource.DATABASE:
             LOGGER.info("Using database")
-            self.db_handler = DbHandler(host=config.db_host, db=config.db_name, port=config.db_port,
-                                        user=config.db_user, password=config.db_password,
-                                        pokestop_table_name=config.pokestop_table_name,
-                                        gym_table_name=config.gym_table_name)
+            self.db_handler = SearchDatabaseHandler(host=config.search_db_host, db=config.search_db_name,
+                                                    port=config.search_db_port,
+                                                    user=config.search_db_user, password=config.search_db_password,
+                                                    pokestop_table_name=config.pokestop_table_name,
+                                                    gym_table_name=config.gym_table_name)
             forts, stops = self.db_handler.get_gyms_stops()
             input = [*forts, *stops]
             self.db_handler.disconnect()
@@ -62,8 +64,6 @@ class FuzzySearcher(object):
         query = re.sub("[ \W+\n]", "", query).lower()
         query = re.sub("%", " ", query).lower()
         delta = int(math.floor(len(query) / 4))
-        result = self.point_of_interest_index.find_matches(query, delta, k=num_results, use_qindex=True, channel_id=channel_id)
+        result = self.point_of_interest_index.find_matches(query, delta, k=num_results, use_qindex=True,
+                                                           channel_id=channel_id)
         return result
-
-
-
