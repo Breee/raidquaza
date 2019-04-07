@@ -23,11 +23,11 @@ SOFTWARE.
 """
 
 from globals.globals import LOGGER
-from ReportBot import ReportBot
+from bot import Raidquaza
 from config.Configuration import Configuration
 
 if __name__ == "__main__":
     LOGGER.info("Starting Bot.")
     config = Configuration("config/config.ini")
-    bot = ReportBot(description="", config=config)
+    bot = Raidquaza(description="", config=config)
     bot.run()
