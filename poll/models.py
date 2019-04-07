@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, TypeDecorator, TIMESTAMP, Boolean, UnicodeText
+from sqlalchemy import Column, Integer, String, TypeDecorator, TIMESTAMP, Boolean, UnicodeText, BigInteger
 from sqlalchemy.ext.declarative import declarative_base
 import json
 
@@ -22,18 +22,18 @@ class Poll(Base):
     creation_time = Column(TIMESTAMP)
     last_update = Column(TIMESTAMP)
     # Poll information
-    guild = Column(String(40))
-    channel = Column(String(40))
-    user = Column(String(40))
+    guild = Column(BigInteger)
+    channel = Column(BigInteger)
+    user = Column(BigInteger)
     poll_id = Column(String(255), unique=True)
-    poll_title = Column(String(255), unique=True)
+    poll_title = Column(String(255))
     options = Column(Json)
     reaction_to_option = Column(Json)
     option_to_reaction = Column(Json)
     reactions = Column(Json)
     participants = Column(Json)
     option_to_participants = Column(Json)
-    sent_message = Column(String(40), unique=True)
-    received_message = Column(String(40), unique=True)
+    sent_message = Column(BigInteger, unique=True)
+    received_message = Column(BigInteger, unique=True)
     is_immortal = Column(Boolean)
     is_enabled = Column(Boolean)
