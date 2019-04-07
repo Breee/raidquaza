@@ -10,3 +10,5 @@ __pycache__/
 config/config\.ini
 
 venv/
+
+raidquaza/config/config\.ini
