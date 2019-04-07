@@ -11,7 +11,7 @@ class PollCog(commands.Cog, name="Poll"):
         self.bot = bot
         self.pollmanager = PollManager(config)
 
-    @commands.command(help="Create a poll", aliases=['umfrage', 'raid', 'voting'])
+    @commands.command(help="Create a poll", aliases=['umfrage', 'raid', 'voting', 'r'])
     @commands.guild_only()
     async def poll(self, ctx, poll_title, *options):
         # create a new poll
@@ -27,6 +27,18 @@ class PollCog(commands.Cog, name="Poll"):
             await sent_message.add_reaction(reaction)
         for reaction in number_emojies:
             await sent_message.add_reaction(discord.utils.get(self.bot.emojis, name=reaction))
+
+    @commands.command(help="Get poll statistics")
+    async def pollstats(self, ctx, show=None):
+        msg = 'Polls:'
+        embed = discord.Embed(description=f'Total: {len(self.pollmanager.polls)}')
+        if show:
+            for id, poll in self.pollmanager.polls.items():
+                embed.add_field(name=f'ID: {id}', value=f'  *{poll.poll_title} - {poll.options}\n', inline=False)
+        await ctx.channel.send(content=msg, embed=embed)
+
+    async def readpoll(self, ctx, command_msg_id, poll_msg_id):
+        pass
 
     async def process_raw_reaction_event(self, payload: discord.RawReactionActionEvent, add):
         data = {'count': 1, 'me': payload.user_id == self.bot.user.id,
@@ -55,3 +67,13 @@ class PollCog(commands.Cog, name="Poll"):
     @commands.Cog.listener()
     async def on_raw_reaction_remove(self, payload: discord.RawReactionActionEvent):
         await self.process_raw_reaction_event(payload, add=False)
+
+    @commands.Cog.listener()
+    async def on_raw_message_delete(self, payload: discord.RawMessageDeleteEvent):
+        # check if message ID is a received msg.
+        if self.pollmanager.is_received_message(payload.message_id):
+            poll = self.pollmanager.get_poll_by_msg_id(payload.message_id)
+            channel: discord.ChannelType = self.bot.get_channel(payload.channel_id)
+            message: discord.Message = await channel.fetch_message(poll.sent_message)
+            await message.delete()
+            await channel.send(f'Deleted poll, **title:** {poll.poll_title}, **ID:** {poll.poll_id}')

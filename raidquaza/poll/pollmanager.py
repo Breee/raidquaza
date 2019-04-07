@@ -42,6 +42,8 @@ class PollManager(object):
                 self.sent_message_to_poll[poll.sent_message] = poll.poll_id
 
     def add_poll(self, poll: Poll, received_message, sent_message):
+        poll.sent_message = sent_message.id
+        poll.received_message = received_message.id
         self.polls[poll.poll_id] = poll
         self.sent_message_to_poll[sent_message.id] = poll.poll_id
         self.received_message_to_poll[received_message.id] = poll.poll_id
@@ -54,6 +56,9 @@ class PollManager(object):
     def is_sent_message(self, msg_id: int) -> bool:
         return msg_id in self.sent_message_to_poll
 
+    def is_received_message(self, msg_id: int) -> bool:
+        return msg_id in self.received_message_to_poll
+
     def get_poll_by_id(self, poll_id: str) -> Union[Poll, None]:
         if poll_id in self.polls:
             return self.polls[poll_id]
@@ -61,12 +66,16 @@ class PollManager(object):
             return None
 
     def get_poll_by_msg_id(self, msg_id: int) -> Union[Poll, None]:
+        poll_id = None
         if msg_id in self.sent_message_to_poll:
             poll_id = self.sent_message_to_poll[msg_id]
-            if poll_id in self.polls:
-                return self.polls[poll_id]
-            else:
-                return None
+        elif msg_id in self.received_message_to_poll:
+            poll_id = self.received_message_to_poll[msg_id]
+
+        if poll_id in self.polls:
+            return self.polls[poll_id]
+        else:
+            return None
 
     def serialize_json(self, poll: Poll):
         dt = {}
