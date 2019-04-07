@@ -39,11 +39,11 @@ class Poll(object):
     def __init__(self, poll_id: str, poll_title: str, options: List[Any], is_immortal=False):
         self.poll_id = poll_id
         self.creation_time = time.time()
+        self.last_update = time.time()
         self.poll_title = poll_title
         self.options = options
         self.reaction_to_option = {reaction_emojies[k]: options[k] for k in range(len(options))}
         self.option_to_reaction = {options[k]: reaction_emojies[k] for k in range(len(options))}
-        self.reactions = []
         self.participants = dict()
         self.option_to_participants = {key: [] for key in options}
         self.sent_message = None
@@ -52,24 +52,19 @@ class Poll(object):
         self.is_enabled = True
 
     def process_reaction(self, reaction, user, add):
-        # add to reactions
-        if add:
-            self.reactions.append((reaction, user))
-        else:
-            self.reactions.remove((reaction, user))
         # get users + reaction emoji
         if reaction.emoji in self.reaction_to_option:
             # set list of users for the option the reaction belongs to.
             option = self.reaction_to_option[reaction.emoji]
             if add and user not in self.option_to_participants[option]:
-                self.option_to_participants[option].append(user)
+                self.option_to_participants[option].append(user.name)
             elif not add:
-                self.option_to_participants[option].remove(user)
-        if user not in self.participants:
-            self.participants[user] = 1
+                self.option_to_participants[option].remove(user.name)
+        if user.name not in self.participants:
+            self.participants[user.name] = 1
         if hasattr(reaction.emoji, 'name') and reaction.emoji.name in number_emojies:
             amount = number_emojies[reaction.emoji.name]
-            self.participants[user] += (amount if add else -1 * amount)
+            self.participants[user.name] += (amount if add else -1 * amount)
 
     def to_discord(self):
         msg = f'Poll for **{self.poll_title}**'
@@ -78,7 +73,7 @@ class Poll(object):
             reaction = self.option_to_reaction[option]
             name = f'{reaction} {option}'
             value = ','.join(
-                    sorted([f'{x.name}[{self.participants[x]}]' for x in participants])) if participants else '-'
+                    sorted([f'{x}[{self.participants[x]}]' for x in participants])) if participants else '-'
             embed.add_field(name=name, value=value, inline=False)
             embed.set_footer(text=f'ID: {self.poll_id}')
         return msg, embed
