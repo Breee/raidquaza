@@ -18,7 +18,6 @@ class PollManager(object):
                             dialect=config.poll_db_dialect, driver=config.poll_db_driver,
                             port=config.poll_db_port)
         self.pull_polls_from_db()
-        self.bot = bot
 
     def pull_polls_from_db(self):
         polls = self.db.get_polls()
@@ -27,7 +26,8 @@ class PollManager(object):
                 poll_obj = Poll(poll_id=poll.poll_id,
                                 poll_title=poll.poll_title,
                                 options=poll.options,
-                                is_immortal=poll.is_immortal)
+                                is_immortal=poll.is_immortal,
+                                updated_since_start=False)
                 poll_obj.creation_time = poll.creation_time
                 poll_obj.last_update = poll.last_update
                 poll_obj.received_message = poll.received_message
@@ -50,7 +50,6 @@ class PollManager(object):
 
     def update_poll(self, poll: Poll):
         if poll.poll_id in self.polls:
-            # self.polls[poll.poll_id] = poll
             self.db.update_poll(poll)
 
     def is_sent_message(self, msg_id: int) -> bool:

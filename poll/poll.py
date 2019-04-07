@@ -1,6 +1,6 @@
 from typing import List, Any
 import time
-from discord import Embed
+from discord import Embed, Reaction
 
 # EMOJIS regional_indicator_A to regional_indicator_T
 reaction_emojies = ['\U0001F1E6',
@@ -36,7 +36,7 @@ class Poll(object):
     A Poll object.
     """
 
-    def __init__(self, poll_id: str, poll_title: str, options: List[Any], is_immortal=False):
+    def __init__(self, poll_id: str, poll_title: str, options: List[Any], is_immortal=False, updated_since_start=True):
         self.poll_id = poll_id
         self.creation_time = time.time()
         self.last_update = time.time()
@@ -50,6 +50,20 @@ class Poll(object):
         self.received_message = None
         self.is_immortal = is_immortal
         self.is_enabled = True
+        self.updated_since_start = updated_since_start
+
+    async def full_update(self, reactions: List[Reaction], bot_user_id: int):
+        if self.updated_since_start:
+            return
+        self.reaction_to_option = {reaction_emojies[k]: self.options[k] for k in range(len(self.options))}
+        self.option_to_reaction = {self.options[k]: reaction_emojies[k] for k in range(len(self.options))}
+        self.participants = dict()
+        self.option_to_participants = {key: [] for key in self.options}
+        for reaction in reactions:
+            async for user in reaction.users():
+                if bot_user_id != user.id:
+                    self.process_reaction(reaction=reaction, user=user, add=True)
+        self.updated_since_start = True
 
     def process_reaction(self, reaction, user, add):
         # get users + reaction emoji
