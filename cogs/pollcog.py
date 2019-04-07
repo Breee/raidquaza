@@ -34,13 +34,16 @@ class PollCog(commands.Cog, name="Poll"):
                 }
         if data['me']:
             return
-        channel = self.bot.get_channel(payload.channel_id)
-        message = await channel.fetch_message(payload.message_id)
-        reaction = discord.Reaction(message=message, data=data)
+        channel: discord.ChannelType = self.bot.get_channel(payload.channel_id)
+        message: discord.Message = await channel.fetch_message(payload.message_id)
+        reaction: discord.Reaction = discord.Reaction(message=message, data=data)
         user = self.bot.get_user(payload.user_id)
         if self.pollmanager.is_sent_message(payload.message_id):
             poll = self.pollmanager.get_poll_by_msg_id(payload.message_id)
-            poll.process_reaction(reaction, user, add=add)
+            if not poll.updated_since_start:
+                await poll.full_update(reactions=message.reactions, bot_user_id=self.bot.user.id)
+            else:
+                poll.process_reaction(reaction, user, add=add)
             msg, embed = poll.to_discord()
             self.pollmanager.update_poll(poll)
             await message.edit(content=msg, embed=embed)
