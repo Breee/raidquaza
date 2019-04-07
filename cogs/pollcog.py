@@ -21,7 +21,7 @@ class PollCog(commands.Cog, name="Poll"):
         msg, embed = new_poll.to_discord()
         sent_message: discord.Message = await ctx.channel.send(content=msg,
                                                                embed=embed)
-        self.pollmanager.add_poll(poll=new_poll, received_message=ctx.message.id, sent_message=sent_message.id)
+        self.pollmanager.add_poll(poll=new_poll, received_message=ctx.message, sent_message=sent_message)
         # add reactions to the poll.
         for reaction in new_poll.reaction_to_option.keys():
             await sent_message.add_reaction(reaction)
@@ -42,6 +42,7 @@ class PollCog(commands.Cog, name="Poll"):
             poll = self.pollmanager.get_poll_by_msg_id(payload.message_id)
             poll.process_reaction(reaction, user, add=add)
             msg, embed = poll.to_discord()
+            self.pollmanager.update_poll(poll)
             await message.edit(content=msg, embed=embed)
 
     @commands.Cog.listener()
