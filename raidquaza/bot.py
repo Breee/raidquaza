@@ -12,7 +12,7 @@ import asyncio
 from poll.utils import replace_quotes
 
 
-class ReportBot(commands.Bot):
+class Raidquaza(commands.Bot):
 
     def __init__(self, description, config: Configuration):
         super().__init__(command_prefix=[config.prefix], description=description, pm_help=None,

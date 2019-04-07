@@ -12,6 +12,7 @@ class PollCog(commands.Cog, name="Poll"):
         self.pollmanager = PollManager(config)
 
     @commands.command(help="Create a poll", aliases=['umfrage', 'raid', 'voting'])
+    @commands.guild_only()
     async def poll(self, ctx, poll_title, *options):
         # create a new poll
         poll_id = str(uuid.uuid4())
