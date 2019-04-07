@@ -65,21 +65,21 @@ class DbHandler(object):
         self.base.metadata.create_all(self.engine)
 
     @transaction_wrapper
-    def add_poll(self, poll: Poll) -> None:
+    def add_poll(self, poll: Poll, received_message, sent_message) -> None:
         new_poll = models.Poll(creation_time=datetime.datetime.now(),
                                last_update=datetime.datetime.now(),
-                               guild=poll.received_message.guild.id,
-                               channel=poll.received_message.channel.id,
-                               user=poll.received_message.author.id,
-                               received_message=poll.received_message.id,
-                               sent_message=poll.sent_message.id,
+                               guild=received_message.guild.id if received_message.guild else None,
+                               channel=received_message.channel.id,
+                               user=received_message.author.id,
+                               received_message=received_message.id,
+                               sent_message=sent_message.id,
                                poll_id=poll.poll_id,
                                poll_title=poll.poll_title,
                                options=poll.options,
                                reaction_to_option=poll.reaction_to_option,
                                option_to_reaction=poll.option_to_reaction,
-                               reactions=poll.reactions,
-                               participants=poll.option_to_participants,
+                               participants=poll.participants,
+                               option_to_participants=poll.option_to_participants,
                                is_immortal=poll.is_immortal,
                                is_enabled=poll.is_enabled
                                )
@@ -120,20 +120,14 @@ class DbHandler(object):
 
     @transaction_wrapper
     def update_poll(self, poll: Poll) -> bool:
-        old_poll = self.get_poll(poll.poll_id)
+        old_poll = self.session.query(models.Poll).filter(models.Poll.poll_id == poll.poll_id).one()
         if old_poll:
-            old_poll.guild = poll.received_message.guild.id,
-            old_poll.channel = poll.received_message.channel.id,
-            old_poll.user = poll.received_message.author.id,
-            old_poll.received_message = poll.received_message.id,
-            old_poll.sent_message = poll.sent_message.id,
-            old_poll.poll_id = poll.poll_id,
-            old_poll.poll_title = poll.poll_title,
-            old_poll.options = poll.options,
-            old_poll.reaction_to_option = poll.reaction_to_option,
-            old_poll.option_to_reaction = poll.option_to_reaction,
-            old_poll.reactions = poll.reactions,
-            old_poll.participants = poll.option_to_participants,
+            old_poll.poll_title = poll.poll_title
+            old_poll.options = poll.options
+            old_poll.reaction_to_option = poll.reaction_to_option
+            old_poll.option_to_reaction = poll.option_to_reaction
+            old_poll.participants = poll.participants
+            old_poll.option_to_participants = poll.option_to_participants
             old_poll.is_immortal = poll.is_immortal
             return True
         else:
