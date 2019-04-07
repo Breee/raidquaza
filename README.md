@@ -128,8 +128,69 @@ Call:
 python3 start_bot.py
 ```
 
+## Deploy with docker
+We expect you to know about docker, docker-compose and how you deploy.
+
+There is a `docker-compose.yml` located in the root directory.
+
+```yaml
+version: '2.4'
+services:
+
+  raidquaza:
+    build:
+      context: ""
+      dockerfile: Dockerfile
+    entrypoint: ["/entrypoint.sh"]
+    volumes:
+      - ./raidquaza/:/usr/src/app/
+    restart: always
+    depends_on:
+      - poll-db
+    networks:
+      - default
+
+  poll-db:
+    image: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: root1234
+      MYSQL_DATABASE: polldb
+      MYSQL_USER: pollman
+      MYSQL_PASSWORD: bestpw
+    command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
+    volumes:
+      - ./volumes/mysql/db:/var/lib/mysql
+    restart: always
+    networks:
+      - default
+``` 
+
+An example config would be: 
+```
+[bot]
+token = <bot_token>
+prefix = !
+playing = Raidquaza
+
+[polls]
+host = poll-db
+user = pollman
+password = bestpw
+port = 3306
+database = polldb
+dialect = mysql
+driver = mysqlconnector
+```
+
+If you want to use the search feature, you have to add the configuration to the above.
+If you use a DB as data_source for the search, you should add the DB to the `docker-compose.yml` or run it in the same network as these services.
+
+To bring the services up, simply `docker-compose up -d poll-db`, `docker-compose up -d raidquaza`.
+
 # Commands
 Commands consist of a `prefix` and an `alias`.
+
+You can specify a `prefix` in `raidquaza/config/config.ini`, the default prefixes are `!` and `@bot_user_name#1337`.
 
 Search:
 - `![search | s | query | q] <query>`will search for an Arena/Pokestop and return the top 5 results. (Arena/Pokestop + Google maps link)
@@ -141,8 +202,9 @@ This command should not bother you, the default is affine scoring, which we cons
 
 Utils:
 - `!help` display help
-- `!ping`ping the bot
+- `!ping` ping the bot
 - `!uptime` return how long the bot is operational.
 
 Poll:
 - `!poll <title> <option_1> .. <option_17>` to create a new poll.
+Polls may have at most 17 vote options, as discord supports a maximum of 21 reactions the bot adds 4 extra reactions.
