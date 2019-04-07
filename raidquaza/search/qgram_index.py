@@ -1,14 +1,12 @@
-import sys
-import time
 import re
 import numpy as np
 import csv
 from collections import Counter
 from abc import ABC, abstractmethod
-from globals.globals import LOGGER
 from geofence.geofencehelper import GeofenceHelper
 from config.Configuration import Configuration
-from search.enums import SCORING_TYPE,RECORD_TYPE
+from search.enums import SCORING_TYPE, RECORD_TYPE
+
 
 def get_qgrams(str, q):
     """ Returns all q-grams for str.
@@ -44,12 +42,9 @@ def merge(lists):
         >>> merge([[1], [2, 4], []])
         [(1, 1), (2, 1), (4, 1)]
         """
-    start = time.time()
     record_counter = Counter()
     for l in lists:
         record_counter.update(l)
-    duration = (time.time() - start) * 1000
-    sys.stderr.write("Merging lists took %.0f ms.\n" % duration)
     return list(record_counter.items())
 
 
@@ -106,32 +101,33 @@ def compute_ped(prefix, str, delta):
     ped = min(matrix[n - 1])
     return ped
 
+
 def levenshtein(seq1, seq2):
     match = 0
     mismatch = 1
     gap_penalty = 1
     size_x = len(seq1) + 1
     size_y = len(seq2) + 1
-    matrix = np.zeros ((size_x, size_y))
+    matrix = np.zeros((size_x, size_y))
     for x in range(size_x):
-        matrix [x, 0] = x
+        matrix[x, 0] = x
     for y in range(size_y):
-        matrix [0, y] = y
+        matrix[0, y] = y
 
     for x in range(1, size_x):
         for y in range(1, size_y):
-            if seq1[x-1] == seq2[y-1]:
-                matrix [x,y] = min(
-                    matrix[x-1, y] + gap_penalty,
-                    matrix[x-1, y-1] + match,
-                    matrix[x, y-1] + gap_penalty
-                )
+            if seq1[x - 1] == seq2[y - 1]:
+                matrix[x, y] = min(
+                        matrix[x - 1, y] + gap_penalty,
+                        matrix[x - 1, y - 1] + match,
+                        matrix[x, y - 1] + gap_penalty
+                        )
             else:
-                matrix [x,y] = min(
-                    matrix[x-1,y] + gap_penalty,
-                    matrix[x-1,y-1] + mismatch,
-                    matrix[x,y-1] + gap_penalty
-                )
+                matrix[x, y] = min(
+                        matrix[x - 1, y] + gap_penalty,
+                        matrix[x - 1, y - 1] + mismatch,
+                        matrix[x, y - 1] + gap_penalty
+                        )
     return (matrix[size_x - 1, size_y - 1])
 
 
@@ -143,26 +139,26 @@ def needleman_wunsch_scoring(seq1, seq2):
     gap_opened = False
     size_x = len(seq1) + 1
     size_y = len(seq2) + 1
-    matrix = np.zeros ((size_x, size_y))
+    matrix = np.zeros((size_x, size_y))
     for x in range(size_x):
-        matrix [x, 0] = x
+        matrix[x, 0] = x
     for y in range(size_y):
-        matrix [0, y] = y
+        matrix[0, y] = y
 
     for x in range(1, size_x):
         for y in range(1, size_y):
-            if seq1[x-1] == seq2[y-1]:
-                matrix [x,y] = min(
-                    matrix[x-1, y] + gap_penalty,
-                    matrix[x-1, y-1] + match,
-                    matrix[x, y-1] + gap_penalty
-                )
+            if seq1[x - 1] == seq2[y - 1]:
+                matrix[x, y] = min(
+                        matrix[x - 1, y] + gap_penalty,
+                        matrix[x - 1, y - 1] + match,
+                        matrix[x, y - 1] + gap_penalty
+                        )
             else:
-                matrix [x,y] = min(
-                    matrix[x-1,y] + gap_penalty,
-                    matrix[x-1,y-1] + mismatch,
-                    matrix[x,y-1] + gap_penalty
-                )
+                matrix[x, y] = min(
+                        matrix[x - 1, y] + gap_penalty,
+                        matrix[x - 1, y - 1] + mismatch,
+                        matrix[x, y - 1] + gap_penalty
+                        )
             if (matrix[x, y] == matrix[x - 1, y] + gap_penalty or matrix[x, y - 1] + gap_penalty) and not gap_opened:
                 matrix[x, y] += gap_opening
                 gap_opened = True
@@ -170,6 +166,7 @@ def needleman_wunsch_scoring(seq1, seq2):
                 gap_opened = False
 
     return (matrix[size_x - 1, size_y - 1])
+
 
 def affine_gap_scoring(seq1, seq2):
     match = -3
@@ -179,26 +176,26 @@ def affine_gap_scoring(seq1, seq2):
     gap_opened = False
     size_x = len(seq1) + 1
     size_y = len(seq2) + 1
-    matrix = np.zeros ((size_x, size_y))
+    matrix = np.zeros((size_x, size_y))
     for x in range(size_x):
-        matrix [x, 0] = x
+        matrix[x, 0] = x
     for y in range(size_y):
-        matrix [0, y] = y
+        matrix[0, y] = y
 
     for x in range(1, size_x):
         for y in range(1, size_y):
-            if seq1[x-1] == seq2[y-1]:
-                matrix [x,y] = min(
-                    matrix[x-1, y] + gap_penalty,
-                    matrix[x-1, y-1] + match,
-                    matrix[x, y-1] + gap_penalty
-                )
+            if seq1[x - 1] == seq2[y - 1]:
+                matrix[x, y] = min(
+                        matrix[x - 1, y] + gap_penalty,
+                        matrix[x - 1, y - 1] + match,
+                        matrix[x, y - 1] + gap_penalty
+                        )
             else:
-                matrix [x,y] = min(
-                    matrix[x-1,y] + gap_penalty,
-                    matrix[x-1,y-1] + mismatch,
-                    matrix[x,y-1] + gap_penalty
-                )
+                matrix[x, y] = min(
+                        matrix[x - 1, y] + gap_penalty,
+                        matrix[x - 1, y - 1] + mismatch,
+                        matrix[x, y - 1] + gap_penalty
+                        )
             if (matrix[x, y] == matrix[x - 1, y] + gap_penalty or matrix[x, y - 1] + gap_penalty):
                 if not gap_opened:
                     matrix[x, y] += gap_opening
@@ -243,6 +240,7 @@ class QgramIndex(ABC):
     def find_matches(self, query, delta, k=5, use_qindex=True):
         pass
 
+
 class PointOfInterestQgramIndex(QgramIndex):
     """ A q-gram index for Point of interests.
     A point of interest is a tuple (name,latitude,longitude,type)
@@ -273,7 +271,7 @@ class PointOfInterestQgramIndex(QgramIndex):
                 # the if/else contructs are necessary because the file lines
                 # dont got always 3 entries
                 # second tab, longitude
-                if(len(row) > 1):
+                if (len(row) > 1):
                     self.longitude.append(row[1])
                 else:
                     self.longitude.append(None)
@@ -360,7 +358,6 @@ class PointOfInterestQgramIndex(QgramIndex):
             raise NotImplementedError(f'scoring method {self.scoring_method} not implemented.')
         return ed
 
-
     def find_matches(self, query, delta, k=5, use_qindex=True, channel_id=None):
         """ Find the top-k matches
             """
@@ -385,9 +382,10 @@ class PointOfInterestQgramIndex(QgramIndex):
                         if geofence_helper.is_in_any_geofence(latitude, longitude):
                             result_words.append((record, (latitude, longitude), type, ed))
                     else:
-                        result_words.append((record, (latitude,longitude), type, ed))
+                        result_words.append((record, (latitude, longitude), type, ed))
         result = sorted(result_words, key=lambda x: x[3], reverse=False)[:k]
         return result
+
 
 class QuestQgramIndex(QgramIndex):
     """ A q-gram index for Quests.
@@ -396,7 +394,6 @@ class QuestQgramIndex(QgramIndex):
     def __init__(self, q):
         """ Create an empty q-gram index for given q (size of the q-grams). """
         super().__init__(q)
-
 
     def build_from_file(self, file_name):
         """ Build index for text in given file, one record per line. """

@@ -23,10 +23,8 @@ SOFTWARE.
 """
 
 from configparser import ConfigParser
-from globals.globals import LOGGER
 import json
 import os
-from ConfigObject import ConfigObject
 import enum
 
 
@@ -39,6 +37,7 @@ class Configuration(object):
 
     def __init__(self, config_file):
         self.token = ""
+        self.prefix = "!"
         self.playing = ""
         self.use_search = False
         self.data_source = DataSource.CSV
@@ -86,6 +85,9 @@ class Configuration(object):
 
             if 'playing' in bot_section:
                 self.playing = bot_section['playing']
+
+            if 'prefix' in bot_section:
+                self.prefix = bot_section['prefix']
         else:
             raise Exception(f'bot section not found in config {filename}, this is required')
 
@@ -113,16 +115,19 @@ class Configuration(object):
             elif self.data_source == DataSource.CSV:
                 self.csv_file = search_section['csv_file']
             # GEOFENCES
-            geofences = [os.path.abspath(x) for x in json.loads(search_section['geofences'])]
-            channels = json.loads(search_section['channels'])
-            if not geofences or not channels or len(channels) != len(geofences):
-                raise Exception("The Number of channels must match number of geofences.\n"
-                                "Both are lists, defining a one-to-one mapping channels[i] -> geofences[i].\n"
-                                "Example:\n\n"
-                                "geofences = ['geofencefile1.txt']\nchannels = ['discord_channel_id_1']\n"
-                                "--> To define that in channel << discord_channel_id_1 >> we only search for "
-                                "coordinates that lay in the geofence defined by << geofencefile1.txt >>")
-            self.channel_to_geofences = dict(zip(channels, geofences))
+            if 'use_geofences' in search_section:
+                self.use_geofences = search_section['use_geofences']
+            if self.use_geofences:
+                geofences = [os.path.abspath(x) for x in json.loads(search_section['geofences'])]
+                channels = json.loads(search_section['channels'])
+                if not geofences or not channels or len(channels) != len(geofences):
+                    raise Exception("The Number of channels must match number of geofences.\n"
+                                    "Both are lists, defining a one-to-one mapping channels[i] -> geofences[i].\n"
+                                    "Example:\n\n"
+                                    "geofences = ['geofencefile1.txt']\nchannels = ['discord_channel_id_1']\n"
+                                    "--> To define that in channel << discord_channel_id_1 >> we only search for "
+                                    "coordinates that lay in the geofence defined by << geofencefile1.txt >>")
+                self.channel_to_geofences = dict(zip(channels, geofences))
 
         # POLLS
         if self.parser.has_section('polls'):

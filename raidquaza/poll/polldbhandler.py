@@ -58,7 +58,8 @@ class DbHandler(object):
         self.conn = None
         self.cursor = None
         self.engine = sqlalchemy.create_engine(
-                '%s+%s://%s:%s@%s:%s/%s' % (dialect, driver, user, password, host, port, database), pool_pre_ping=True)
+                '%s+%s://%s:%s@%s:%s/%s?charset=utf8mb4' % (dialect, driver, user, password, host, port, database),
+                pool_pre_ping=True)
         self.session = None
         self.metadata = sqlalchemy.MetaData()
         self.base = models.Base

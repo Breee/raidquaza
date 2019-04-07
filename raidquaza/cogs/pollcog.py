@@ -1,6 +1,5 @@
 import discord
 from discord.ext import commands
-from globals.globals import LOGGER
 from poll.poll import Poll, number_emojies
 from poll.pollmanager import PollManager
 import uuid

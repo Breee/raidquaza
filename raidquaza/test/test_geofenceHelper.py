@@ -2,14 +2,19 @@ from unittest import TestCase
 from geofence.geofencehelper import GeofenceHelper
 from shapely.geometry import Point
 
+
 class TestGeofenceHelper(TestCase):
     def test_read_geofence_file(self):
         geofence = "../geofence/geofence.txt"
         geofence_to_coordinates = GeofenceHelper.read_geofence_file(geofence)
-        expected = {'[raids]': [Point(48.13172583437477, 7.797374725341797), Point(48.11946535004539, 7.80252456665039),
-                                Point(48.09975077428877, 7.84698486328125), Point(48.07039414422354, 7.859001159667968)],
-                    '[raids2]': [Point(48.13172583437477, 7.797374725341797), Point(48.11946535004539, 7.80252456665039),
-                                Point(48.09975077428877, 7.84698486328125), Point(48.07039414422354, 7.859001159667968)]
+        expected = {'[raids]':  [Point(48.13172583437477, 7.797374725341797),
+                                 Point(48.11946535004539, 7.80252456665039),
+                                 Point(48.09975077428877, 7.84698486328125),
+                                 Point(48.07039414422354, 7.859001159667968)],
+                    '[raids2]': [Point(48.13172583437477, 7.797374725341797),
+                                 Point(48.11946535004539, 7.80252456665039),
+                                 Point(48.09975077428877, 7.84698486328125),
+                                 Point(48.07039414422354, 7.859001159667968)]
                     }
         self.assertDictEqual(expected, geofence_to_coordinates)
 

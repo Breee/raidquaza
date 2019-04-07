@@ -2,9 +2,8 @@ from typing import Union
 import json
 
 from poll.poll import Poll
-from poll.dbhandler import DbHandler
+from poll.polldbhandler import DbHandler
 from config.Configuration import Configuration
-from discord.ext import commands
 
 
 class PollManager(object):

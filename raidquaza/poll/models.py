@@ -26,7 +26,7 @@ class Poll(Base):
     channel = Column(BigInteger)
     user = Column(BigInteger)
     poll_id = Column(String(255), unique=True)
-    poll_title = Column(String(255))
+    poll_title = Column(UnicodeText)
     options = Column(Json)
     reaction_to_option = Column(Json)
     option_to_reaction = Column(Json)

@@ -1,7 +1,8 @@
 from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
-from typing import List,Dict, Tuple
+from typing import List, Dict, Tuple
 from globals.globals import LOGGER
+
 
 class GeofenceHelper(object):
     def __init__(self, geofencefile):
@@ -33,25 +34,24 @@ class GeofenceHelper(object):
                     geofence_to_coordinates[current_fence].append(Point(float(lat), float(lon)))
         return geofence_to_coordinates
 
-
     def is_in_any_geofence(self, coordinate: Point):
-        for name,geofence in self.geofences.items():
+        for name, geofence in self.geofences.items():
             if coordinate.within(geofence):
                 LOGGER.debug("coordinate: %s is in geofence: %s" % (coordinate, name))
                 return True
         LOGGER.debug("coordinate: %s not in any geofence" % coordinate)
         return False
 
-    def is_in_any_geofence(self, latitude:float, longitude:float):
-        coordinate = Point(latitude,longitude)
-        for name,geofence in self.geofences.items():
+    def is_in_any_geofence(self, latitude: float, longitude: float):
+        coordinate = Point(latitude, longitude)
+        for name, geofence in self.geofences.items():
             if coordinate.within(geofence):
                 LOGGER.debug("coordinate: %s is in geofence: %s" % (coordinate, name))
                 return True
         LOGGER.debug("coordinate: %s not in any geofence" % coordinate)
         return False
 
-    def filter_coordinates(self, coordinates: List[Point]) -> Tuple[List[Point],List[Point]]:
+    def filter_coordinates(self, coordinates: List[Point]) -> Tuple[List[Point], List[Point]]:
         inside = []
         outside = []
         for coord in coordinates:

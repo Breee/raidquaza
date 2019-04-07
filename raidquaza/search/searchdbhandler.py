@@ -23,7 +23,6 @@ SOFTWARE.
 """
 
 from mysql.connector import MySQLConnection, Error
-import logging
 from globals.globals import LOGGER
 from search.enums import RECORD_TYPE
 

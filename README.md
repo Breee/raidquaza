@@ -1,14 +1,16 @@
-# Discord Searchbot
-Bot to search Point of Interests via discord.
+# Discord bot Raidquaza
+- Bot to create polls via discord.
+- Bot to search Point of Interests via discord.
 
 # Setup
+
 ## 1. Requirements: 
 - python 3.6+
 - pip3
 - discord bot user (https://discordapp.com/developers/applications/me)
+- Add Emojis from directory `/poll/emojis/` to your discord server, name them equally. (`rq_plus_one`,`rq_plus_two`,`rq_plus_three`, `rq_plus_four`)
 
-
-## 2. Install requirements:
+## 2. Install Python3 requirements:
 We recommend to use a virtual environment.
 ```
 python3 -m venv searchbot-venv
@@ -20,32 +22,39 @@ Then install the requirements.
 pip3 install -U -r requirements.txt
 ```
 
+
 ## 3. Configuration:
 Copy the file `config/config.ini.example` to `config/config.ini` (or create it). 
 The configuration file can contain sections of the form: 
 
 ```
 [bot]
-token = <bot_token>
-playing = u mom lel
+token = <discord_bot_token>
+playing = Raidquaza!
 
-[csv]  
-point_of_interests = <.csv file>
-
-[database]
-use_database = True
+[search]
+# database / csv
+data_source = database
 host = localhost
-database = db_name
-user = user_name
-password = password
+database = monocle
+user = monocleuser
+password = test123
 port = 3306
 pokestop_table_name = pokestops
 gym_table_name = forts
-
-[geofences]
 use_geofences = True
-geofences = ["config/geofence1.txt", "config/geofence2.txt"]
-channels = [12321425124, 12321425124]
+geofences = ["config/freiburg.txt","config/emmendingen.txt"]
+channels = ["411547369096740864", "410357320464465929"]
+
+
+[polls]
+host = localhost
+user = pollman
+password = bestpw
+port = 3307
+database = polldb
+dialect = mysql
+driver = mysqlconnector
 ```
 where:
 
@@ -59,25 +68,28 @@ Just use the section you need.
 **Limitations:** 
 - Currently we only support mysql/mariadb databases
 
+### [search] section:
 
+* `data_source` defines which is either `database` or `csv`. 
 
-####  [csv] section:
+####  csv settings:
   * `<.csv file>` is a .csv file, which consists of 4 columns: Name, long, lat,Type(Arena/Pokestop)
   an example file is `data/gyms_stops.csv` which contains all pokestops and arenas of the city Freiburg.
 
 
-#### [database] section: 
+#### database settings: 
  In the `database` section you can define the database, from which the bot shall pull gyms and pokestops.  (e.g. monocle)
   * `use_database`: True False - enables the use of database.
-  * `host`:  Database host
-  * `database`: Database Name
-  * `user`: Database User
-  * `password`: Database Password of your user.
-  * `pokestop_table_name` : table which contains pokestops
+  * `host`:  Database host.
+  * `database`: Database name.
+  * `user`: Database user.
+  * `port` : Database port.
+  * `password`: Database password of your user.
+  * `pokestop_table_name` : table which contains pokestops.
   * `gym_table_name`: table which contains gyms.
   The tables `pokestop_table_name` + `gym_table_name` must have columns `name`, `lat`, `lon`.
 
-### [geofences] section:
+### geofence settings:
  * If your set of Point of Interests is really big and covers multiple regions, you can use geofences 
  * `use_geofences`: True | False  - Enables the usage of geofences.
  * `geofences` defines a list of geofences, an entry in the list defines a path to a geofence (starting from the repository root)
@@ -100,6 +112,16 @@ and in channel `CHANNEL_ID_2` you can only search within the geofences defined i
 
 If you do not need this feature, just delete the section in the config.
 
+### [polls] section:
+In the `polls` section you define a database, where the bot shall store its polls.
+* `host`:  Database host.
+* `database`: Database name.
+* `user`: Database user.
+* `password`: Database password of your user.
+* `port` : Database port.
+* `dialect` : SQL Dialect of the database.
+* `driver` : Driver for the database.
+
 ## 4. Starting the bot
 Call:
 ```
@@ -107,6 +129,8 @@ python3 start_bot.py
 ```
 
 # Commands
+Commands consist of a `prefix` and an `alias`.
+
 Search:
 - `![search | s | query | q] <query>`will search for an Arena/Pokestop and return the top 5 results. (Arena/Pokestop + Google maps link)
 - `![gym|arena] <query>`will search for an Arena return the top 5 results. (Arena + Google maps link)
@@ -118,4 +142,7 @@ This command should not bother you, the default is affine scoring, which we cons
 Utils:
 - `!help` display help
 - `!ping`ping the bot
-- `!uptime` return how loing the bot is operational.
+- `!uptime` return how long the bot is operational.
+
+Poll:
+- `!poll <title> <option_1> .. <option_17>` to create a new poll.

@@ -23,10 +23,11 @@ SOFTWARE.
 """
 
 from globals.globals import LOGGER
-
 from ReportBot import ReportBot
+from config.Configuration import Configuration
 
 if __name__ == "__main__":
     LOGGER.info("Starting Bot.")
-    bot = ReportBot(prefix="!", description="", config_file="config/config.ini")
+    config = Configuration("config/config.ini")
+    bot = ReportBot(description="", config=config)
     bot.run()

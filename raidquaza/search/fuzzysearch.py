@@ -25,7 +25,7 @@ import math
 import re
 from search.qgram_index import PointOfInterestQgramIndex
 from globals.globals import LOGGER
-from search.dbmanager import SearchDatabaseHandler
+from search.searchdbhandler import SearchDatabaseHandler
 from config.Configuration import DataSource, Configuration
 
 
@@ -56,7 +56,7 @@ class FuzzySearcher(object):
             self.point_of_interest_index.build_from_lists(input)
         else:
             LOGGER.info("Using forts/stops from file")
-            input = config.point_of_interests
+            input = config.csv_file
             self.point_of_interest_index.build_from_file(input)
 
     def search(self, query, num_results=5, channel_id=None):
