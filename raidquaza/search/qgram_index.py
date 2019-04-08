@@ -121,13 +121,13 @@ def levenshtein(seq1, seq2):
                         matrix[x - 1, y] + gap_penalty,
                         matrix[x - 1, y - 1] + match,
                         matrix[x, y - 1] + gap_penalty
-                        )
+                )
             else:
                 matrix[x, y] = min(
                         matrix[x - 1, y] + gap_penalty,
                         matrix[x - 1, y - 1] + mismatch,
                         matrix[x, y - 1] + gap_penalty
-                        )
+                )
     return (matrix[size_x - 1, size_y - 1])
 
 
@@ -152,13 +152,13 @@ def needleman_wunsch_scoring(seq1, seq2):
                         matrix[x - 1, y] + gap_penalty,
                         matrix[x - 1, y - 1] + match,
                         matrix[x, y - 1] + gap_penalty
-                        )
+                )
             else:
                 matrix[x, y] = min(
                         matrix[x - 1, y] + gap_penalty,
                         matrix[x - 1, y - 1] + mismatch,
                         matrix[x, y - 1] + gap_penalty
-                        )
+                )
             if (matrix[x, y] == matrix[x - 1, y] + gap_penalty or matrix[x, y - 1] + gap_penalty) and not gap_opened:
                 matrix[x, y] += gap_opening
                 gap_opened = True
@@ -189,13 +189,13 @@ def affine_gap_scoring(seq1, seq2):
                         matrix[x - 1, y] + gap_penalty,
                         matrix[x - 1, y - 1] + match,
                         matrix[x, y - 1] + gap_penalty
-                        )
+                )
             else:
                 matrix[x, y] = min(
                         matrix[x - 1, y] + gap_penalty,
                         matrix[x - 1, y - 1] + mismatch,
                         matrix[x, y - 1] + gap_penalty
-                        )
+                )
             if (matrix[x, y] == matrix[x - 1, y] + gap_penalty or matrix[x, y - 1] + gap_penalty):
                 if not gap_opened:
                     matrix[x, y] += gap_opening
@@ -247,13 +247,13 @@ class PointOfInterestQgramIndex(QgramIndex):
     types are Arena,Pokestop.
     """
 
-    def __init__(self, q, config: Configuration):
+    def __init__(self, q, use_geofences, channel_to_geofences):
         """ Create an empty q-gram index for given q (size of the q-grams). """
         super().__init__(q)
-        self.use_geofences = config.use_geofences
+        self.use_geofences = use_geofences
         self.channel_to_geofence_helper = dict()
         if self.use_geofences:
-            for channel_id, geofence in config.channel_to_geofences.items():
+            for channel_id, geofence in channel_to_geofences.items():
                 self.channel_to_geofence_helper[channel_id] = GeofenceHelper(geofence)
 
     def build_from_file(self, file_name):
@@ -272,20 +272,20 @@ class PointOfInterestQgramIndex(QgramIndex):
                 # dont got always 3 entries
                 # second tab, longitude
                 if (len(row) > 1):
-                    self.longitude.append(row[1])
-                else:
-                    self.longitude.append(None)
-                # third tab, latitude
-                if (len(row) > 2):
-                    self.latitude.append(row[2])
+                    self.latitude.append(row[1].strip())
                 else:
                     self.latitude.append(None)
+                # third tab, latitude
+                if (len(row) > 2):
+                    self.longitude.append(row[2].strip())
+                else:
+                    self.longitude.append(None)
 
                 # fourth tab, type
                 if (len(row) > 3):
-                    if row[3] == 'Gym':
+                    if row[3].strip() == 'Gym':
                         self.types.append(RECORD_TYPE.GYM)
-                    elif row[3] == 'Pokestop':
+                    elif row[3].strip() == 'Pokestop':
                         self.types.append(RECORD_TYPE.POKESTOP)
                     else:
                         self.types.append(RECORD_TYPE.UNKNOWN)

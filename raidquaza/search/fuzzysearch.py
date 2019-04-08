@@ -35,11 +35,13 @@ class FuzzySearcher(object):
         self.q = q
         self.k = k
         # init search engine
+        self.db_handler = None
+        self.point_of_interest_index: PointOfInterestQgramIndex = None
         self.index(config)
 
-    def index(self, config):
-        self.point_of_interest_index = PointOfInterestQgramIndex(3, config)
-        input = None
+    def index(self, config: Configuration):
+        self.point_of_interest_index = PointOfInterestQgramIndex(3, config.use_geofences, config.channel_to_geofences)
+        index_input = None
         if config.data_source == DataSource.DATABASE:
             LOGGER.info("Using database")
             self.db_handler = SearchDatabaseHandler(host=config.search_db_host, db=config.search_db_name,
@@ -48,16 +50,16 @@ class FuzzySearcher(object):
                                                     pokestop_table_name=config.pokestop_table_name,
                                                     gym_table_name=config.gym_table_name)
             forts, stops = self.db_handler.get_gyms_stops()
-            input = [*forts, *stops]
+            index_input = [*forts, *stops]
             self.db_handler.disconnect()
 
-        if isinstance(input, list):
+        if isinstance(index_input, list):
             LOGGER.info("Using forts/stops from database")
-            self.point_of_interest_index.build_from_lists(input)
+            self.point_of_interest_index.build_from_lists(index_input)
         else:
             LOGGER.info("Using forts/stops from file")
-            input = config.csv_file
-            self.point_of_interest_index.build_from_file(input)
+            index_input = config.csv_file
+            self.point_of_interest_index.build_from_file(index_input)
 
     def search(self, query, num_results=5, channel_id=None):
         LOGGER.info("Received query %s " % query)

@@ -2,20 +2,5 @@
 token = <bot_token>
 playing = u mom lel
 
-[csv]
+[search]
 point_of_interests = ../data/gyms_stops.csv
-
-[database]
-use_database = True
-host = localhost
-database = db_name
-user = user_name
-password = password
-port = 3306
-pokestop_table_name = pokestops
-gym_table_name = forts
-
-[geofences]
-use_geofences = True
-geofences = ["config/geofence1.txt"]
-channels = [12321425124]
