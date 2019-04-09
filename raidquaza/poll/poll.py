@@ -88,7 +88,7 @@ class Poll(object):
             name = f'{reaction} {option}'
             value = ', '.join(
                     sorted([f'{x} [{self.participants[x]}]' for x in participants])) if participants else '-'
-            total = sum(self.participants.values())
+            total = sum(participants.values())
             embed.add_field(name=f'{name} [{total}]', value=value, inline=False)
             embed.set_footer(text=f'ID: {self.poll_id}')
         return msg, embed
