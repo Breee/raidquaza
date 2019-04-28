@@ -37,8 +37,27 @@ class PollCog(commands.Cog, name="Poll"):
                 embed.add_field(name=f'ID: {id}', value=f'  *{poll.poll_title} - {poll.options}\n', inline=False)
         await ctx.channel.send(content=msg, embed=embed)
 
-    async def readpoll(self, ctx, command_msg_id, poll_msg_id):
-        pass
+    @commands.command(help="read a poll")
+    @commands.is_owner()
+    async def readpoll(self, ctx, command_msg_id, poll_msg_id, poll_title, *options):
+        # create a new poll from given information
+        poll_id = str(uuid.uuid4())
+        new_poll = Poll(poll_id, poll_title, options, updated_since_start=False)
+        new_poll.received_message = command_msg_id
+        new_poll.sent_message = poll_msg_id
+
+        self.pollmanager.add_poll(poll=new_poll,
+                                  received_message=await ctx.channel.fetch_message(command_msg_id),
+                                  sent_message=await ctx.channel.fetch_message(poll_msg_id))
+        # fetch the existing poll_message from discord
+        poll_message: discord.Message = await ctx.channel.fetch_message(poll_msg_id)
+        print(poll_message.reactions)
+        # Fully update it.
+        await new_poll.full_update(reactions=poll_message.reactions, bot_user_id=self.bot.user.id)
+        # Send the update to discord.
+        msg, embed = new_poll.to_discord()
+        self.pollmanager.update_poll(new_poll)
+        await poll_message.edit(content=msg, embed=embed)
 
     async def process_raw_reaction_event(self, payload: discord.RawReactionActionEvent, add):
         data = {'count': 1, 'me': payload.user_id == self.bot.user.id,
