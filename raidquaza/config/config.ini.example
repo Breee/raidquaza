@@ -1,0 +1,6 @@
+[bot]
+token = <bot_token>
+playing = u mom lel
+
+[search]
+point_of_interests = ../data/gyms_stops.csv

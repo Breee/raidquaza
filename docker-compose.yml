@@ -1,0 +1,29 @@
+version: '2.4'
+services:
+
+  raidquaza:
+    build:
+      context: ""
+      dockerfile: Dockerfile
+    entrypoint: ["/entrypoint.sh"]
+    volumes:
+      - ./raidquaza/:/usr/src/app/
+    restart: always
+    depends_on:
+      - poll-db
+    networks:
+      - default
+
+  poll-db:
+    image: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: root1234
+      MYSQL_DATABASE: polldb
+      MYSQL_USER: pollman
+      MYSQL_PASSWORD: bestpw
+    command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
+    volumes:
+      - ./volumes/mysql/db:/var/lib/mysql
+    restart: always
+    networks:
+      - default
