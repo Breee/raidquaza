@@ -73,7 +73,7 @@ Just use the section you need.
 * `data_source` defines which is either `database` or `csv`. 
 
 ####  csv settings:
-  * `<.csv file>` is a .csv file, which consists of 4 columns: Name, long, lat,Type(Arena/Pokestop)
+  * `csv_file` is a path to .csv file, which consists of 4 columns: Name, long, lat,Type(Arena/Pokestop)
   an example file is `data/gyms_stops.csv` which contains all pokestops and arenas of the city Freiburg.
 
 
