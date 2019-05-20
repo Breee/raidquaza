@@ -5,7 +5,6 @@ services:
     build:
       context: ""
       dockerfile: Dockerfile
-    entrypoint: ["/entrypoint.sh"]
     volumes:
       - ./raidquaza/:/usr/src/app/
     restart: always
