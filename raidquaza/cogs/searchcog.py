@@ -1,20 +1,20 @@
 import discord
 from discord.ext import commands
 from search.fuzzysearch import FuzzySearcher
-from globals.globals import LOGGER
+from utility.globals import LOGGER
 from search.enums import SCORING_TYPE, RECORD_TYPE
 
 
 class SearchCog(commands.Cog, name="Search"):
-    def __init__(self, bot, config):
+    def __init__(self, bot):
         self.bot = bot
-        self.fuzzy_searcher = FuzzySearcher(config)
+        self.fuzzy_searcher = FuzzySearcher()
 
     @commands.command(help="Rebuild the index, you must be bot_owner to do this.")
     @commands.is_owner()
     async def reindex(self, ctx):
         LOGGER.info("Building new Index.")
-        self.fuzzy_searcher.index(self.bot.config)
+        self.fuzzy_searcher.index()
         await ctx.channel.send("New index built, happy searching!")
 
     @commands.command(

@@ -4,7 +4,6 @@ import csv
 from collections import Counter
 from abc import ABC, abstractmethod
 from geofence.geofencehelper import GeofenceHelper
-from config.Configuration import Configuration
 from search.enums import SCORING_TYPE, RECORD_TYPE
 
 
@@ -121,13 +120,13 @@ def levenshtein(seq1, seq2):
                         matrix[x - 1, y] + gap_penalty,
                         matrix[x - 1, y - 1] + match,
                         matrix[x, y - 1] + gap_penalty
-                )
+                        )
             else:
                 matrix[x, y] = min(
                         matrix[x - 1, y] + gap_penalty,
                         matrix[x - 1, y - 1] + mismatch,
                         matrix[x, y - 1] + gap_penalty
-                )
+                        )
     return (matrix[size_x - 1, size_y - 1])
 
 
@@ -152,13 +151,13 @@ def needleman_wunsch_scoring(seq1, seq2):
                         matrix[x - 1, y] + gap_penalty,
                         matrix[x - 1, y - 1] + match,
                         matrix[x, y - 1] + gap_penalty
-                )
+                        )
             else:
                 matrix[x, y] = min(
                         matrix[x - 1, y] + gap_penalty,
                         matrix[x - 1, y - 1] + mismatch,
                         matrix[x, y - 1] + gap_penalty
-                )
+                        )
             if (matrix[x, y] == matrix[x - 1, y] + gap_penalty or matrix[x, y - 1] + gap_penalty) and not gap_opened:
                 matrix[x, y] += gap_opening
                 gap_opened = True
@@ -189,13 +188,13 @@ def affine_gap_scoring(seq1, seq2):
                         matrix[x - 1, y] + gap_penalty,
                         matrix[x - 1, y - 1] + match,
                         matrix[x, y - 1] + gap_penalty
-                )
+                        )
             else:
                 matrix[x, y] = min(
                         matrix[x - 1, y] + gap_penalty,
                         matrix[x - 1, y - 1] + mismatch,
                         matrix[x, y - 1] + gap_penalty
-                )
+                        )
             if (matrix[x, y] == matrix[x - 1, y] + gap_penalty or matrix[x, y - 1] + gap_penalty):
                 if not gap_opened:
                     matrix[x, y] += gap_opening

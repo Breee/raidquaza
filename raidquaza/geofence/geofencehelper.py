@@ -1,7 +1,7 @@
 from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
 from typing import List, Dict, Tuple
-from globals.globals import LOGGER
+from utility.globals import LOGGER
 
 
 class GeofenceHelper(object):

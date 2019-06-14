@@ -24,41 +24,41 @@ SOFTWARE.
 import math
 import re
 from search.qgram_index import PointOfInterestQgramIndex
-from globals.globals import LOGGER
-from search.searchdbhandler import SearchDatabaseHandler
-from config.Configuration import DataSource, Configuration
+from utility.globals import LOGGER
+from search.searchdbhandler import SearchDBHandler
+from utility.enums import DataSource
+import config as config
 
 
 class FuzzySearcher(object):
 
-    def __init__(self, config: Configuration, q=3, k=5):
+    def __init__(self, q=3, k=5):
         self.q = q
         self.k = k
         # init search engine
         self.db_handler = None
         self.point_of_interest_index: PointOfInterestQgramIndex = None
-        self.index(config)
+        self.index()
 
-    def index(self, config: Configuration):
-        self.point_of_interest_index = PointOfInterestQgramIndex(3, config.use_geofences, config.channel_to_geofences)
+    def index(self):
+        self.point_of_interest_index = PointOfInterestQgramIndex(3, config.SEARCH_USE_GEOFENCES,
+                                                                 config.SEARCH_CHANNELS_TO_GEOFENCES)
         index_input = None
-        if config.data_source == DataSource.DATABASE:
+        if config.SEARCH_DATASOURCE == DataSource.DATABASE:
             LOGGER.info("Using database")
-            self.db_handler = SearchDatabaseHandler(host=config.search_db_host, db=config.search_db_name,
-                                                    port=config.search_db_port,
-                                                    user=config.search_db_user, password=config.search_db_password,
-                                                    pokestop_table_name=config.pokestop_table_name,
-                                                    gym_table_name=config.gym_table_name)
+            self.db_handler = SearchDBHandler(database=config.SEARCH_DB_NAME, user=config.SEARCH_DB_USER,
+                                              password=config.SEARCH_DB_PASSWORD, host=config.SEARCH_DB_HOST,
+                                              dialect=config.SEARCH_DB_DIALECT, driver=config.SEARCH_DB_DRIVER,
+                                              port=config.SEARCH_DB_PORT)
             forts, stops = self.db_handler.get_gyms_stops()
             index_input = [*forts, *stops]
-            self.db_handler.disconnect()
 
         if isinstance(index_input, list):
             LOGGER.info("Using forts/stops from database")
             self.point_of_interest_index.build_from_lists(index_input)
         else:
             LOGGER.info("Using forts/stops from file")
-            index_input = config.csv_file
+            index_input = config.SEARCH_CSV_FILE
             self.point_of_interest_index.build_from_file(index_input)
 
     def search(self, query, num_results=5, channel_id=None):

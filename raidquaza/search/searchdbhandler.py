@@ -22,58 +22,38 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from mysql.connector import MySQLConnection, Error
-from globals.globals import LOGGER
+from utility.globals import LOGGER
 from search.enums import RECORD_TYPE
+from database.dbhandler import DbHandler, transaction_wrapper
+import config as config
+from collections import namedtuple
+
+keys = ['name', 'lat', 'lon']
+Record = namedtuple('Record', keys)
 
 
-class SearchDatabaseHandler(object):
+class SearchDBHandler(DbHandler):
 
-    def __init__(self, host, db, port, user, password, pokestop_table_name, gym_table_name):
-        self.host = host
-        self.db = db
-        self.port = port
-        self.user = user
-        self.password = password
-        self.pokestop_table_name = pokestop_table_name
-        self.gym_table_name = gym_table_name
-        self.conn = None
-        self.cursor = None
+    def __init__(self, host, database, port, user, password, dialect, driver):
+        super(SearchDBHandler, self).__init__(host, database, port, user, password, dialect, driver)
 
-        try:
-            config = {'user':     self.user,
-                      'password': self.password,
-                      'database': self.db,
-                      'host':     self.host,
-                      'port':     self.port
-                      }
-            LOGGER.info('Connecting to MySQL database...')
-            self.conn = MySQLConnection(**config)
-            self.cursor = self.conn.cursor()
-
-            if self.conn.is_connected():
-                LOGGER.info('connection established.')
-            else:
-                raise Exception('connection to database failed.')
-
-        except Error as error:
-            raise Exception(error)
-
-    def disconnect(self):
-        self.conn.close()
-        LOGGER.info("disconnected from DB")
-
+    @transaction_wrapper
     def get_gyms_stops(self):
         LOGGER.info("Pulling forts and stops from DB")
         gyms = []
         stops = []
-        self.cursor.execute(f"SELECT name, lat, lon FROM {self.gym_table_name}")
-        for row in self.cursor:
+
+        #  Fetch gyms from DB
+        gym_result = self.session.execute(f"SELECT name, lat, lon FROM {config.SEARCH_GYM_TABLE}")
+        gym_records = [Record(*r) for r in gym_result.fetchall()]
+        for row in gym_records:
             if row[0]:
                 gyms.append(row + (RECORD_TYPE.GYM,))
 
-        self.cursor.execute(f"SELECT name, lat, lon FROM {self.pokestop_table_name}")
-        for row in self.cursor:
+        # Fetch stops from DB
+        pokestop_result = self.session.execute(f"SELECT name, lat, lon FROM {config.SEARCH_POKESTOP_TABLE}")
+        pokestop_records = [Record(*r) for r in pokestop_result.fetchall()]
+        for row in pokestop_records:
             if row[0]:
                 stops.append(row + (RECORD_TYPE.POKESTOP,))
         LOGGER.info("Pulled %d forts and %d stops" % (len(gyms), len(stops)))
@@ -81,8 +61,8 @@ class SearchDatabaseHandler(object):
 
 
 if __name__ == '__main__':
-    db = DbHandler(host='localhost', db='monocle', user='monocleuser', password='test123', port=3306)
+    db = SearchDBHandler(host="localhost", user="monocleuser", password="test123", port="3309", database="monocledb",
+                         dialect="mysql", driver="mysqlconnector")
     forts, stops = db.get_gyms_stops()
     print(len(forts), forts)
     print(len(stops), stops)
-    db.disconnect()

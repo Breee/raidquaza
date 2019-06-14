@@ -1,27 +1,27 @@
-from config.Configuration import Configuration
 from discord.ext import commands
 import discord
 from _datetime import datetime
 import aiohttp
-from globals.globals import LOGGER
+from utility.globals import LOGGER
 from cogs.searchcog import SearchCog
 from cogs.utilscog import UtilsCog
 from cogs.pollcog import PollCog
 import traceback
 import asyncio
 from poll.utils import replace_quotes
+import config as config
 
 
 class Raidquaza(commands.Bot):
 
-    def __init__(self, description, config: Configuration):
-        super().__init__(command_prefix=[config.prefix], description=description, pm_help=None,
+    def __init__(self, description):
+        super().__init__(command_prefix=[config.PREFIX], description=description, pm_help=None,
                          help_attrs=dict(hidden=True))
-        self.config = config
-        if self.config.use_search:
-            self.add_cog(SearchCog(self, self.config))
-        if self.config.use_polls:
-            self.add_cog(PollCog(self, self.config))
+
+        if config.SEARCH_ENABLED:
+            self.add_cog(SearchCog(self))
+        if config.POLL_ENABLED:
+            self.add_cog(PollCog(self))
         self.add_cog(UtilsCog(self))
         self.session = aiohttp.ClientSession(loop=self.loop)
 
@@ -30,12 +30,12 @@ class Raidquaza(commands.Bot):
     async def on_ready(self):
         LOGGER.info('Bot is ready.')
         self.start_time = datetime.utcnow()
-        await self.change_presence(activity=discord.Game(name=self.config.playing))
+        await self.change_presence(activity=discord.Game(name=config.PLAYING))
         # make mentionable.
         self.command_prefix.extend([f'<@!{self.user.id}> ', f'<@{self.user.id}> '])
 
     def run(self):
-        super().run(self.config.token, reconnect=True)
+        super().run(config.BOT_TOKEN, reconnect=True)
 
     async def close(self):
         await super().close()

@@ -1,15 +1,14 @@
 import discord
 from discord.ext import commands
-from poll.poll import Poll, number_emojies
+from poll.polls import Poll, number_emojies
 from poll.pollmanager import PollManager
 import uuid
-from config.Configuration import Configuration
 
 
 class PollCog(commands.Cog, name="Poll"):
-    def __init__(self, bot, config: Configuration):
+    def __init__(self, bot):
         self.bot = bot
-        self.pollmanager = PollManager(config)
+        self.pollmanager = PollManager()
 
     @commands.command(help="Create a poll", aliases=['umfrage', 'raid', 'voting', 'r'])
     @commands.guild_only()
