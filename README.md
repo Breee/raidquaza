@@ -9,12 +9,176 @@
 - pip3
 - discord bot user (https://discordapp.com/developers/applications/me)
 - Add Emojis from directory `/poll/emojis/` to your discord server, name them equally. (`rq_plus_one`,`rq_plus_two`,`rq_plus_three`, `rq_plus_four`)
+- A database of your choice, which is supported by sqlalchemy (https://docs.sqlalchemy.org/en/13/core/engines.html).
 
-## 2. Install Python3 requirements:
+
+## 2. Configuration:
+Copy the file `config.py.dist` to `config.py` (or create it). 
+The configuration file is plain python and looks as follows: 
+
+```
+from utility.enums import DataSource
+
+# Directory where the log file of the bot shall be stored
+LOG_PATH = '/home/logs/raidquaza'
+
+"""
+Discord Section.
+"""
+# The Token of your botuser.
+BOT_TOKEN = 'NDExNTQzMTExNDA0MDkzNDQx.DV9O5g.lA9ETLB9Ckivac2iLeRm64VFpHE'
+# Discord Status
+PLAYING = 'RaidquazaTesting'
+# Command prefix
+PREFIX = '!'
+
+"""
+Poll Section.
+"""
+# If you want to use the poll COG, set this to true
+POLL_ENABLED = True
+# The host of the DB in which we store polls
+POLL_DB_HOST = 'localhost'
+# The user of the DB
+POLL_DB_USER = 'pollman'
+# The password of user POLL_DB_USER
+POLL_DB_PASSWORD = 'bestpw'
+# The port of the DB-server
+POLL_DB_PORT = 3306
+# The name of the DB in which we store polls
+POLL_DB_NAME = 'polldb'
+# The dialect of the database-server
+POLL_DB_DIALECT = 'mysql'
+# The driver of the database-server
+POLL_DB_DRIVER = 'mysqlconnector'
+
+"""
+Search section.
+
+Here we define the settings for the Search.
+"""
+# If you want to use the search COG, set this to True.
+SEARCH_ENABLED = True
+
+"""
+Choosing the datasource. 
+
+The datasource is either DataSource.DATABASE or DataSource.CSV
+If DataSource.DATABASE is chosen, we pull the gyms and stops from a database.
+If DataSource.CSV is chosen, we pull the gyms and stops from a csv file, an example can be found in 
+'data/gyms_stops.csv'
+"""
+SEARCH_DATASOURCE = DataSource.DATABASE
+
+# The csv file we pull data from, example in 'data/gyms_stops.csv'. Leave this empty if you do not need it.
+SEARCH_CSV_FILE = ''
+
+# If you have chosen DataSource.DATABASE, you have to define from which database you pull data.
+# The host of the DB
+SEARCH_DB_HOST = 'localhost'
+# The name of the database
+SEARCH_DB_NAME = 'monocledb'
+# The user of the database
+SEARCH_DB_USER = 'monocleuser'
+# The password to connect with SEARCH_DB_USER.
+SEARCH_DB_PASSWORD = 'test123'
+# The port of the database-server
+SEARCH_DB_PORT = 3309
+# The dialect of the database-server
+SEARCH_DB_DIALECT = 'mysql'
+# The driver of the database-server
+SEARCH_DB_DRIVER = 'mysqlconnector'
+
+# The table in database SEARCH_DB_NAME, which contains pokestops
+SEARCH_POKESTOP_TABLE = 'pokestops'
+# The table in database SEARCH_DB_NAME, which contains gyms
+SEARCH_GYM_TABLE = 'forts'
+
+"""
+Geofencing.
+
+When the amount of pokestops/gyms if big and you cover different cities / regions, you might want to restrict the 
+search space for different channels.
+We define a mapping DISCORD_CHANNEL -> GEOFENCE, if you then use the search functionality in a specified 
+DISCORD_CHANNEL, the search space is restricted to point of interests which are in the according GEOFENCE.
+"""
+# Set to true if you want to use geofencing.
+SEARCH_USE_GEOFENCES = True
+# DISCORD_CHANNEL -> GEOFENCE
+SEARCH_CHANNELS_TO_GEOFENCES = {434387358817976350: "data/geofences/freiburg.txt",
+                                434618437419925504: "data/geofences/emmendingen.txt",
+                                554074442272211045: "data/geofences/krozingen.txt"
+                                }
+
+
+```
+where:
+
+### Discord section: 
+ -`BOT_TOKEN` is the token of your discord bot user.
+
+### Search section:
+
+If you want to enable search, set `SEARCH_ENABLED = True`
+
+#### Defining the source of Point of Interests. 
+You must choose between using a csv file or a database.
+
+* `SEARCH_DATASOURCE` defines which is  either `DataSource.DATABASE` or `DataSource.CSV`. 
+
+####  `DataSource.CSV` approach:
+  * `SEARCH_CSV_FILE` is a path to .csv file, which consists of 4 columns: Name, long, lat,Type(Arena/Pokestop)
+  an example file is `data/gyms_stops.csv` which contains all pokestops and arenas of the city Freiburg.
+
+
+#### `DataSource.DATABASE` approach: 
+you must define the database, from which the bot shall pull gyms and pokestops.  (e.g. monocle)
+  * `SEARCH_DB_HOST`:  Database host.
+  * `SEARCH_DB_NAME`: Database name.
+  * `SEARCH_DB_USER`: Database user.
+  * `SEARCH_DB_PORT` : Database port.
+  * `SEARCH_DB_PASSWORD`: Database password of your user.
+  * `SEARCH_DB_DIALECT`: Dialect of your database-server.
+  * `SEARCH_DB_DRIVER`: Driver of your database-server.
+  * `SEARCH_POKESTOP_TABLE` : table which contains pokestops.
+  * `SEARCH_GYM_TABLE`: table which contains gyms.
+  The tables `SEARCH_POKESTOP_TABLE` + `SEARCH_GYM_TABLE` must have columns `name`, `lat`, `lon`.
+
+### Geofencing settings:
+ * If your set of Point of Interests is really big and covers multiple regions, you can use geofences 
+ * `SEARCH_USE_GEOFENCES`: True | False  - Enables the usage of geofences.
+ * `SEARCH_CHANNELS_TO_GEOFENCES` defines a mapping of discord-channel IDs to geofence-files.
+ You can find out the ID of a channel, by enabling the developer mode in discord; When enabled, you can right click a channel and copy its ID.
+ Channel IDs are **integers**, not strings.
+ Geofences are defined as a path to a geofence-file (starting from the repository root).
+ Examples of geofence-files can be found in `data/geofences`.
+
+Example:
+The following definition
+```
+SEARCH_CHANNELS_TO_GEOFENCES = {
+                                CHANNEL_ID_1: "data/geofences/freiburg.txt",
+                                CHANNEL_ID_2: "data/geofences/emmendingen.txt"
+                                }
+```
+- Defines a mapping: 
+* `CHANNEL_ID_1` -> `"data/geofences/freiburg.txt"`
+* `CHANNEL_ID_2` -> `"data/geofences/emmendingen.txt"`
+
+Which means that in channel `CHANNEL_ID_1` you can only search within the geofences defined in `"data/geofences/freiburg.txt"`,
+and in channel `CHANNEL_ID_2` you can only search within the geofences defined in `"data/geofences/emmendingen.txt"`.
+
+
+
+## 3. Deploy:
+### Configure
+Fill in everything necessary in `config.py`
+
+### Install python3 requirements
 We recommend to use a virtual environment.
 ```
-python3 -m venv searchbot-venv
-source searchbot-venv/bin/activate
+python3 -m venv raidquaza-venv
+source raidquaza-venv/bin/activate
 ```
 
 Then install the requirements.
@@ -22,111 +186,14 @@ Then install the requirements.
 pip3 install -U -r requirements.txt
 ```
 
-
-## 3. Configuration:
-Copy the file `config/config.ini.example` to `config/config.ini` (or create it). 
-The configuration file can contain sections of the form: 
-
-```
-[bot]
-token = <discord_bot_token>
-playing = Raidquaza!
-
-[search]
-# database / csv
-data_source = database
-host = localhost
-database = monocle
-user = monocleuser
-password = test123
-port = 3306
-pokestop_table_name = pokestops
-gym_table_name = forts
-use_geofences = True
-geofences = ["config/freiburg.txt","config/emmendingen.txt"]
-channels = ["411547369096740864", "410357320464465929"]
-
-
-[polls]
-host = localhost
-user = pollman
-password = bestpw
-port = 3307
-database = polldb
-dialect = mysql
-driver = mysqlconnector
-```
-where:
-
-### [bot] section: 
- -`<bot_token>` is the token of your discord bot user.
-
-### Defining the source of Point of Interests. 
-You must choose between using a csv file or a database.
-Just use the section you need.
-
-**Limitations:** 
-- Currently we only support mysql/mariadb databases
-
-### [search] section:
-
-* `data_source` defines which is either `database` or `csv`. 
-
-####  csv settings:
-  * `csv_file` is a path to .csv file, which consists of 4 columns: Name, long, lat,Type(Arena/Pokestop)
-  an example file is `data/gyms_stops.csv` which contains all pokestops and arenas of the city Freiburg.
-
-
-#### database settings: 
- In the `database` section you can define the database, from which the bot shall pull gyms and pokestops.  (e.g. monocle)
-  * `use_database`: True False - enables the use of database.
-  * `host`:  Database host.
-  * `database`: Database name.
-  * `user`: Database user.
-  * `port` : Database port.
-  * `password`: Database password of your user.
-  * `pokestop_table_name` : table which contains pokestops.
-  * `gym_table_name`: table which contains gyms.
-  The tables `pokestop_table_name` + `gym_table_name` must have columns `name`, `lat`, `lon`.
-
-### geofence settings:
- * If your set of Point of Interests is really big and covers multiple regions, you can use geofences 
- * `use_geofences`: True | False  - Enables the usage of geofences.
- * `geofences` defines a list of geofences, an entry in the list defines a path to a geofence (starting from the repository root)
- * `channels` defines a list of discord-channel IDs. You can find out the ID of a channel, by enabling the developer mode in discord; When enabled, you can right click a channel and copy its ID. Channel IDs are **integers**, not strings.
- 
-The lists  `geofences` and `channels` define a one-to-one mapping.
-
-Example:
-The follwing definition
-```
-geofences = ["config/geofence1.txt", "config/geofence2.txt"]
-channels = [CHANNEL_ID_1, CHANNEL_ID_2]
-```
-- Defines a mapping: 
-* `CHANNEL_ID_1` -> `"config/geofence1.txt"`
-* `CHANNEL_ID_2` -> `"config/geofence2.txt"`
-
-Which means that in channel `CHANNEL_ID_1` you can only search within the geofences defined in `"config/geofence1.txt"`,
-and in channel `CHANNEL_ID_2` you can only search within the geofences defined in `"config/geofence2.txt"`.
-
-If you do not need this feature, just delete the section in the config.
-
-### [polls] section:
-In the `polls` section you define a database, where the bot shall store its polls.
-* `host`:  Database host.
-* `database`: Database name.
-* `user`: Database user.
-* `password`: Database password of your user.
-* `port` : Database port.
-* `dialect` : SQL Dialect of the database.
-* `driver` : Driver for the database.
-
-## 4. Starting the bot
+### Start the bot
 Call:
 ```
 python3 start_bot.py
 ```
+
+
+
 
 ## Deploy with docker
 We expect you to know about docker, docker-compose and how you deploy.
@@ -165,21 +232,98 @@ services:
       - default
 ``` 
 
-An example config would be: 
+An example config for a bot with polls and search (with CSV as datasource for simplicity) would be: 
 ```
-[bot]
-token = <bot_token>
-prefix = !
-playing = Raidquaza
+from utility.enums import DataSource
 
-[polls]
-host = poll-db
-user = pollman
-password = bestpw
-port = 3306
-database = polldb
-dialect = mysql
-driver = mysqlconnector
+# Directory where the log file of the bot shall be stored
+LOG_PATH = '/home/logs/raidquaza'
+
+"""
+Discord Section.
+"""
+# The Token of your botuser.
+BOT_TOKEN = 'NDExNTQzMTExNDA0MDkzNDQx.DV9O5g.lA9ETLB9Ckivac2iLeRm64VFpHE'
+# Discord Status
+PLAYING = 'RaidquazaTesting'
+# Command prefix
+PREFIX = '!'
+
+"""
+Poll Section.
+"""
+# If you want to use the poll COG, set this to true
+POLL_ENABLED = True
+# The host of the DB in which we store polls
+POLL_DB_HOST = 'poll-db'
+# The user of the DB
+POLL_DB_USER = 'pollman'
+# The password of user POLL_DB_USER
+POLL_DB_PASSWORD = 'bestpw'
+# The port of the DB-server
+POLL_DB_PORT = 3306
+# The name of the DB in which we store polls
+POLL_DB_NAME = 'polldb'
+# The dialect of the database-server
+POLL_DB_DIALECT = 'mysql'
+# The driver of the database-server
+POLL_DB_DRIVER = 'mysqlconnector'
+"""
+Search section.
+
+Here we define the settings for the Search.
+"""
+# If you want to use the search COG, set this to True.
+SEARCH_ENABLED = True
+
+"""
+Choosing the datasource. 
+
+The datasource is either DataSource.DATABASE or DataSource.CSV
+If DataSource.DATABASE is chosen, we pull the gyms and stops from a database.
+If DataSource.CSV is chosen, we pull the gyms and stops from a csv file, an example can be found in 
+'data/gyms_stops.csv'
+"""
+SEARCH_DATASOURCE = DataSource.CSV
+
+# The csv file we pull data from, example in 'data/gyms_stops.csv'. Leave this empty if you do not need it.
+SEARCH_CSV_FILE = 'data/gyms_stops.csv'
+
+# If you have chosen DataSource.DATABASE, you have to define from which database you pull data.
+# The host of the DB
+SEARCH_DB_HOST = ''
+# The name of the database
+SEARCH_DB_NAME = ''
+# The user of the database
+SEARCH_DB_USER = ''
+# The password to connect with SEARCH_DB_USER.
+SEARCH_DB_PASSWORD = ''
+# The port of the database-server
+SEARCH_DB_PORT = 0
+# The dialect of the database-server
+SEARCH_DB_DIALECT = ''
+# The driver of the database-server
+SEARCH_DB_DRIVER = ''
+
+# The table in database SEARCH_DB_NAME, which contains pokestops
+SEARCH_POKESTOP_TABLE = ''
+# The table in database SEARCH_DB_NAME, which contains gyms
+SEARCH_GYM_TABLE = ''
+
+"""
+Geofencing.
+
+When the amount of pokestops/gyms if big and you cover different cities / regions, you might want to restrict the 
+search space for different channels.
+We define a mapping DISCORD_CHANNEL -> GEOFENCE, if you then use the search functionality in a specified 
+DISCORD_CHANNEL, the search space is restricted to point of interests which are in the according GEOFENCE.
+"""
+# Set to true if you want to use geofencing.
+SEARCH_USE_GEOFENCES = False
+# DISCORD_CHANNEL -> GEOFENCE
+SEARCH_CHANNELS_TO_GEOFENCES = {}
+
+
 ```
 
 If you want to use the search feature, you have to add the configuration to the above.
