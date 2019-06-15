@@ -357,7 +357,7 @@ class PointOfInterestQgramIndex(QgramIndex):
             raise NotImplementedError(f'scoring method {self.scoring_method} not implemented.')
         return ed
 
-    def find_matches(self, query, delta, k=5, use_qindex=True, channel_id=None):
+    def find_matches(self, query, k=5, use_qindex=True, channel_id=None):
         """ Find the top-k matches
             """
         result_words = []

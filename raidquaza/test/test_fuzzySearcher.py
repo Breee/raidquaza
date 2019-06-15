@@ -1,9 +1,8 @@
 from unittest import TestCase
 from search.fuzzysearch import FuzzySearcher
-from config.Configuration import Configuration
 from search.enums import RECORD_TYPE
+import test.testconfig as config
 
-config = Configuration(config_file="testconfig.ini")
 fuzzy = FuzzySearcher(config=config)
 
 
@@ -36,11 +35,13 @@ class TestFuzzySearcher(TestCase):
                                    'rgc': [5], 'gcr': [5], 'cro': [5],
                                    'ros': [5], 'ss$': [5], '$$j': [6], '$jo': [6], 'joh': [6], 'oha': [6], 'han': [6],
                                    'ann': [6], 'nes': [6],
-                                   'esk': [6], 'ski': [6]}
-        expected_latitude = ['7.953323', '7.820795', '7.825398', '7.826742', '7.817412', '7.858673', '7.847594']
-        expected_longitude = ['48.091214', '47.988518', '47.991222', '47.991146', '47.992087', '47.994854', '47.988868']
+                                   'esk': [6], 'ski': [6]
+                                   }
+        expected_longitude = ['7.953323', '7.820795', '7.825398', '7.826742', '7.817412', '7.858673', '7.847594']
+        expected_latitude = ['48.091214', '47.988518', '47.991222', '47.991146', '47.992087', '47.994854', '47.988868']
         expected_vocab = {0: 'Grösste Pfeife Waldkirchs', 1: 'Gutleutkreis 1', 2: 'Sonnenuhr Staudinger',
-                          3: 'Beat Man Haslach', 4: 'Melanchthonkirche', 5: 'Schlossberg Cross', 6: 'Johanneskirche'}
+                          3: 'Beat Man Haslach', 4: 'Melanchthonkirche', 5: 'Schlossberg Cross', 6: 'Johanneskirche'
+                          }
         expected_types = [RECORD_TYPE.GYM, RECORD_TYPE.GYM, RECORD_TYPE.GYM, RECORD_TYPE.POKESTOP, RECORD_TYPE.POKESTOP,
                           RECORD_TYPE.GYM, RECORD_TYPE.GYM]
 
@@ -54,7 +55,8 @@ class TestFuzzySearcher(TestCase):
         # Test: if a query matches a record, the record shall be the #1 result.
         full_match_query_list = {0: 'Grösste Pfeife Waldkirchs', 1: 'Gutleutkreis 1', 2: 'Sonnenuhr Staudinger',
                                  3: 'Beat Man Haslach', 4: 'Melanchthonkirche', 5: 'Schlossberg Cross',
-                                 6: 'Johanneskirche'}
+                                 6: 'Johanneskirche'
+                                 }
         expected_scores = [-66.0, -36.0, -54.0, -39.0, -48.0, -45.0, -39.0]
         for record_id, record in full_match_query_list.items():
             result = fuzzy.search(query=record, num_results=1)

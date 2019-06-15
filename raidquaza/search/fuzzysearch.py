@@ -27,29 +27,30 @@ from search.qgram_index import PointOfInterestQgramIndex
 from utility.globals import LOGGER
 from search.searchdbhandler import SearchDBHandler
 from utility.enums import DataSource
-import config as config
 
 
 class FuzzySearcher(object):
 
-    def __init__(self, q=3, k=5):
+    def __init__(self, config, q=3, k=5):
         self.q = q
         self.k = k
         # init search engine
         self.db_handler = None
         self.point_of_interest_index: PointOfInterestQgramIndex = None
+        self.config = config
         self.index()
 
     def index(self):
-        self.point_of_interest_index = PointOfInterestQgramIndex(3, config.SEARCH_USE_GEOFENCES,
-                                                                 config.SEARCH_CHANNELS_TO_GEOFENCES)
+        self.point_of_interest_index = PointOfInterestQgramIndex(3, self.config.SEARCH_USE_GEOFENCES,
+                                                                 self.config.SEARCH_CHANNELS_TO_GEOFENCES)
         index_input = None
-        if config.SEARCH_DATASOURCE == DataSource.DATABASE:
+        if self.config.SEARCH_DATASOURCE == DataSource.DATABASE:
             LOGGER.info("Using database")
-            self.db_handler = SearchDBHandler(database=config.SEARCH_DB_NAME, user=config.SEARCH_DB_USER,
-                                              password=config.SEARCH_DB_PASSWORD, host=config.SEARCH_DB_HOST,
-                                              dialect=config.SEARCH_DB_DIALECT, driver=config.SEARCH_DB_DRIVER,
-                                              port=config.SEARCH_DB_PORT)
+            self.db_handler = SearchDBHandler(database=self.config.SEARCH_DB_NAME, user=self.config.SEARCH_DB_USER,
+                                              password=self.config.SEARCH_DB_PASSWORD, host=self.config.SEARCH_DB_HOST,
+                                              dialect=self.config.SEARCH_DB_DIALECT,
+                                              driver=self.config.SEARCH_DB_DRIVER,
+                                              port=self.config.SEARCH_DB_PORT)
             forts, stops = self.db_handler.get_gyms_stops()
             index_input = [*forts, *stops]
 
@@ -58,7 +59,7 @@ class FuzzySearcher(object):
             self.point_of_interest_index.build_from_lists(index_input)
         else:
             LOGGER.info("Using forts/stops from file")
-            index_input = config.SEARCH_CSV_FILE
+            index_input = self.config.SEARCH_CSV_FILE
             self.point_of_interest_index.build_from_file(index_input)
 
     def search(self, query, num_results=5, channel_id=None):

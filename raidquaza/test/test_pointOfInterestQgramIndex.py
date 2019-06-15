@@ -80,7 +80,35 @@ class TestPointOfInterestQgramIndex(TestCase):
             self.assertAlmostEqual(acutal_posting_list, expected_posting_lists[i])
 
     def test_get_score(self):
-        self.fail()
+        words = ['Grösste Pfeife Waldkirchs', 'Gutleutkreis 1', 'Sonnenuhr Staudinger', 'Beat Man Haslach',
+                 'Melanchthonkirche', 'Schlossberg Cross', 'Johanneskirche']
+        queries_full_match = ['Grösste Pfeife Waldkirchs', 'Gutleutkreis 1', 'Sonnenuhr Staudinger', 'Beat Man Haslach',
+                              'Melanchthonkirche', 'Schlossberg Cross', 'Johanneskirche']
+        scores_full_match = [-72.0, -39.0, -57.0, -45.0, -48.0, -48.0, -39.0]
+
+        queries_typos = ['Grössde feife Waldmirchs', 'Gutmeutkreiss 1', 'Sonnenuhr Laudinger', 'Beat Man Hasfach',
+                         'Melanchthon', 'Schlossgferg Cross', 'Johanneslirrche']
+
+        for word, query in zip(words, queries_full_match):
+            scores_full_match.append(index.get_score(query, word))
+        print(scores_full_match)
+
+    def check_query_results(self, queries, target_records):
+        for query, target in zip(queries, target_records):
+            matches = [x[0] for x in index.find_matches(query, k=5)]
+            print(f"query: {query}, target:{target}, matches: {matches}")
+            self.assertIn(target, matches)
 
     def test_find_matches(self):
-        self.fail()
+        index.build_from_file(test_data)
+        target_records = ['Grösste Pfeife Waldkirchs', 'Gutleutkreis 1', 'Sonnenuhr Staudinger', 'Beat Man Haslach',
+                          'Melanchthonkirche', 'Schlossberg Cross', 'Johanneskirche']
+
+        queries_full_match = ['Grösste Pfeife Waldkirchs', 'Gutleutkreis 1', 'Sonnenuhr Staudinger', 'Beat Man Haslach',
+                              'Melanchthonkirche', 'Schlossberg Cross', 'Johanneskirche']
+
+        queries_typos = ['Grössde feife Waldmirchs', 'Gutmeutkreiss 1', 'Sonnenuhr Laudinger', 'Beat Man Hasfach',
+                         'Melanchthon', 'Schlossgferg Cross', 'Johanneslirrche']
+
+        self.check_query_results(queries_full_match, target_records)
+        self.check_query_results(queries_typos, target_records)
