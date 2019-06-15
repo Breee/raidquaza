@@ -282,7 +282,7 @@ class PointOfInterestQgramIndex(QgramIndex):
 
                 # fourth tab, type
                 if (len(row) > 3):
-                    if row[3].strip() == 'Gym':
+                    if row[3].strip() == 'Gym' or row[3].strip() == 'Arena':
                         self.types.append(RECORD_TYPE.GYM)
                     elif row[3].strip() == 'Pokestop':
                         self.types.append(RECORD_TYPE.POKESTOP)
