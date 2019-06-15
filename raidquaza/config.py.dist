@@ -1,33 +1,52 @@
 from utility.enums import DataSource
 
-BOT_TOKEN = 'NDExNTQzMTExNDA0MDkzNDQx.DV9O5g.lA9ETLB9Ckivac2iLeRm64VFpHE'
+# Directory where the log file of the bot shall be stored
+LOG_PATH = '/home/logs/raidquaza'
+
+"""
+Discord Section.
+"""
+# The Token of your botuser.
+BOT_TOKEN = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+# Discord Status
 PLAYING = 'RaidquazaTesting'
+# Command prefix
 PREFIX = '!'
 
-LOG_PATH = '/home/bree/repos/pokemon-discord-report-bot/raidquaza/'
-
+"""
+Poll Section.
+"""
+# If you want to use the poll COG, set this to true
 POLL_ENABLED = True
+# The host of the DB in which we store polls
 POLL_DB_HOST = 'localhost'
+# The user of the DB
 POLL_DB_USER = 'pollman'
+# The password of user POLL_DB_USER
 POLL_DB_PASSWORD = 'bestpw'
-POLL_DB_PORT = 3307
+# The port of the DB-server
+POLL_DB_PORT = 3306
+# The name of the DB in which we store polls
 POLL_DB_NAME = 'polldb'
+# The dialect of the database-server
 POLL_DB_DIALECT = 'mysql'
+# The driver of the database-server
 POLL_DB_DRIVER = 'mysqlconnector'
 
 """
 Search section.
-- Here we define the settings for the Search.
+
+Here we define the settings for the Search.
 """
 # If you want to use the search COG, set this to True.
 SEARCH_ENABLED = True
 
 """
-Choosing the datasource. 
+Choosing the datasource.
 
 The datasource is either DataSource.DATABASE or DataSource.CSV
 If DataSource.DATABASE is chosen, we pull the gyms and stops from a database.
-If DataSource.CSV is chosen, we pull the gyms and stops from a csv file, an example can be found in 
+If DataSource.CSV is chosen, we pull the gyms and stops from a csv file, an example can be found in
 'data/gyms_stops.csv'
 """
 SEARCH_DATASOURCE = DataSource.DATABASE
@@ -59,9 +78,9 @@ SEARCH_GYM_TABLE = 'forts'
 """
 Geofencing.
 
-When the amount of pokestops/gyms if big and you cover different cities / regions, you might want to restrict the 
+When the amount of pokestops/gyms if big and you cover different cities / regions, you might want to restrict the
 search space for different channels.
-We define a mapping DISCORD_CHANNEL -> GEOFENCE, if you then use the search functionality in a specified 
+We define a mapping DISCORD_CHANNEL -> GEOFENCE, if you then use the search functionality in a specified
 DISCORD_CHANNEL, the search space is restricted to point of interests which are in the according GEOFENCE.
 """
 # Set to true if you want to use geofencing.

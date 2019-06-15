@@ -26,7 +26,7 @@ LOG_PATH = '/home/logs/raidquaza'
 Discord Section.
 """
 # The Token of your botuser.
-BOT_TOKEN = 'NDExNTQzMTExNDA0MDkzNDQx.DV9O5g.lA9ETLB9Ckivac2iLeRm64VFpHE'
+BOT_TOKEN = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
 # Discord Status
 PLAYING = 'RaidquazaTesting'
 # Command prefix
@@ -243,7 +243,7 @@ LOG_PATH = '/home/logs/raidquaza'
 Discord Section.
 """
 # The Token of your botuser.
-BOT_TOKEN = 'NDExNTQzMTExNDA0MDkzNDQx.DV9O5g.lA9ETLB9Ckivac2iLeRm64VFpHE'
+BOT_TOKEN = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
 # Discord Status
 PLAYING = 'RaidquazaTesting'
 # Command prefix

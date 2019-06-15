@@ -16,3 +16,5 @@ raidquaza/config/config\.ini
 raidquaza/supervisord\.log
 
 *.log
+
+raidquaza/config\.py
