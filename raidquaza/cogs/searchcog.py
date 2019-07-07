@@ -3,12 +3,13 @@ from discord.ext import commands
 from search.fuzzysearch import FuzzySearcher
 from utility.globals import LOGGER
 from search.enums import SCORING_TYPE, RECORD_TYPE
+import config as config
 
 
 class SearchCog(commands.Cog, name="Search"):
     def __init__(self, bot):
         self.bot = bot
-        self.fuzzy_searcher = FuzzySearcher()
+        self.fuzzy_searcher = FuzzySearcher(config=config)
 
     @commands.command(help="Rebuild the index, you must be bot_owner to do this.")
     @commands.is_owner()
