@@ -5,6 +5,8 @@ from collections import Counter
 from abc import ABC, abstractmethod
 from geofence.geofencehelper import GeofenceHelper
 from search.enums import SCORING_TYPE, RECORD_TYPE
+from typing import List
+from utility.custom_types import Record
 
 
 def get_qgrams(str, q):
@@ -300,36 +302,18 @@ class PointOfInterestQgramIndex(QgramIndex):
                     self.inverted_lists[qgram].append(record_id)
                 record_id += 1
 
-    def build_from_lists(self, input):
+    def build_from_lists(self, input: List[Record]):
         """ Build index of point of interest, from a list which contains tuples of the form (name,lat,lon,type)"""
         record_id = 0
         for row in input:
             # first tab is the name/record
-            record = row[0].strip()
+            record = row.name
+            if record is None or record == 'unknown':
+                continue
             self.vocab[record_id] = record
-            # the if/else contructs are necessary because the file lines
-            # dont got always 3 entries
-            # second tab, longitude
-            if (len(row) > 1):
-                self.longitude.append(row[2])
-            else:
-                self.longitude.append(None)
-            # third tab, latitude
-            if (len(row) > 2):
-                self.latitude.append(row[1])
-            else:
-                self.latitude.append(None)
-
-            # fourth tab, type
-            if (len(row) > 3):
-                record_type = row[3]
-                if record_type == RECORD_TYPE.GYM or record_type == RECORD_TYPE.POKESTOP:
-                    self.types.append(record_type)
-                else:
-                    self.types.append(RECORD_TYPE.UNKNOWN)
-            else:
-                self.types.append(RECORD_TYPE.UNKNOWN)
-
+            self.latitude.append(row.lat)
+            self.longitude.append(row.lon)
+            self.types.append(row.type)
             # on the fly calc qgrams
             word = re.sub("[ \W+\n]", "", record).lower()
             self.vocab[record_id] = record
