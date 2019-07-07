@@ -26,10 +26,7 @@ from utility.globals import LOGGER
 from search.enums import RECORD_TYPE
 from database.dbhandler import DbHandler, transaction_wrapper
 import config as config
-from collections import namedtuple
-
-keys = ['name', 'lat', 'lon']
-Record = namedtuple('Record', keys)
+from utility.custom_types import Record
 
 
 class SearchDBHandler(DbHandler):
@@ -45,17 +42,15 @@ class SearchDBHandler(DbHandler):
 
         #  Fetch gyms from DB
         gym_result = self.session.execute(f"SELECT name, lat, lon FROM {config.SEARCH_GYM_TABLE}")
-        gym_records = [Record(*r) for r in gym_result.fetchall()]
+        gym_records = [Record(*r, RECORD_TYPE.GYM) for r in gym_result.fetchall()]
         for row in gym_records:
-            if row[0]:
-                gyms.append(row + (RECORD_TYPE.GYM,))
+            gyms.append(row)
 
         # Fetch stops from DB
         pokestop_result = self.session.execute(f"SELECT name, lat, lon FROM {config.SEARCH_POKESTOP_TABLE}")
-        pokestop_records = [Record(*r) for r in pokestop_result.fetchall()]
+        pokestop_records = [Record(*r, RECORD_TYPE.POKESTOP) for r in pokestop_result.fetchall()]
         for row in pokestop_records:
-            if row[0]:
-                stops.append(row + (RECORD_TYPE.POKESTOP,))
+            stops.append(row)
         LOGGER.info("Pulled %d forts and %d stops" % (len(gyms), len(stops)))
         return gyms, stops
 
