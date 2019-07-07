@@ -67,6 +67,6 @@ class FuzzySearcher(object):
         query = re.sub("[ \W+\n]", "", query).lower()
         query = re.sub("%", " ", query).lower()
         delta = int(math.floor(len(query) / 4))
-        result = self.point_of_interest_index.find_matches(query, delta, k=num_results, use_qindex=True,
+        result = self.point_of_interest_index.find_matches(query, k=num_results, use_qindex=True,
                                                            channel_id=channel_id)
         return result
