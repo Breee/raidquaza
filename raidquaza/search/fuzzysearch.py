@@ -27,6 +27,7 @@ from search.qgram_index import PointOfInterestQgramIndex
 from utility.globals import LOGGER
 from search.searchdbhandler import SearchDBHandler
 from utility.enums import DataSource
+from search.enums import RECORD_TYPE
 
 
 class FuzzySearcher(object):
@@ -43,18 +44,32 @@ class FuzzySearcher(object):
     def index(self):
         self.point_of_interest_index = PointOfInterestQgramIndex(3, self.config.SEARCH_USE_GEOFENCES,
                                                                  self.config.SEARCH_CHANNELS_TO_GEOFENCES)
-        index_input = None
+        index_input = []
         if self.config.SEARCH_DATASOURCE == DataSource.DATABASE:
             LOGGER.info("Using database")
-            self.db_handler = SearchDBHandler(database=self.config.SEARCH_DB_NAME, user=self.config.SEARCH_DB_USER,
-                                              password=self.config.SEARCH_DB_PASSWORD, host=self.config.SEARCH_DB_HOST,
+            self.db_handler = SearchDBHandler(database=self.config.SEARCH_DB_NAME,
+                                              user=self.config.SEARCH_DB_USER,
+                                              password=self.config.SEARCH_DB_PASSWORD,
+                                              host=self.config.SEARCH_DB_HOST,
                                               dialect=self.config.SEARCH_DB_DIALECT,
                                               driver=self.config.SEARCH_DB_DRIVER,
                                               port=self.config.SEARCH_DB_PORT)
-            forts, stops = self.db_handler.get_gyms_stops()
-            index_input = [*forts, *stops]
+            forts = self.db_handler.get_pois(table=self.config.SEARCH_GYM_TABLE, type=RECORD_TYPE.GYM)
+            stops = self.db_handler.get_pois(table=self.config.SEARCH_POKESTOP_TABLE, type=RECORD_TYPE.POKESTOP)
+            index_input += [*forts] + [*stops]
+        if self.config.SEARCH_USE_PORTALS:
+            if self.config.SEARCH_PORTALS_DATASOURCE == DataSource.DATABASE:
+                self.db_handler = SearchDBHandler(database=self.config.SEARCH_PORTALS_DB_NAME,
+                                                  user=self.config.SEARCH_PORTALS_DB_USER,
+                                                  password=self.config.SEARCH_PORTALS_DB_PASSWORD,
+                                                  host=self.config.SEARCH_PORTALS_DB_HOST,
+                                                  dialect=self.config.SEARCH_PORTALS_DB_DIALECT,
+                                                  driver=self.config.SEARCH_PORTALS_DB_DRIVER,
+                                                  port=self.config.SEARCH_PORTALS_DB_PORT)
+                portals = self.db_handler.get_pois(table=self.config.SEARCH_PORTALS_DB_TABLE, type=RECORD_TYPE.PORTAL)
+                index_input += [*portals]
 
-        if isinstance(index_input, list):
+        if isinstance(index_input, list) and index_input:
             LOGGER.info("Using forts/stops from database")
             self.point_of_interest_index.build_from_lists(index_input)
         else:
