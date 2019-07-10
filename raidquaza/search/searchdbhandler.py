@@ -27,6 +27,7 @@ from search.enums import RECORD_TYPE
 from database.dbhandler import DbHandler, transaction_wrapper
 import config as config
 from utility.custom_types import Record
+from typing import List
 
 
 class SearchDBHandler(DbHandler):
@@ -34,30 +35,25 @@ class SearchDBHandler(DbHandler):
     def __init__(self, host, database, port, user, password, dialect, driver):
         super(SearchDBHandler, self).__init__(host, database, port, user, password, dialect, driver)
 
+    def fetch_results(self, table, type):
+        query_result = self.session.execute(f"SELECT name, lat, lon FROM {table}")
+        results = [Record(*r, type) for r in query_result.fetchall()]
+        return results
+
     @transaction_wrapper
-    def get_gyms_stops(self):
-        LOGGER.info("Pulling forts and stops from DB")
-        gyms = []
-        stops = []
-
-        #  Fetch gyms from DB
-        gym_result = self.session.execute(f"SELECT name, lat, lon FROM {config.SEARCH_GYM_TABLE}")
-        gym_records = [Record(*r, RECORD_TYPE.GYM) for r in gym_result.fetchall()]
-        for row in gym_records:
-            gyms.append(row)
-
-        # Fetch stops from DB
-        pokestop_result = self.session.execute(f"SELECT name, lat, lon FROM {config.SEARCH_POKESTOP_TABLE}")
-        pokestop_records = [Record(*r, RECORD_TYPE.POKESTOP) for r in pokestop_result.fetchall()]
-        for row in pokestop_records:
-            stops.append(row)
-        LOGGER.info("Pulled %d forts and %d stops" % (len(gyms), len(stops)))
-        return gyms, stops
+    def get_pois(self, table: str, type: RECORD_TYPE) -> List[Record]:
+        # Fetch poi from DB table
+        pois = self.fetch_results(table=table, type=type)
+        LOGGER.info("Pulled %d pois of type %s from table %s" % (len(pois), type, table))
+        return pois
 
 
 if __name__ == '__main__':
     db = SearchDBHandler(host="localhost", user="monocleuser", password="test123", port="3309", database="monocledb",
                          dialect="mysql", driver="mysqlconnector")
-    forts, stops = db.get_gyms_stops()
+    forts = db.get_pois(table=config.SEARCH_GYM_TABLE, type=RECORD_TYPE.GYM)
+    stops = db.get_pois(table=config.SEARCH_POKESTOP_TABLE, type=RECORD_TYPE.POKESTOP)
+    portals = db.get_pois(table=config.SEARCH_PORTALS_DB_TABLE, type=RECORD_TYPE.PORTAL)
     print(len(forts), forts)
     print(len(stops), stops)
+    print(len(portals), portals)
