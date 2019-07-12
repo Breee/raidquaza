@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from poll.polls import Poll, number_emojies
 from poll.pollmanager import PollManager
+from utility.globals import LOGGER
 import uuid
 
 
@@ -13,6 +14,7 @@ class PollCog(commands.Cog, name="Poll"):
     @commands.command(help="Create a poll", aliases=['umfrage', 'raid', 'voting', 'r'])
     @commands.guild_only()
     async def poll(self, ctx, poll_title, *options):
+        LOGGER.info("Creating Poll: %s %s on Server %s" % (poll_title, options, ctx.guild))
         # create a new poll
         poll_id = str(uuid.uuid4())
         new_poll = Poll(poll_id, poll_title, options)

@@ -23,5 +23,33 @@ class UtilsCog(commands.Cog, name="Utility"):
     @commands.command(aliases=['dracarys'])
     @commands.is_owner()
     async def purge(self, ctx, number):
-        async for message in ctx.channel.history(limit=number):
+        async for message in ctx.channel.history(limit=int(number)):
             await message.delete()
+        await ctx.send("Dracarys! Purged %s messages!" % number)
+
+    @commands.command(help="Show all servers (owner only)")
+    @commands.is_owner()
+    async def servers(self, ctx):
+        guilds = []
+        async for guild in self.bot.fetch_guilds(limit=150):
+            guilds.append("- %s (%s)" % (guild.name, guild.id))
+        await ctx.send("__**Servers**__\n%s" % "\n".join(guilds))
+
+    @commands.command(help="Leave a server (owner only)")
+    @commands.is_owner()
+    async def leave(self, ctx, id):
+        guild = self.bot.get_guild(int(id))
+        channel = ctx.channel
+        await ctx.send("Are you sure you want to leave Server %s?" % guild)
+
+        def check(m):
+            return m.channel == channel
+
+        msg = await self.bot.wait_for('message', check=check, timeout=10)
+        if msg.content == "yes":
+            await ctx.send("you said yes, leaving")
+            await guild.leave()
+        elif msg.content == "no":
+            await ctx.send("you said no")
+        else:
+            await ctx.send("No valid answer")
