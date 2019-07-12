@@ -1,12 +1,16 @@
 import logging
-import config as config
 import os
 
+try:
+    import config as config
+
+    log_path = config.LOG_PATH
+
+except:
+    log_path = "."
 # LOGGING
 logging.getLogger('discord').setLevel(logging.INFO)
 logging.getLogger('discord.http').setLevel(logging.WARNING)
-
-log_path = config.LOG_PATH
 
 if not os.path.exists(log_path):
     os.makedirs(log_path)
