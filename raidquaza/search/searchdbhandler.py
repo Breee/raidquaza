@@ -22,67 +22,38 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from mysql.connector import MySQLConnection, Error
-from globals.globals import LOGGER
+from utility.globals import LOGGER
 from search.enums import RECORD_TYPE
+from database.dbhandler import DbHandler, transaction_wrapper
+import config as config
+from utility.custom_types import Record
+from typing import List
 
 
-class SearchDatabaseHandler(object):
+class SearchDBHandler(DbHandler):
 
-    def __init__(self, host, db, port, user, password, pokestop_table_name, gym_table_name):
-        self.host = host
-        self.db = db
-        self.port = port
-        self.user = user
-        self.password = password
-        self.pokestop_table_name = pokestop_table_name
-        self.gym_table_name = gym_table_name
-        self.conn = None
-        self.cursor = None
+    def __init__(self, host, database, port, user, password, dialect, driver):
+        super(SearchDBHandler, self).__init__(host, database, port, user, password, dialect, driver)
 
-        try:
-            config = {'user':     self.user,
-                      'password': self.password,
-                      'database': self.db,
-                      'host':     self.host,
-                      'port':     self.port
-                      }
-            LOGGER.info('Connecting to MySQL database...')
-            self.conn = MySQLConnection(**config)
-            self.cursor = self.conn.cursor()
+    def fetch_results(self, table, type):
+        query_result = self.session.execute(f"SELECT name, lat, lon FROM {table}")
+        results = [Record(*r, type) for r in query_result.fetchall()]
+        return results
 
-            if self.conn.is_connected():
-                LOGGER.info('connection established.')
-            else:
-                raise Exception('connection to database failed.')
-
-        except Error as error:
-            raise Exception(error)
-
-    def disconnect(self):
-        self.conn.close()
-        LOGGER.info("disconnected from DB")
-
-    def get_gyms_stops(self):
-        LOGGER.info("Pulling forts and stops from DB")
-        gyms = []
-        stops = []
-        self.cursor.execute(f"SELECT name, lat, lon FROM {self.gym_table_name}")
-        for row in self.cursor:
-            if row[0]:
-                gyms.append(row + (RECORD_TYPE.GYM,))
-
-        self.cursor.execute(f"SELECT name, lat, lon FROM {self.pokestop_table_name}")
-        for row in self.cursor:
-            if row[0]:
-                stops.append(row + (RECORD_TYPE.POKESTOP,))
-        LOGGER.info("Pulled %d forts and %d stops" % (len(gyms), len(stops)))
-        return gyms, stops
+    @transaction_wrapper
+    def get_pois(self, table: str, type: RECORD_TYPE) -> List[Record]:
+        # Fetch poi from DB table
+        pois = self.fetch_results(table=table, type=type)
+        LOGGER.info("Pulled %d pois of type %s from table %s" % (len(pois), type, table))
+        return pois
 
 
 if __name__ == '__main__':
-    db = DbHandler(host='localhost', db='monocle', user='monocleuser', password='test123', port=3306)
-    forts, stops = db.get_gyms_stops()
+    db = SearchDBHandler(host="localhost", user="monocleuser", password="test123", port="3309", database="monocledb",
+                         dialect="mysql", driver="mysqlconnector")
+    forts = db.get_pois(table=config.SEARCH_GYM_TABLE, type=RECORD_TYPE.GYM)
+    stops = db.get_pois(table=config.SEARCH_POKESTOP_TABLE, type=RECORD_TYPE.POKESTOP)
+    portals = db.get_pois(table=config.SEARCH_PORTALS_DB_TABLE, type=RECORD_TYPE.PORTAL)
     print(len(forts), forts)
     print(len(stops), stops)
-    db.disconnect()
+    print(len(portals), portals)

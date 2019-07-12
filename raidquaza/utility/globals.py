@@ -1,16 +1,20 @@
 import logging
+import config
+import os
 
 # LOGGING
 logging.getLogger('discord').setLevel(logging.INFO)
 logging.getLogger('discord.http').setLevel(logging.WARNING)
 
-log_path = '.'
-log_file = 'searchbot'
+log_path = config.LOG_PATH
+
+if not os.path.exists(log_path):
+    os.makedirs(log_path)
 
 logFormatter = logging.Formatter("[%(asctime)s] [%(module)s] [%(levelname)-5.5s]  %(message)s")
-LOGGER = logging.getLogger('searchbot')
+LOGGER = logging.getLogger('raidquaza')
 
-fileHandler = logging.FileHandler("{0}/{1}.log".format(log_path, log_file))
+fileHandler = logging.FileHandler("{0}/raidquaza.log".format(config.LOG_PATH))
 fileHandler.setFormatter(logFormatter)
 LOGGER.addHandler(fileHandler)
 

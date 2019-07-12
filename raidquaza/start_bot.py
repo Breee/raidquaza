@@ -22,12 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from globals.globals import LOGGER
+from utility.globals import LOGGER
 from bot import Raidquaza
-from config.Configuration import Configuration
 
 if __name__ == "__main__":
     LOGGER.info("Starting Bot.")
-    config = Configuration("config/config.ini")
-    bot = Raidquaza(description="", config=config)
+    bot = Raidquaza(description="")
     bot.run()

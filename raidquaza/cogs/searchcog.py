@@ -1,20 +1,21 @@
 import discord
 from discord.ext import commands
 from search.fuzzysearch import FuzzySearcher
-from globals.globals import LOGGER
+from utility.globals import LOGGER
 from search.enums import SCORING_TYPE, RECORD_TYPE
+import config as config
 
 
 class SearchCog(commands.Cog, name="Search"):
-    def __init__(self, bot, config):
+    def __init__(self, bot):
         self.bot = bot
-        self.fuzzy_searcher = FuzzySearcher(config)
+        self.fuzzy_searcher = FuzzySearcher(config=config)
 
     @commands.command(help="Rebuild the index, you must be bot_owner to do this.")
     @commands.is_owner()
     async def reindex(self, ctx):
         LOGGER.info("Building new Index.")
-        self.fuzzy_searcher.index(self.bot.config)
+        self.fuzzy_searcher.index()
         await ctx.channel.send("New index built, happy searching!")
 
     @commands.command(
@@ -41,7 +42,7 @@ class SearchCog(commands.Cog, name="Search"):
     @commands.command(help="Search for a Point of Interest", aliases=['s', 'query', 'q'])
     async def search(self, ctx, *, query):
         msg = ''
-        results = self.fuzzy_searcher.search(query, num_results=5, channel_id=ctx.channel.id)
+        results = self.fuzzy_searcher.search(query, num_results=10, channel_id=ctx.channel.id)
         if results:
             for (poi, location, type, ed) in results:
                 maps_link = 'https://www.google.com/maps/place/%s,%s' % (location[0], location[1])
@@ -60,7 +61,7 @@ class SearchCog(commands.Cog, name="Search"):
         if results:
             for (gym, location, type, ed) in results:
                 maps_link = 'https://www.google.com/maps/place/%s,%s' % (location[0], location[1])
-                if (type == RECORD_TYPE.GYM) and (result_count < 5):
+                if (type == RECORD_TYPE.GYM) and (result_count < 10):
                     msg += '- **%s:**\t[%s](%s)\t(ed: %d)\n' % (
                         type.value[0], gym.strip(), maps_link.replace('\n', '').strip(), ed)
                     result_count += 1
@@ -77,7 +78,24 @@ class SearchCog(commands.Cog, name="Search"):
         if results:
             for (pokestop, location, type, ed) in results:
                 maps_link = 'https://www.google.com/maps/place/%s,%s' % (location[0], location[1])
-                if (type == RECORD_TYPE.POKESTOP) and (result_count < 5):
+                if (type == RECORD_TYPE.POKESTOP) and (result_count < 10):
+                    msg += '- **%s:**\t[%s](%s)\t(ed: %d)\n' % (
+                        type.value[0], pokestop.strip(), maps_link.replace('\n', '').strip(), ed)
+                    result_count += 1
+        else:
+            msg += 'No results found ...'
+        embed = discord.Embed(color=11010048, title="Top results for query '%s'" % query, description=msg)
+        await ctx.channel.send(content='', embed=embed)
+
+    @commands.command(help="Search for a portal", aliases=['poi'])
+    async def portal(self, ctx, *, query):
+        msg = ''
+        results = self.fuzzy_searcher.search(query, num_results=15, channel_id=ctx.channel.id)
+        result_count = 0
+        if results:
+            for (pokestop, location, type, ed) in results:
+                maps_link = 'https://www.google.com/maps/place/%s,%s' % (location[0], location[1])
+                if (type == RECORD_TYPE.PORTAL) and (result_count < 5):
                     msg += '- **%s:**\t[%s](%s)\t(ed: %d)\n' % (
                         type.value[0], pokestop.strip(), maps_link.replace('\n', '').strip(), ed)
                     result_count += 1

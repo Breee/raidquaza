@@ -1,21 +1,21 @@
 from typing import Union
 import json
 
-from poll.poll import Poll
-from poll.polldbhandler import DbHandler
-from config.Configuration import Configuration
+from poll.polls import Poll
+from poll.polldbhandler import PollDBHandler
+import config as config
 
 
 class PollManager(object):
 
-    def __init__(self, config: Configuration):
+    def __init__(self):
         self.polls = dict()
         self.received_message_to_poll = dict()
         self.sent_message_to_poll = dict()
-        self.db = DbHandler(database=config.poll_db_database, user=config.poll_db_user,
-                            password=config.poll_db_password, host=config.poll_db_host,
-                            dialect=config.poll_db_dialect, driver=config.poll_db_driver,
-                            port=config.poll_db_port)
+        self.db = PollDBHandler(database=config.POLL_DB_NAME, user=config.POLL_DB_USER,
+                                password=config.POLL_DB_PASSWORD, host=config.POLL_DB_HOST,
+                                dialect=config.POLL_DB_DIALECT, driver=config.POLL_DB_DRIVER,
+                                port=config.POLL_DB_PORT)
         self.pull_polls_from_db()
 
     def pull_polls_from_db(self):

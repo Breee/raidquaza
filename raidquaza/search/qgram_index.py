@@ -4,8 +4,9 @@ import csv
 from collections import Counter
 from abc import ABC, abstractmethod
 from geofence.geofencehelper import GeofenceHelper
-from config.Configuration import Configuration
 from search.enums import SCORING_TYPE, RECORD_TYPE
+from typing import List
+from utility.custom_types import Record
 
 
 def get_qgrams(str, q):
@@ -121,13 +122,13 @@ def levenshtein(seq1, seq2):
                         matrix[x - 1, y] + gap_penalty,
                         matrix[x - 1, y - 1] + match,
                         matrix[x, y - 1] + gap_penalty
-                )
+                        )
             else:
                 matrix[x, y] = min(
                         matrix[x - 1, y] + gap_penalty,
                         matrix[x - 1, y - 1] + mismatch,
                         matrix[x, y - 1] + gap_penalty
-                )
+                        )
     return (matrix[size_x - 1, size_y - 1])
 
 
@@ -152,13 +153,13 @@ def needleman_wunsch_scoring(seq1, seq2):
                         matrix[x - 1, y] + gap_penalty,
                         matrix[x - 1, y - 1] + match,
                         matrix[x, y - 1] + gap_penalty
-                )
+                        )
             else:
                 matrix[x, y] = min(
                         matrix[x - 1, y] + gap_penalty,
                         matrix[x - 1, y - 1] + mismatch,
                         matrix[x, y - 1] + gap_penalty
-                )
+                        )
             if (matrix[x, y] == matrix[x - 1, y] + gap_penalty or matrix[x, y - 1] + gap_penalty) and not gap_opened:
                 matrix[x, y] += gap_opening
                 gap_opened = True
@@ -189,13 +190,13 @@ def affine_gap_scoring(seq1, seq2):
                         matrix[x - 1, y] + gap_penalty,
                         matrix[x - 1, y - 1] + match,
                         matrix[x, y - 1] + gap_penalty
-                )
+                        )
             else:
                 matrix[x, y] = min(
                         matrix[x - 1, y] + gap_penalty,
                         matrix[x - 1, y - 1] + mismatch,
                         matrix[x, y - 1] + gap_penalty
-                )
+                        )
             if (matrix[x, y] == matrix[x - 1, y] + gap_penalty or matrix[x, y - 1] + gap_penalty):
                 if not gap_opened:
                     matrix[x, y] += gap_opening
@@ -283,7 +284,7 @@ class PointOfInterestQgramIndex(QgramIndex):
 
                 # fourth tab, type
                 if (len(row) > 3):
-                    if row[3].strip() == 'Gym':
+                    if row[3].strip() == 'Gym' or row[3].strip() == 'Arena':
                         self.types.append(RECORD_TYPE.GYM)
                     elif row[3].strip() == 'Pokestop':
                         self.types.append(RECORD_TYPE.POKESTOP)
@@ -301,36 +302,18 @@ class PointOfInterestQgramIndex(QgramIndex):
                     self.inverted_lists[qgram].append(record_id)
                 record_id += 1
 
-    def build_from_lists(self, input):
+    def build_from_lists(self, input: List[Record]):
         """ Build index of point of interest, from a list which contains tuples of the form (name,lat,lon,type)"""
         record_id = 0
         for row in input:
             # first tab is the name/record
-            record = row[0].strip()
+            record = row.name
+            if record is None or record == 'unknown':
+                continue
             self.vocab[record_id] = record
-            # the if/else contructs are necessary because the file lines
-            # dont got always 3 entries
-            # second tab, longitude
-            if (len(row) > 1):
-                self.longitude.append(row[2])
-            else:
-                self.longitude.append(None)
-            # third tab, latitude
-            if (len(row) > 2):
-                self.latitude.append(row[1])
-            else:
-                self.latitude.append(None)
-
-            # fourth tab, type
-            if (len(row) > 3):
-                record_type = row[3]
-                if record_type == RECORD_TYPE.GYM or record_type == RECORD_TYPE.POKESTOP:
-                    self.types.append(record_type)
-                else:
-                    self.types.append(RECORD_TYPE.UNKNOWN)
-            else:
-                self.types.append(RECORD_TYPE.UNKNOWN)
-
+            self.latitude.append(row.lat)
+            self.longitude.append(row.lon)
+            self.types.append(row.type)
             # on the fly calc qgrams
             word = re.sub("[ \W+\n]", "", record).lower()
             self.vocab[record_id] = record
@@ -358,7 +341,7 @@ class PointOfInterestQgramIndex(QgramIndex):
             raise NotImplementedError(f'scoring method {self.scoring_method} not implemented.')
         return ed
 
-    def find_matches(self, query, delta, k=5, use_qindex=True, channel_id=None):
+    def find_matches(self, query, k=5, use_qindex=True, channel_id=None):
         """ Find the top-k matches
             """
         result_words = []
