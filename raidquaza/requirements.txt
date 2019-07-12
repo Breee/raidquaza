@@ -3,3 +3,4 @@ numpy
 mysql-connector-python
 shapely
 sqlalchemy
+pytest

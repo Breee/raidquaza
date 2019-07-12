@@ -1,4 +1,8 @@
+#!/usr/local/bin/python3
+# -*- coding: utf-8 -*-
+
 import csv
+import pytest
 from unittest import TestCase
 from search.qgram_index import PointOfInterestQgramIndex
 from search.enums import RECORD_TYPE
@@ -7,6 +11,7 @@ index = PointOfInterestQgramIndex(q=3, use_geofences=False, channel_to_geofences
 test_data = 'test_data.csv'
 
 
+@pytest.mark.skip
 class TestPointOfInterestQgramIndex(TestCase):
 
     def test_index(self):

@@ -1,3 +1,6 @@
+#!/usr/local/bin/python3
+# -*- coding: utf-8 -*-
+
 from unittest import TestCase
 from search.fuzzysearch import FuzzySearcher
 from search.enums import RECORD_TYPE
