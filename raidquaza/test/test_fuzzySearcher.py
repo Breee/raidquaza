@@ -4,7 +4,7 @@
 from unittest import TestCase
 from search.fuzzysearch import FuzzySearcher
 from search.enums import RECORD_TYPE
-import test.testconfig as config
+import test.config as config
 
 fuzzy = FuzzySearcher(config=config)
 
