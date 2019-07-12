@@ -360,7 +360,6 @@ SEARCH_CHANNELS_TO_GEOFENCES = {}
 
 If you want to use the search feature, you have to add the configuration to the above.
 If you use a DB as data_source for the search, you should add the DB to the `docker-compose.yml` or run it in the same network as these services.
-
 To bring the services up, simply `docker-compose up -d poll-db`, `docker-compose up -d raidquaza`.
 
 # Commands
