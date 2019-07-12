@@ -372,6 +372,7 @@ Search:
 - `![search | s | query | q] <query>`will search for an Arena/Pokestop and return the top 5 results. (Arena/Pokestop + Google maps link)
 - `![gym|arena] <query>`will search for an Arena return the top 5 results. (Arena + Google maps link)
 - `![stop | pokestop] <query>`will search for an Stop return the top 5 results. (Stop + Google maps link)
+- `![portal | poi] <query>`will search for an Portal return the top 5 results. (Stop + Google maps link)
 - `!reindex` rebuild the index  (Requires that you are Owner of the Bot)
 - `!scoring` change scoring type to either one:  needleman_wunsch | levenshtein | affine (Requires that you are Owner of the Bot) 
 This command should not bother you, the default is affine scoring, which we consider to perform good atm.
