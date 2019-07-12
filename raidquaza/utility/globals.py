@@ -18,7 +18,7 @@ if not os.path.exists(log_path):
 logFormatter = logging.Formatter("[%(asctime)s] [%(module)s] [%(levelname)-5.5s]  %(message)s")
 LOGGER = logging.getLogger('raidquaza')
 
-fileHandler = logging.FileHandler("{0}/raidquaza.log".format(config.LOG_PATH))
+fileHandler = logging.FileHandler("{0}/raidquaza.log".format(log_path))
 fileHandler.setFormatter(logFormatter)
 LOGGER.addHandler(fileHandler)
 
