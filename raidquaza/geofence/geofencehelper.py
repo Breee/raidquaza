@@ -42,15 +42,6 @@ class GeofenceHelper(object):
         LOGGER.debug("coordinate: %s not in any geofence" % coordinate)
         return False
 
-    def is_in_any_geofence(self, latitude: float, longitude: float):
-        coordinate = Point(latitude, longitude)
-        for name, geofence in self.geofences.items():
-            if coordinate.within(geofence):
-                LOGGER.debug("coordinate: %s is in geofence: %s" % (coordinate, name))
-                return True
-        LOGGER.debug("coordinate: %s not in any geofence" % coordinate)
-        return False
-
     def filter_coordinates(self, coordinates: List[Point]) -> Tuple[List[Point], List[Point]]:
         inside = []
         outside = []

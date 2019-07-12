@@ -7,6 +7,7 @@ from geofence.geofencehelper import GeofenceHelper
 from search.enums import SCORING_TYPE, RECORD_TYPE
 from typing import List
 from utility.custom_types import Record
+from shapely.geometry import Point
 
 
 def get_qgrams(str, q):
@@ -362,7 +363,7 @@ class PointOfInterestQgramIndex(QgramIndex):
                     if self.use_geofences and channel_id and channel_id in self.channel_to_geofence_helper:
                         geofence_helper = self.channel_to_geofence_helper[channel_id]
                         # check if point is in geofence
-                        if geofence_helper.is_in_any_geofence(latitude, longitude):
+                        if geofence_helper.is_in_any_geofence(Point(float(latitude), float(longitude))):
                             result_words.append((record, (latitude, longitude), type, ed))
                     else:
                         result_words.append((record, (latitude, longitude), type, ed))
