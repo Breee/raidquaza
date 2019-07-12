@@ -2,6 +2,10 @@
 - Bot to create polls via discord.
 - Bot to search Point of Interests via discord.
 
+Try it out and add it to your discord :) 
+https://discordapp.com/api/oauth2/authorize?client_id=410240526701559829&permissions=280640&scope=bot 
+
+
 # Setup
 
 ## 1. Requirements: 
