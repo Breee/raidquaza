@@ -75,6 +75,38 @@ SEARCH_POKESTOP_TABLE = 'pokestops'
 # The table in database SEARCH_DB_NAME, which contains gyms
 SEARCH_GYM_TABLE = 'forts'
 
+
+"""
+Choosing the datasource for portals.
+
+The datasource is either DataSource.DATABASE or DataSource.CSV
+If DataSource.DATABASE is chosen, we pull the gyms and stops from a database.
+If DataSource.CSV is chosen, we pull the from a csv file SEARCH_CSV_FILE an example can be found in
+'data/gyms_stops.csv'
+"""
+SEARCH_USE_PORTALS = True
+# if you want CSV, use SEARCH_CSV_FILE
+SEARCH_PORTALS_DATASOURCE = DataSource.DATABASE
+
+# If you have chosen DataSource.DATABASE, you have to define from which database you pull data.
+# The host of the DB
+SEARCH_PORTALS_DB_HOST = 'localhost'
+# The name of the database
+SEARCH_PORTALS_DB_NAME = 'monocledb'
+# The user of the database
+SEARCH_PORTALS_DB_USER = 'monocleuser'
+# The password to connect with SEARCH_DB_USER.
+SEARCH_PORTALS_DB_PASSWORD = 'test123'
+# The port of the database-server
+SEARCH_PORTALS_DB_PORT = 3309
+# The dialect of the database-server
+SEARCH_PORTALS_DB_DIALECT = 'mysql'
+# The driver of the database-server
+SEARCH_PORTALS_DB_DRIVER = 'mysqlconnector'
+
+# The table in database SEARCH_PORTALS_DB_NAME, which contains portals
+SEARCH_PORTALS_DB_TABLE = 'ingress_portals'
+
 """
 Geofencing.
 
