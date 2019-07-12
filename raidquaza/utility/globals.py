@@ -1,5 +1,5 @@
 import logging
-import config
+import config as config
 import os
 
 # LOGGING
