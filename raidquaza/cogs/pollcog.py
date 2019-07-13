@@ -17,7 +17,7 @@ class PollCog(commands.Cog, name="Poll"):
         LOGGER.info("Creating Poll: %s %s on Server %s" % (poll_title, options, ctx.guild))
         # create a new poll
         poll_id = str(uuid.uuid4())
-        new_poll = Poll(poll_id, poll_title, options)
+        new_poll = Poll(poll_id, poll_title, list(options))
         # send it to discord
         msg, embed = new_poll.to_discord()
         sent_message: discord.Message = await ctx.channel.send(content=msg,

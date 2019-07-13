@@ -1,6 +1,7 @@
 from typing import List, Any
 import time
 from discord import Embed, Reaction
+from utils import uniquify
 
 # EMOJIS regional_indicator_A to regional_indicator_T
 reaction_emojies = ['\U0001F1E6',
@@ -37,11 +38,13 @@ class Poll(object):
     """
 
     def __init__(self, poll_id: str, poll_title: str, options: List[Any], is_immortal=False, updated_since_start=True):
+        if options is None:
+            options = []
         self.poll_id = poll_id
         self.creation_time = time.time()
         self.last_update = time.time()
         self.poll_title = poll_title
-        self.options = options
+        self.options = uniquify(options)
         self.reaction_to_option = {reaction_emojies[k]: options[k] for k in range(len(options))}
         self.option_to_reaction = {options[k]: reaction_emojies[k] for k in range(len(options))}
         self.participants = dict()
