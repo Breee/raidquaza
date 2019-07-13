@@ -1,7 +1,7 @@
 from utility.enums import DataSource
 
 # Directory where the log file of the bot shall be stored
-LOG_PATH = '/home/logs/raidquaza'
+LOG_PATH = '.'
 
 """
 Discord Section.
