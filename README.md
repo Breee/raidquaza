@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.com/Breee/raidquaza.svg?branch=master)](https://travis-ci.com/Breee/raidquaza)
+[![CodeFactor](https://www.codefactor.io/repository/github/breee/raidquaza/badge)](https://www.codefactor.io/repository/github/breee/raidquaza)
 # Discord bot Raidquaza
 - Bot to create polls via discord.
 - Bot to search Point of Interests via discord.
