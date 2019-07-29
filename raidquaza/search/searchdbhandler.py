@@ -36,7 +36,7 @@ class SearchDBHandler(DbHandler):
         super(SearchDBHandler, self).__init__(host, database, port, user, password, dialect, driver)
 
     def fetch_results(self, table, type):
-        if type == RECORD_TYPE.POKESTOP:
+        if type == RECORD_TYPE.PORTAL:
             query_result = self.session.execute(f"SELECT name, lat, lon FROM {table}")
         else:
             query_result = self.session.execute(f"SELECT name, latitude, longitude FROM {table}")
