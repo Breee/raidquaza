@@ -36,7 +36,7 @@ class SearchDBHandler(DbHandler):
         super(SearchDBHandler, self).__init__(host, database, port, user, password, dialect, driver)
 
     def fetch_results(self, table, type):
-        query_result = self.session.execute(f"SELECT name, lat, lon FROM {table}")
+        query_result = self.session.execute(f"SELECT name, latitude, longitude FROM {table}")
         results = [Record(*r, type) for r in query_result.fetchall()]
         return results
 
@@ -51,7 +51,8 @@ class SearchDBHandler(DbHandler):
 if __name__ == '__main__':
     db = SearchDBHandler(host="localhost", user="monocleuser", password="test123", port="3309", database="monocledb",
                          dialect="mysql", driver="mysqlconnector")
-    forts = db.get_pois(table=config.SEARCH_GYM_TABLE, type=RECORD_TYPE.GYM)
+    forts = db.get_pois(table=config.SEARCH_GYM_TABLE + " JOIN gymdetails ON gym.gym_id = gymdetails.gym_id",
+                        type=RECORD_TYPE.GYM)
     stops = db.get_pois(table=config.SEARCH_POKESTOP_TABLE, type=RECORD_TYPE.POKESTOP)
     portals = db.get_pois(table=config.SEARCH_PORTALS_DB_TABLE, type=RECORD_TYPE.PORTAL)
     print(len(forts), forts)
