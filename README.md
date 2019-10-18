@@ -9,6 +9,9 @@
 Try it out and add it to your discord:
 https://discordapp.com/api/oauth2/authorize?client_id=410240526701559829&permissions=280640&scope=bot 
 
+Questions? I'm Bree#2002 @ Discord
+
+
 Docker image:  https://cloud.docker.com/repository/docker/breedocker/raidquaza
 
 # Setup
