@@ -1,13 +1,11 @@
-FROM python:3.7-alpine
+FROM python:3.7-slim
 
 # Working directory for the application
 WORKDIR /usr/src/app
 COPY raidquaza /usr/src/app
 # prepare to run bot.
 
-#RUN echo "@testing http://nl.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
-RUN echo "http://mirror.leaseweb.com/alpine/edge/testing" >> /etc/apk/repositories
-RUN apk --no-cache update && apk add gcc musl-dev linux-headers geos geos-dev python3-dev git
+RUN apt update && apt install git
 
 RUN cd /usr/src/app && python3 -m pip install -U -r requirements.txt
 
