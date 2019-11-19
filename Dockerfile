@@ -5,11 +5,9 @@ WORKDIR /usr/src/app
 COPY raidquaza /usr/src/app
 # prepare to run bot.
 
-RUN apk --no-cache update && apk add gcc python3-dev musl-dev linux-headers git
-RUN apk add --no-cache \
-libc-dev \
-geos-dev \
-&& pip install shapely
+#RUN echo "@testing http://nl.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
+RUN echo "http://mirror.leaseweb.com/alpine/edge/testing" >> /etc/apk/repositories
+RUN apk --no-cache update && apk add gcc musl-dev linux-headers geos-dev python3-dev git
 
 RUN cd /usr/src/app && python3 -m pip install -U -r requirements.txt
 
