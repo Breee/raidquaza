@@ -394,5 +394,7 @@ Utils:
 - `!uptime` return how long the bot is operational.
 
 Poll:
-- `!poll <title> <option_1> .. <option_17>` to create a new poll.
+- `!poll <title> <option_1> .. <option_17>` to create a new poll with number reactions.
+- `!simplepoll <title> <option_1> .. <option_21>`  to create a new poll without number reactions
 Polls may have at most 17 vote options, as discord supports a maximum of 21 reactions the bot adds 4 extra reactions.
+Simple Polls have at most 21 reactions
