@@ -28,6 +28,22 @@ class PollCog(commands.Cog, name="Poll"):
             await sent_message.add_reaction(reaction)
         for reaction in number_emojies:
             await sent_message.add_reaction(discord.utils.get(self.bot.emojis, name=reaction))
+    
+    @commands.command(help="Create a poll without number emojis")
+    @commands.guild_only()
+    async def simplepoll(self, ctx, poll_title, *options):
+        LOGGER.info("Creating Poll: %s %s on Server %s" % (poll_title, options, ctx.guild))
+        # create a new poll
+        poll_id = str(uuid.uuid4())
+        new_poll = Poll(poll_id, poll_title, list(options))
+        # send it to discord
+        msg, embed = new_poll.to_discord()
+        sent_message: discord.Message = await ctx.channel.send(content=msg,
+                                                               embed=embed)
+        self.pollmanager.add_poll(poll=new_poll, received_message=ctx.message, sent_message=sent_message)
+        # add reactions to the poll.
+        for reaction in new_poll.reaction_to_option.keys():
+            await sent_message.add_reaction(reaction)
 
     @commands.command(help="Get poll statistics")
     async def pollstats(self, ctx, show=None):
