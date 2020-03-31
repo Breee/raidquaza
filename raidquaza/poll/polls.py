@@ -74,14 +74,14 @@ class Poll(object):
             # set list of users for the option the reaction belongs to.
             option = self.reaction_to_option[reaction.emoji]
             if add and user not in self.option_to_participants[option]:
-                self.option_to_participants[option].append(user.name)
+                self.option_to_participants[option].append(user.display_name)
             elif not add:
-                self.option_to_participants[option].remove(user.name)
-        if user.name not in self.participants:
-            self.participants[user.name] = 1
+                self.option_to_participants[option].remove(user.display_name)
+        if user.display_name not in self.participants:
+            self.participants[user.display_name] = 1
         if hasattr(reaction.emoji, 'name') and reaction.emoji.name in number_emojies:
             amount = number_emojies[reaction.emoji.name]
-            self.participants[user.name] += (amount if add else -1 * amount)
+            self.participants[user.display_name] += (amount if add else -1 * amount)
 
     def to_discord(self):
         msg = f'Poll for **{self.poll_title}**'
