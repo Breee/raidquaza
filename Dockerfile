@@ -1,5 +1,8 @@
 FROM python:3.7-slim
 
+ARG tag=0
+ENV TAG=$tag
+
 # Working directory for the application
 WORKDIR /usr/src/app
 COPY raidquaza /usr/src/app

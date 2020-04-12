@@ -9,7 +9,7 @@ Discord Section.
 # The Token of your botuser.
 BOT_TOKEN = os.getenv("BOT_TOKEN", "xxxxx")
 # Discord Status
-PLAYING = os.getenv("PLAYING", "BLA")
+PLAYING = os.getenv("TAG", "BLA")
 # Command prefix
 PREFIX = os.getenv("BOT_PREFIX", "!")
 
