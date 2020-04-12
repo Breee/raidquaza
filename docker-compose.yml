@@ -2,7 +2,7 @@ version: '2.4'
 services:
 
   raidquaza:
-    image: raidquaza-local
+    image: breedocker/raidquaza
     environment:
       - "BOT_TOKEN=token"
       - "BOT_PREFIX=!"
