@@ -2,10 +2,9 @@ version: '2.4'
 services:
 
   raidquaza:
-    image: breedocker/raidquaza
-    entrypoint: ["/entrypoint.sh"]
+    image: raidquaza-local
     environment:
-      - "BOT_TOKEN=xxxx"
+      - "BOT_TOKEN=NDExNTQzMTExNDA0MDkzNDQx.XpL1ag.5Jjo6iYK7QKjsJSP8peiutpBdic"
       - "BOT_PREFIX=!"
       - "POLL_DB_HOST=poll-db"
       - "POLL_DB_PORT=3306"
@@ -14,8 +13,6 @@ services:
       - "POLL_DB_PASSWORD=bestpw"
       - "POLL_DB_DIALECT=mysql"
       - "POLL_DB_DRIVER=mysqlconnector"
-    volumes:
-      - ./raidquaza/:/usr/src/app/
     restart: always
     depends_on:
       - poll-db

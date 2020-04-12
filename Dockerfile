@@ -1,16 +1,22 @@
-FROM python:3.7-slim
+FROM python:3.8-alpine
 
 ARG tag=0
 ENV TAG=$tag
 
 # Working directory for the application
 WORKDIR /usr/src/app
-COPY raidquaza /usr/src/app
-# prepare to run bot.
 
-RUN apt update && apt install -y git
+COPY raidquaza/requirements.txt /usr/src/app/requirements.txt
+
+RUN apk --no-cache update && apk --no-cache upgrade && apk --no-cache add --virtual buildpack gcc musl-dev build-base
+RUN apk --no-cache update && apk --no-cache add git
 
 RUN cd /usr/src/app && python3 -m pip install -U -r requirements.txt
+
+COPY raidquaza /usr/src/app
+RUN cp config.py.dist config.py
+
+RUN apk del buildpack
 
 # Set Entrypoint with hard-coded options
 ENTRYPOINT ["python3"]
