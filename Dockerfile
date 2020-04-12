@@ -1,8 +1,5 @@
 FROM python:3.8-alpine
 
-ARG tag=0
-ENV TAG=$tag
-
 # Working directory for the application
 WORKDIR /usr/src/app
 
@@ -17,6 +14,9 @@ COPY raidquaza /usr/src/app
 RUN cp config.py.dist config.py
 
 RUN apk del buildpack
+
+ARG tag=0
+ENV TAG=$tag
 
 # Set Entrypoint with hard-coded options
 ENTRYPOINT ["python3"]
