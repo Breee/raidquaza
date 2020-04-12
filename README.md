@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/Breee/raidquaza.svg?branch=master)](https://travis-ci.com/Breee/raidquaza)
+[![Breee](https://circleci.com/gh/Breee/raidquaza.svg?style=svg)](https://app.circleci.com/pipelines/github/Breee/raidquaza)
 [![CodeFactor](https://www.codefactor.io/repository/github/breee/raidquaza/badge)](https://www.codefactor.io/repository/github/breee/raidquaza)
 # Discord Poll Bot Raidquaza
 - Bot to create polls via discord.
