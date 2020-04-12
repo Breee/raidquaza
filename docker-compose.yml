@@ -2,9 +2,18 @@ version: '2.4'
 services:
 
   raidquaza:
-    build:
-      context: ""
-      dockerfile: Dockerfile
+    image: breedocker/raidquaza
+    entrypoint: ["/entrypoint.sh"]
+    environment:
+      - "BOT_TOKEN=xxxx"
+      - "BOT_PREFIX=!"
+      - "POLL_DB_HOST=poll-db"
+      - "POLL_DB_PORT=3306"
+      - "POLL_DB_NAME=polldb"
+      - "POLL_DB_USER=pollman"
+      - "POLL_DB_PASSWORD=bestpw"
+      - "POLL_DB_DIALECT=mysql"
+      - "POLL_DB_DRIVER=mysqlconnector"
     volumes:
       - ./raidquaza/:/usr/src/app/
     restart: always
@@ -16,15 +25,13 @@ services:
   poll-db:
     image: mariadb
     environment:
-      MYSQL_ROOT_PASSWORD: root1234
-      MYSQL_DATABASE: polldb
-      MYSQL_USER: pollman
-      MYSQL_PASSWORD: bestpw
+      - "MYSQL_ROOT_PASSWORD: root1234"
+      - "MYSQL_DATABASE: polldb"
+      - "MYSQL_USER: pollman"
+      - "MYSQL_PASSWORD: bestpw"
     command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
     volumes:
       - ./volumes/mysql/db:/var/lib/mysql
     restart: always
-    ports: 
-      - "1338:3306"
     networks:
       - default
