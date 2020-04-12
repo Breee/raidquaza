@@ -18,3 +18,5 @@ raidquaza/supervisord\.log
 *.log
 
 raidquaza/config\.py
+
+volumes/

@@ -3,7 +3,6 @@ import discord
 from _datetime import datetime
 import aiohttp
 from utility.globals import LOGGER
-from cogs.searchcog import SearchCog
 from cogs.utilscog import UtilsCog
 from cogs.pollcog import PollCog
 import traceback
@@ -18,10 +17,7 @@ class Raidquaza(commands.Bot):
         super().__init__(command_prefix=[config.PREFIX], description=description, pm_help=None,
                          help_attrs=dict(hidden=True))
 
-        if config.SEARCH_ENABLED:
-            self.add_cog(SearchCog(self))
-        if config.POLL_ENABLED:
-            self.add_cog(PollCog(self))
+        self.add_cog(PollCog(self))
         self.add_cog(UtilsCog(self))
         self.session = aiohttp.ClientSession(loop=self.loop)
 
@@ -59,7 +55,6 @@ class Raidquaza(commands.Bot):
         else:
             LOGGER.critical(error)
 
-    @asyncio.coroutine
     async def process_commands(self, message):
         """|coro|
         This function processes the commands that have been registered

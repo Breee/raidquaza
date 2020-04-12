@@ -24,5 +24,7 @@ services:
     volumes:
       - ./volumes/mysql/db:/var/lib/mysql
     restart: always
+    ports: 
+      - "1338:3306"
     networks:
       - default
