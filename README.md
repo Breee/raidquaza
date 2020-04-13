@@ -19,7 +19,8 @@ Discord server: https://discord.gg/Mamfk3Q
 # Commands
 Commands consist of a `prefix` and an `alias`.
 
-You can specify a `prefix` in `raidquaza/config/config.ini`, the default prefixes are `!` and `@bot_user_name#1337`.
+The default prefix is just your bot user: `@bot_user_name#1337`. 
+You can set a custom prefix using `@bot_user_name#1337 set_prefix !`, to set the prefix to `!`. 
 
 Utils:
 - `@bot_user_name#1337 help` display help
