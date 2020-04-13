@@ -3,6 +3,7 @@ from discord import Role, TextChannel
 import time
 from core.coredbhandler import CoreDBHandler
 import config as config
+from utility.globals import LOGGER
 
 
 
@@ -54,7 +55,10 @@ class UtilsCog(commands.Cog, name="Utility"):
                 else:
                     owners = [app.owner.mention]
                 message_prefix = f"Hey there,\nYou are the administrator of a server on which I am and I got an important notification from my owner(s) {' '.join(owners)}:\n\n"
-                await member.send(message_prefix + message)
+                try:
+                    await member.send(message_prefix + message)
+                except:
+                    LOGGER.error(f"Could not send notification to {member.name}")
 
     @commands.command(help="Leave a server (owner only)")
     @commands.is_owner()
