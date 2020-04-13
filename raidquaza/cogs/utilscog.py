@@ -46,17 +46,15 @@ class UtilsCog(commands.Cog, name="Utility"):
     @commands.command(help="Show all servers (owner only)")
     @commands.is_owner()
     async def notify_servers(self, ctx, message):
-        return
-        # TODO
-        guilds = await self.bot.fetch_guilds(limit=150).flatten()
-        for guild in guilds:
-            members = await guild.fetch_members(limit=1000).flatten()
-            for member in members:
-                if member.guild_permissions.administrator:
-                    print(f"{member} is admin")
-                    msg_prefix = "Hey there, you are a administrator"
-                    await member.send(message)
-
+        for member in self.bot.get_all_members():
+            if member.guild_permissions.administrator:
+                app = await self.bot.application_info()
+                if app.team:
+                    owners = [m.mention for m in app.team.members]
+                else:
+                    owners = [app.owner.mention]
+                message_prefix = f"Hey there,\nYou are the administrator of a server on which I am and I got an important notification from my owner(s) {' '.join(owners)}:\n\n"
+                await member.send(message_prefix + message)
 
     @commands.command(help="Leave a server (owner only)")
     @commands.is_owner()
