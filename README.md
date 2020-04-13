@@ -60,8 +60,7 @@ Discord Section.
 BOT_TOKEN = os.getenv("BOT_TOKEN", "xxxxx")
 # Discord Status
 PLAYING = os.getenv("TAG", "BLA")
-# Command prefix
-PREFIX = os.getenv("BOT_PREFIX", "!")
+
 
 """
 Poll Section.
