@@ -15,6 +15,23 @@ Docker image:  https://cloud.docker.com/repository/docker/breedocker/raidquaza
 
 Discord server: https://discord.gg/Mamfk3Q
 
+
+# Commands
+Commands consist of a `prefix` and an `alias`.
+
+You can specify a `prefix` in `raidquaza/config/config.ini`, the default prefixes are `!` and `@bot_user_name#1337`.
+
+Utils:
+- `@bot_user_name#1337 help` display help
+- `@bot_user_name#1337 ping` ping the bot
+- `@bot_user_name#1337 uptime` return how long the bot is operational.
+
+Poll:
+- `@bot_user_name#1337 poll <title> <option_1> .. <option_17>` to create a new poll with number reactions.
+- `@bot_user_name#1337 simplepoll <title> <option_1> .. <option_21>`  to create a new poll without number reactions
+Polls may have at most 17 vote options, as discord supports a maximum of 21 reactions the bot adds 4 extra reactions.
+Simple Polls have at most 21 reactions
+
 # Setup
 
 ## 1. Requirements: 
@@ -131,19 +148,3 @@ services:
 ``` 
 
 To bring the services up, simply `docker-compose up -d poll-db`, `docker-compose up -d raidquaza`.
-
-# Commands
-Commands consist of a `prefix` and an `alias`.
-
-You can specify a `prefix` in `raidquaza/config/config.ini`, the default prefixes are `!` and `@bot_user_name#1337`.
-
-Utils:
-- `!help` display help
-- `!ping` ping the bot
-- `!uptime` return how long the bot is operational.
-
-Poll:
-- `!poll <title> <option_1> .. <option_17>` to create a new poll with number reactions.
-- `!simplepoll <title> <option_1> .. <option_21>`  to create a new poll without number reactions
-Polls may have at most 17 vote options, as discord supports a maximum of 21 reactions the bot adds 4 extra reactions.
-Simple Polls have at most 21 reactions
