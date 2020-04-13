@@ -17,6 +17,6 @@ class ServerSetting(Base):
     __tablename__ = 'server_setting'
     # Overall useful information
     id = Column(Integer, primary_key=True)
-    server_id = Column(BigInteger)
-    prefix = Column(UnicodeText)
-    moderator_roles = Column(Json)
+    server_id = Column(BigInteger, name="server_id")
+    prefix = Column(UnicodeText, name="prefix")
+    moderator_roles = Column(Json, name="moderator_roles")
