@@ -47,18 +47,26 @@ class UtilsCog(commands.Cog, name="Utility"):
     @commands.command(help="Show all servers (owner only)")
     @commands.is_owner()
     async def notify_servers(self, ctx, message):
+        admin_ids = set()
+        admins = set()
         for member in self.bot.get_all_members():
-            if member.guild_permissions.administrator:
-                app = await self.bot.application_info()
-                if app.team:
-                    owners = [m.mention for m in app.team.members]
-                else:
-                    owners = [app.owner.mention]
-                message_prefix = f"Hey there,\nYou are the administrator of a server on which I am and I got an important notification from my owner(s) {' '.join(owners)}:\n\n"
-                try:
-                    await member.send(message_prefix + message)
-                except:
-                    LOGGER.error(f"Could not send notification to {member.name}")
+            if member.guild_permissions.administrator and not member.bot:
+                if member.id not in admin_ids:
+                    admins.add(member)
+                    admin_ids.add(member.id)
+        app = await self.bot.application_info()
+        if app.team:
+            owners = [m.mention for m in app.team.members]
+        else:
+            owners = [app.owner.mention]
+        message_prefix = f"Hey there,\nYou are the administrator of a server on which I am and I got an important " \
+                         f"notification from my owner(s) {' '.join(owners)}:\n\n"
+        LOGGER.info(f"Admins I notify: {[a.name for a in admins]}")
+        for admin in admins:
+            try:
+                await admin.send(message_prefix + message)
+            except:
+                LOGGER.error(f"Could not send notification to {admin.name}")
 
     @commands.command(help="Leave a server (owner only)")
     @commands.is_owner()
