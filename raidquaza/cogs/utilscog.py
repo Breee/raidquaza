@@ -1,5 +1,5 @@
 from discord.ext import commands
-from discord import Role
+from discord import Role, TextChannel
 import time
 from core.coredbhandler import CoreDBHandler
 import config as config
@@ -43,6 +43,21 @@ class UtilsCog(commands.Cog, name="Utility"):
             guilds.append("- %s (%s)" % (guild.name, guild.id))
         await ctx.send("__**Servers**__\n%s" % "\n".join(guilds))
 
+    @commands.command(help="Show all servers (owner only)")
+    @commands.is_owner()
+    async def notify_servers(self, ctx, message):
+        return
+        # TODO
+        guilds = await self.bot.fetch_guilds(limit=150).flatten()
+        for guild in guilds:
+            members = await guild.fetch_members(limit=1000).flatten()
+            for member in members:
+                if member.guild_permissions.administrator:
+                    print(f"{member} is admin")
+                    msg_prefix = "Hey there, you are a administrator"
+                    await member.send(message)
+
+
     @commands.command(help="Leave a server (owner only)")
     @commands.is_owner()
     async def leave(self, ctx, id):
@@ -65,7 +80,8 @@ class UtilsCog(commands.Cog, name="Utility"):
     async def check_is_moderator_or_owner(self, ctx: commands.Context) -> bool:
         moderator_roles = self.db.get_moderator_roles(ctx.guild.id)
         user_roles = [str(role.id) for role in ctx.author.roles]
-        is_authorized = any(role in user_roles for role in moderator_roles) or await self.bot.is_owner(ctx.author)
+        has_admin_permissions = ctx.author.guild_permissions.administrator
+        is_authorized = any(role in user_roles for role in moderator_roles) or await self.bot.is_owner(ctx.author) or has_admin_permissions
         if is_authorized:
             return True
         else:
