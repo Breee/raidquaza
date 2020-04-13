@@ -13,6 +13,8 @@ Questions? I'm Bree#2002 @ Discord
 
 Docker image:  https://cloud.docker.com/repository/docker/breedocker/raidquaza
 
+Discord server: https://discord.gg/Mamfk3Q
+
 # Setup
 
 ## 1. Requirements: 
