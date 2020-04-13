@@ -3,6 +3,7 @@ import aiohttp
 import traceback
 import collections
 from discord.ext import commands
+from discord import DMChannel
 from _datetime import datetime
 from utility.globals import LOGGER
 from cogs.utilscog import UtilsCog
@@ -80,9 +81,12 @@ class Raidquaza(commands.Bot):
         """
         prefix = ret = self.command_prefix
 
-        server_prefix = self.db.get_prefix(message.guild.id)
-        if server_prefix:
-            prefix.append(server_prefix)
+        if not isinstance(message.channel, DMChannel):
+            server_prefix = self.db.get_prefix(message.guild.id)
+            if server_prefix:
+                prefix.append(server_prefix)
+        else:
+            prefix.append("!")
 
         if callable(prefix):
             ret = await discord.utils.maybe_coroutine(prefix, self, message)
