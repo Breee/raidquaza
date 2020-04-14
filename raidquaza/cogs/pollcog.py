@@ -85,7 +85,8 @@ class PollCog(commands.Cog, name="Poll"):
         channel: discord.ChannelType = self.bot.get_channel(payload.channel_id)
         message: discord.Message = await channel.fetch_message(payload.message_id)
         reaction: discord.Reaction = discord.Reaction(message=message, data=data)
-        user = payload.member
+        guild = await self.bot.fetch_guild(payload.guild_id)
+        user = await guild.fetch_member(payload.user_id)
         if self.pollmanager.is_sent_message(payload.message_id):
             poll = self.pollmanager.get_poll_by_msg_id(payload.message_id)
             if not poll.updated_since_start:
