@@ -12,8 +12,8 @@ jobs:
      # with credentials stored in the UI
      - run:
          command: |
-           docker build -t breedocker/$IMAGE_NAME:$TAG --build-arg tag=${TAG} .
-           docker build -t breedocker/$IMAGE_NAME:latest --build-arg tag=${TAG} .
+           docker build --no-cache -t breedocker/$IMAGE_NAME:$TAG --build-arg tag=${TAG} .
+           docker build --no-cache -t breedocker/$IMAGE_NAME:latest --build-arg tag=${TAG} .
            docker login -u="$DOCKER_USER" -p="$DOCKER_PASSWORD"
            docker push breedocker/$IMAGE_NAME:$TAG
            docker push breedocker/$IMAGE_NAME:latest
