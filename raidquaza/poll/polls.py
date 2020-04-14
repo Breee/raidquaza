@@ -70,11 +70,11 @@ class Poll(object):
 
     def process_reaction(self, reaction, user, add):
         # get users + reaction emoji
+        nick = user.nick
         if reaction.emoji in self.reaction_to_option:
             # set list of users for the option the reaction belongs to.
             option = self.reaction_to_option[reaction.emoji]
-            nick = user.nick
-            if add and user not in self.option_to_participants[option]:
+            if add and nick not in self.option_to_participants[option]:
                 self.option_to_participants[option].append(nick)
             elif not add:
                 self.option_to_participants[option].remove(nick)
