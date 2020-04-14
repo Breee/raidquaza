@@ -73,7 +73,7 @@ class Poll(object):
         if reaction.emoji in self.reaction_to_option:
             # set list of users for the option the reaction belongs to.
             option = self.reaction_to_option[reaction.emoji]
-            nick = user.nick
+            nick = user.display_name
             if add and user not in self.option_to_participants[option]:
                 self.option_to_participants[option].append(nick)
             elif not add:
