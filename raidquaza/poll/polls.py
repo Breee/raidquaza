@@ -70,7 +70,10 @@ class Poll(object):
 
     def process_reaction(self, reaction, user, add):
         # get users + reaction emoji
-        nick = user.nick
+        if user.nick is not None:
+            nick = user.nick
+        else:
+            nick = user.display_name
         if reaction.emoji in self.reaction_to_option:
             # set list of users for the option the reaction belongs to.
             option = self.reaction_to_option[reaction.emoji]
