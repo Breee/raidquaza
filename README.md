@@ -1,12 +1,16 @@
 [![Breee](https://circleci.com/gh/Breee/raidquaza.svg?style=svg)](https://app.circleci.com/pipelines/github/Breee/raidquaza)
 [![CodeFactor](https://www.codefactor.io/repository/github/breee/raidquaza/badge)](https://www.codefactor.io/repository/github/breee/raidquaza)
+
 # Discord Poll Bot Raidquaza
 - Bot to create polls via discord.
 
 ![raidquaza_example](https://s18.directupload.net/images/190713/g6ob9ptw.jpg)
 
 Try it out and add it to your discord:
-https://discordapp.com/api/oauth2/authorize?client_id=410240526701559829&permissions=280640&scope=bot 
+
+[![Discord Bots](https://top.gg/api/widget/410240526701559829.svg)](https://top.gg/bot/410240526701559829)
+
+upvote if you like it :)
 
 Questions? I'm Bree#2002 @ Discord
 
