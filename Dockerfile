@@ -15,7 +15,7 @@ RUN cp config.py.dist config.py
 
 RUN apk del buildpack
 
-ARG tag=0
+ARG tag
 ENV TAG=$tag
 
 # Set Entrypoint with hard-coded options
