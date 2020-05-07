@@ -79,14 +79,12 @@ class Raidquaza(commands.Bot):
             A list of prefixes or a single prefix that the bot is
             listening for.
         """
-        prefix = ret = self.command_prefix
-
+        prefix = ret = self.command_prefix.copy()
+        
         if not isinstance(message.channel, DMChannel):
             server_prefix = self.db.get_prefix(message.guild.id)
             if server_prefix:
                 prefix.append(server_prefix)
-        else:
-            prefix.append("!")
 
         if callable(prefix):
             ret = await discord.utils.maybe_coroutine(prefix, self, message)
