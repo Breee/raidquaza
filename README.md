@@ -40,7 +40,7 @@ Simple Polls have at most 21 reactions
 # Setup
 
 ## 1. Requirements: 
-- python 3.7
+- python 3.8
 - pip3
 - discord bot user (https://discordapp.com/developers/applications/me)
 - Add Emojis from directory `/poll/emojis/` to your discord server, name them equally. (`rq_plus_one`,`rq_plus_two`,`rq_plus_three`, `rq_plus_four`)
