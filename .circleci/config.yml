@@ -17,3 +17,11 @@ jobs:
            docker login -u="$DOCKER_USER" -p="$DOCKER_PASSWORD"
            docker push breedocker/$IMAGE_NAME:$TAG
            docker push breedocker/$IMAGE_NAME:latest
+workflows:
+  version: 2
+  main:
+    jobs:
+    - build:
+        filters:
+          branches:
+            only: master
