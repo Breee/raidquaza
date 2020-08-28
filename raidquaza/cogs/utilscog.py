@@ -39,11 +39,20 @@ class UtilsCog(commands.Cog, name="Utility"):
     @commands.command(help="Show all servers (owner only)")
     @commands.is_owner()
     async def servers(self, ctx):
-        guilds = []
+        guilds = ""
         async for guild in self.bot.fetch_guilds(limit=150):
-            guilds.append("- %s (%s)" % (guild.name, guild.id))
-        await ctx.send("__**Servers**__\n%s" % "\n".join(guilds))
+            guild = f"- {guild.name} ({guild.id})\n"
+            if len(f"__**Servers**__\n{guilds + guild}") <= 2000:
+                guilds += guild
+            else:
+                await ctx.send(f"__**Servers**__\n{guilds}")
+                guilds = guild
+        if guilds:
+            await ctx.send(f"__**Servers**__\n{guilds}")
 
+
+                
+                
     @commands.command(help="Show all servers (owner only)")
     @commands.is_owner()
     async def notify_servers(self, ctx, message):
