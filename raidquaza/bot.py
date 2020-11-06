@@ -8,6 +8,7 @@ from _datetime import datetime
 from utility.globals import LOGGER
 from cogs.utilscog import UtilsCog
 from cogs.pollcog import PollCog
+from cogs.topggcog import TopGG
 from poll.utils import replace_quotes
 from core.coredbhandler import CoreDBHandler
 
@@ -22,6 +23,7 @@ class Raidquaza(commands.Bot):
 
         self.add_cog(PollCog(self))
         self.add_cog(UtilsCog(self))
+        self.add_cog(TopGG(self, config.TOPGG_API_TOKEN))
         self.session = aiohttp.ClientSession(loop=self.loop)
         self.db = CoreDBHandler(database=config.POLL_DB_NAME, user=config.POLL_DB_USER,
                                 password=config.POLL_DB_PASSWORD, host=config.POLL_DB_HOST,

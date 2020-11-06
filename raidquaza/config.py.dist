@@ -30,3 +30,7 @@ POLL_DB_NAME = os.getenv("POLL_DB_NAME", "polldb")
 POLL_DB_DIALECT =  os.getenv("POLL_DB_DIALECT", "mysql")
 # The driver of the database-server
 POLL_DB_DRIVER =  os.getenv("POLL_DB_DRIVER", "mysqlconnector")
+
+
+# TOP GG 
+TOPGG_API_TOKEN = os.getenv("TOPGG_API_TOKEN", "xxxxxxxxxxx")

@@ -70,7 +70,7 @@ class Poll(object):
 
     def process_reaction(self, reaction, user, add):
         # get users + reaction emoji
-        if user.nick is not None:
+        if hasattr(user, 'nick') and user.nick is not None:
             nick = user.nick
         else:
             nick = user.display_name

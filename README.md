@@ -108,7 +108,7 @@ python3 start_bot.py
 ```
 
 ## Deploy with docker
-We expect you to know about docker, docker-compose and how you deploy.
+We expect you to know about docker, docker-compose and how you deploy..
 
 There is a `docker-compose.yml` file located in the root directory.
 
