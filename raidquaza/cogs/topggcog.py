@@ -18,5 +18,3 @@ class TopGG(commands.Cog):
         print("Server count posted successfully")
 
 
-def setup(bot):
-    bot.add_cog(TopGG(bot))
