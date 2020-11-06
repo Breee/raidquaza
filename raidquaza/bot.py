@@ -8,7 +8,7 @@ from _datetime import datetime
 from utility.globals import LOGGER
 from cogs.utilscog import UtilsCog
 from cogs.pollcog import PollCog
-from cog.topggcog import TopGG
+from cogs.topggcog import TopGG
 from poll.utils import replace_quotes
 from core.coredbhandler import CoreDBHandler
 
