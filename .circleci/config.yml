@@ -3,14 +3,12 @@ jobs:
  build:
    machine: true
    steps:
-     - checkout
      - run:
          name: Store Version and Image name
          command: |
            echo 'export TAG=0.1.${CIRCLE_BUILD_NUM}' >> $BASH_ENV
            echo 'export IMAGE_NAME=raidquaza' >> $BASH_ENV
      # with credentials stored in the UI
-     - Build and Push
      - run:
          command: |
            docker build --no-cache -t breedocker/$IMAGE_NAME:$TAG --build-arg tag=${TAG} .
@@ -22,7 +20,6 @@ jobs:
    machine: true
    steps:
      # with credentials stored in the UI
-     - Build and Push
      - run:
          command: |
            docker build --no-cache -t breedocker/$IMAGE_NAME:$CIRCLE_TAG --build-arg tag=${CIRCLE_TAG} .
