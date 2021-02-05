@@ -45,7 +45,7 @@ workflows:
     - build-tags:
         filters:
           tags:
-            only: /.*/
+            only: /\d+\.\d+\.\d+/
     - build-pr:
         filters:
           branches:
