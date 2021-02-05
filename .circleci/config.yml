@@ -49,7 +49,7 @@ workflows:
     - build-tags:
         filters:
           tags:
-            only: '\d+\.\d+.\d+'
+            only: /.*/
     - build-pr:
         filters:
           branches:
