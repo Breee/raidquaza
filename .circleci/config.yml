@@ -19,7 +19,7 @@ jobs:
            docker login -u="$DOCKER_USER" -p="$DOCKER_PASSWORD"
            docker push breedocker/$IMAGE_NAME:$TAG
            docker push breedocker/$IMAGE_NAME:latest
-  build_tag:
+ build_tag:
    machine: true
    steps:
      # with credentials stored in the UI
