@@ -7,7 +7,7 @@ from utility.globals import LOGGER
 
 
 
-class UtilsCog(commands.Cog, name="Utility"):
+class UtilsCog(commands.Cog, name="utility"):
     def __init__(self, bot):
         self.bot = bot
         self.start_time = time.time()

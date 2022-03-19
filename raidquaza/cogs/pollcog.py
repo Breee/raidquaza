@@ -6,7 +6,7 @@ from utility.globals import LOGGER
 import uuid
 
 
-class PollCog(commands.Cog, name="Poll"):
+class PollCog(commands.Cog, name="poll"):
     def __init__(self, bot):
         self.bot = bot
         self.pollmanager = PollManager()
@@ -90,7 +90,7 @@ class PollCog(commands.Cog, name="Poll"):
         if self.pollmanager.is_sent_message(payload.message_id):
             poll = self.pollmanager.get_poll_by_msg_id(payload.message_id)
             if not poll.updated_since_start:
-                await poll.full_update(reactions=message.reactions, bot_user_id=self.bot.user.id)
+                await poll.full_update(reactions=message.reactions, bot_user_id=self.bot.user.id, guild=guild)
             else:
                 poll.process_reaction(reaction, user, add=add)
             msg, embed = poll.to_discord()

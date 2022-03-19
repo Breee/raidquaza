@@ -55,7 +55,7 @@ class Poll(object):
         self.is_enabled = True
         self.updated_since_start = updated_since_start
 
-    async def full_update(self, reactions: List[Reaction], bot_user_id: int):
+    async def full_update(self, reactions: List[Reaction], bot_user_id: int, guild):
         if self.updated_since_start:
             return
         self.reaction_to_option = {reaction_emojies[k]: self.options[k] for k in range(len(self.options))}
@@ -65,7 +65,8 @@ class Poll(object):
         for reaction in reactions:
             async for user in reaction.users():
                 if bot_user_id != user.id:
-                    self.process_reaction(reaction=reaction, user=user, add=True)
+                    member = await guild.fetch_member(user.id)
+                    self.process_reaction(reaction=reaction, user=member, add=True)
         self.updated_since_start = True
 
     def process_reaction(self, reaction, user, add):
