@@ -43,10 +43,6 @@ workflows:
         filters:
           branches:
             only: master
-    - build-tags:
-        filters:
-          tags:
-            only: /\d+\.\d+\.\d+/
     - build-pr:
         filters:
           branches:
