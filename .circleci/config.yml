@@ -3,6 +3,7 @@ jobs:
  build:
    machine: true
    steps:
+     - checkout
      - run:
          name: Store Version and Image name
          command: |
@@ -16,15 +17,15 @@ jobs:
            docker login -u="$DOCKER_USER" -p="$DOCKER_PASSWORD"
            docker push breedocker/$IMAGE_NAME:$TAG
            docker push breedocker/$IMAGE_NAME:latest
- build-tags:
-   machine: true
-   steps:
-     # with credentials stored in the UI
-     - run:
-         command: |
-           docker build --no-cache -t "breedocker/$IMAGE_NAME:$CIRCLE_TAG" --build-arg tag=${CIRCLE_TAG} .
-           docker login -u="$DOCKER_USER" -p="$DOCKER_PASSWORD"
-           docker push breedocker/$IMAGE_NAME:$CIRCLE_TAG
+ #build-tags:
+ #  machine: true
+ #  steps:
+ #    # with credentials stored in the UI
+ #    - run:
+ #        command: |
+ #          docker build --no-cache -t breedocker/$IMAGE_NAME:$CIRCLE_TAG --build-arg tag=${CIRCLE_TAG} .
+ #          docker login -u="$DOCKER_USER" -p="$DOCKER_PASSWORD"
+ #          docker push breedocker/$IMAGE_NAME:$CIRCLE_TAG
  build-pr:
   machine: true
   steps:
