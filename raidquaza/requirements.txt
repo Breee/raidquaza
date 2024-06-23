@@ -1,5 +1,5 @@
 discord.py==2.4.0
-mysql-connector-python==8.1.0
+mysql-connector-python==8.4.0
 sqlalchemy
 pytest
 dblpy==0.4.0
